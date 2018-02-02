@@ -1,0 +1,17 @@
+# Folders
+output
+build*
+
+*.exe
+*.asv
+*.csv
+*.dat
+*.stackdump
+*.png
+*.pyc
+*.log
+*sublime-project
+*sublime-workspace
+*.txt
+!*CMakeLists.txt
+*.kase

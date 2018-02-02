@@ -1,0 +1,26 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 3.10)
+
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+set (CMAKE_C_COMPILER "gcc")
+set (CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ansi -pedantic" CACHE STRING "Default compilation flags to be used when compiling C++ files.")
+
+project (StaggeredLib)
+set (VERSION_MAJOR "0")
+set (VERSION_MINOR "0")
+set (VERSION_PATCH "0")
+set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+	set (CMAKE_INSTALL_PREFIX "$ENV{HOME}/Libraries/${PROJECT_NAME}-${VERSION}" CACHE PATH "Installation path" FORCE)
+endif ()
+
+message ("\n-- Project: ${PROJECT_NAME} ${VERSION}")
+message ("-- Build type: ${CMAKE_BUILD_TYPE}")
+message ("-- Install prefix: ${CMAKE_INSTALL_PREFIX}\n")
+message ("-- C++ compiler: ${CMAKE_CXX_COMPILER}")
+message ("-- Compile flags: ${CMAKE_CXX_FLAGS}")
