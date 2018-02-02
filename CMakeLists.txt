@@ -19,6 +19,7 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 	set (CMAKE_INSTALL_PREFIX "$ENV{HOME}/Libraries/${PROJECT_NAME}-${VERSION}" CACHE PATH "Installation path" FORCE)
 endif ()
 include_directories ("${CMAKE_SOURCE_DIR}/include")
+include_directories ("${CMAKE_SOURCE_DIR}/Eigen")
 
 add_subdirectory(UtilsTest)
 
