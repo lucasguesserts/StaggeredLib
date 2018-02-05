@@ -1,0 +1,23 @@
+% Insert codes in the pdf
+
+\usepackage{listings} % it loads the package 'xcolor'
+
+% Include '.c'
+\lstdefinestyle{customc}{
+  language=C,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{blue},
+  %identifierstyle=\color{blue},
+  stringstyle=\color{RubineRed},
+}
+
+% Example: how to use
+% 
+% Inline code:
+% \begin{lstlisting}
+% code here
+% \end{lstlisting}
+% 
+% Input file
+% \lstinputlisting{source_filename.py}

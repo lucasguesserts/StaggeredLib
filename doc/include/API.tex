@@ -1,0 +1,47 @@
+\usepackage{titlesec} % change section format
+
+\titleformat{\section}
+{\normalfont\LARGE\bfseries}
+{\color{red}\thesection}{1em}{}
+
+\titleformat{\subsection}[wrap]
+{\normalfont\large\bfseries}
+{\thesubsection}{1em}{}
+
+\newcommand{\class}[1]
+{
+	\chapter*{#1}
+	\addcontentsline{toc}{chapter}{#1}
+}
+
+\newenvironment{function}[1]
+{
+	\section*{#1}
+	\addcontentsline{toc}{section}{#1}
+}
+{}
+
+\newcommand{\functiondescription}
+{
+	\subsection*{Description}
+}
+
+\newcommand{\parameters}
+{
+	\subsection*{Parameters}
+}
+
+\newcommand{\return}
+{
+	\subsection*{Return}
+}
+
+\newcommand{\codeexample}
+{
+	\subsection*{Code Example}
+}
+
+\newcommand{\notes}
+{
+	\subsection*{Notes}
+}
