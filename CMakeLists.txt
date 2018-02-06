@@ -22,6 +22,8 @@ include_directories ("${CMAKE_SOURCE_DIR}/include")
 include_directories ("${CMAKE_SOURCE_DIR}/Eigen")
 
 add_subdirectory(UtilsTest)
+add_subdirectory(Grid)
+add_subdirectory(GridTest)
 
 message ("\n-- Project: ${PROJECT_NAME} ${VERSION}")
 message ("-- Build type: ${CMAKE_BUILD_TYPE}")
