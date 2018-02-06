@@ -1,0 +1,14 @@
+#ifndef VERTEX_HPP
+#define VERTEX_HPP
+
+#include <Grid/Entity.hpp>
+#include <Eigen/Core>
+
+class Vertex: public Eigen::Vector3d, public Entity
+{
+	public:
+		explicit Vertex(const double x, const double y, const double z, const unsigned handle);
+		Vertex(void);
+};
+
+#endif
