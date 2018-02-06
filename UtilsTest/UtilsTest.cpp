@@ -1,4 +1,4 @@
-#include <Utils/Test.h>
+#include <Utils/Test.hpp>
 #include <vector>
 
 #include <Eigen/Core>
