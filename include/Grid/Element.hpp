@@ -9,7 +9,7 @@ class Element: public Entity, public VertexCollection
 {
 	public:
 		Eigen::Vector3d getCentroid(void);
-		virtual double getVolume(void) const = 0;
+		virtual double getVolume(void) = 0;
 		virtual Eigen::VectorXd getShapeFunctionValues(const Eigen::Vector3d localCoordinates) const = 0;
 		virtual Eigen::MatrixXd getShapeFunctionDerivatives(const Eigen::Vector3d localCoordinates) const = 0;
 	private:

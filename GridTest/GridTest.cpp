@@ -89,27 +89,45 @@ TestCase("Vertex collection", "[VertexCollection]")
 TestCase("Triangle", "[Element][Element2D][Triangle]")
 {
 	const unsigned numberOfVertices = 3;
-	const Eigen::Vector3d centroid(1.0/3.0, 1.0/3.0, 7.0/3.0);
-	const Eigen::Vector3d areaVector(28.0, 13.5, 38.0);
-	const double volume = 49.09429702; // the area
-	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
-	Eigen::VectorXd shapeFunctionValues(3); shapeFunctionValues << 1.0, 0.0, 0.0;
-	Eigen::MatrixXd shapeFunctionDerivatives(3,3);
-		shapeFunctionDerivatives << 0.0, 0.0, 0.0,
-		                            0.0, 0.0, 1.0,
-									0.0, 0.0, 0.0;
 	std::vector<Vertex> vertices(numberOfVertices);
-	vertices[0] = Vertex(2.0, -5.0, 3.0, 0);
-	vertices[1] = Vertex(3.0, 7.0, -2.0, 1);
-	vertices[2] = Vertex(-4.0, -1.0, 6.0, 2);
+		vertices[0] = Vertex(2.0, -5.0, 3.0, 0);
+		vertices[1] = Vertex(3.0, 7.0, -2.0, 1);
+		vertices[2] = Vertex(-4.0, -1.0, 6.0, 2);
+	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Triangle triangle;
 	for(Vertex& vertex: vertices)
 		triangle.addVertex(vertex);
-	check(triangle.getNumberOfVertices()==3);
-	check(triangle.getCentroid()==centroid);
-	check(triangle.getVolume()==volume);
-	check(triangle.getShapeFunctionValues(localCoordinates)==shapeFunctionValues);
-	check(triangle.getShapeFunctionDerivatives(localCoordinates)==shapeFunctionDerivatives);
-	check((2*shapeFunctionValues)==shapeFunctionValues);
-	check(shapeFunctionDerivatives==shapeFunctionDerivatives);
+	section("Basic requirements")
+	{
+		require(triangle.getNumberOfVertices()==3);
+		require(triangle.dimension==2);
+	}
+	section("Centroid")
+	{
+		const Eigen::Vector3d centroid(1.0/3.0, 1.0/3.0, 7.0/3.0);
+		check(triangle.getCentroid()==centroid);
+	}
+	section("Area vector")
+	{
+		const Eigen::Vector3d areaVector(28.0, 13.5, 38.0);
+		check(triangle.getAreaVector()==areaVector);
+	}
+	section("Volume")
+	{
+		const double volume = 49.09429702; // the area
+		check(triangle.getVolume()==Approx(volume));
+	}
+	section("Shape function values")
+	{
+		Eigen::VectorXd shapeFunctionValues(3); shapeFunctionValues << 0.5, 0.2, 0.3;
+		check(triangle.getShapeFunctionValues(localCoordinates)==shapeFunctionValues);
+	}
+	section("Shape function derivatives")
+	{
+		Eigen::MatrixXd shapeFunctionDerivatives(3,3);
+			shapeFunctionDerivatives << -1.0, -1.0, 0.0,
+										 1.0,  0.0, 0.0,
+										 0.0,  1.0, 0.0;
+		check(triangle.getShapeFunctionDerivatives(localCoordinates)==shapeFunctionDerivatives);
+	}
 }

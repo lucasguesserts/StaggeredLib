@@ -8,7 +8,7 @@ class Element2D: public Element
 {
 	public:
 		static const unsigned dimension;
-		virtual Eigen::Vector3d getAreaVector(void) const = 0;
+		virtual Eigen::Vector3d getAreaVector(void) = 0;
 };
 
 #endif
