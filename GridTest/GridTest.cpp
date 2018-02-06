@@ -4,6 +4,9 @@
 #include <Grid/Entity.hpp>
 #include <Grid/Vertex.hpp>
 #include <Grid/VertexCollection.hpp>
+#include <Grid/Element.hpp>
+#include <Grid/Element2D.hpp>
+#include <Grid/Triangle.hpp>
 
 TestCase("Entity", "[Entity]")
 {
@@ -81,4 +84,32 @@ TestCase("Vertex collection", "[VertexCollection]")
 		for(unsigned i=0 ; i<numberOfVertices ; ++i)
 			check(&vertexVector[i]==vertexCollectionVector[i]);
 	}
+}
+
+TestCase("Triangle", "[Element][Element2D][Triangle]")
+{
+	const unsigned numberOfVertices = 3;
+	const Eigen::Vector3d centroid(1.0/3.0, 1.0/3.0, 7.0/3.0);
+	const Eigen::Vector3d areaVector(28.0, 13.5, 38.0);
+	const double volume = 49.09429702; // the area
+	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
+	Eigen::VectorXd shapeFunctionValues(3); shapeFunctionValues << 1.0, 0.0, 0.0;
+	Eigen::MatrixXd shapeFunctionDerivatives(3,3);
+		shapeFunctionDerivatives << 0.0, 0.0, 0.0,
+		                            0.0, 0.0, 1.0,
+									0.0, 0.0, 0.0;
+	std::vector<Vertex> vertices(numberOfVertices);
+	vertices[0] = Vertex(2.0, -5.0, 3.0, 0);
+	vertices[1] = Vertex(3.0, 7.0, -2.0, 1);
+	vertices[2] = Vertex(-4.0, -1.0, 6.0, 2);
+	Triangle triangle;
+	for(Vertex& vertex: vertices)
+		triangle.addVertex(vertex);
+	check(triangle.getNumberOfVertices()==3);
+	check(triangle.getCentroid()==centroid);
+	check(triangle.getVolume()==volume);
+	check(triangle.getShapeFunctionValues(localCoordinates)==shapeFunctionValues);
+	check(triangle.getShapeFunctionDerivatives(localCoordinates)==shapeFunctionDerivatives);
+	check((2*shapeFunctionValues)==shapeFunctionValues);
+	check(shapeFunctionDerivatives==shapeFunctionDerivatives);
 }
