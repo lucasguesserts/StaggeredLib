@@ -83,3 +83,10 @@ TestCase("Matrix solver", "[eigen]")
 		solution << 4, 8;
 	check(solution==matrix.fullPivLu().solve(independent));
 }
+
+TestCase("Eigen equality operator", "[eigen]")
+{
+	Eigen::Vector2d vector(0.0, 1.0);
+	Eigen::Vector2d copyVector(vector);
+	check(vector==copyVector);
+}
