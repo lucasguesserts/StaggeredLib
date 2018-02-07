@@ -7,6 +7,7 @@
 #include <Grid/Element.hpp>
 #include <Grid/Element2D.hpp>
 #include <Grid/Triangle.hpp>
+#include <Grid/Quadrangle.hpp>
 
 TestCase("Entity", "[Entity]")
 {
@@ -145,51 +146,61 @@ TestCase("Triangle", "[Element][Element2D][Triangle]")
 	}
 }
 
-//TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
-//{
-	//const unsigned numberOfVertices = 4;
-	//std::vector<Vertex> vertices(numberOfVertices);
-		//vertices[0] = Vertex( 2.0, -5.0,  3.0, 0);
-		//vertices[1] = Vertex(-4.0, -1.0,  6.0, 1);
-		//vertices[2] = Vertex( 4.0,  3.0,  3.4, 2);
-		//vertices[3] = Vertex( 3.0,  7.0, -2.0, 3);
-	//const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
-	//Quadrangle quadrangle;
-	//for(Vertex& vertex: vertices)
-		//quadrangle.addVertex(vertex);
-	//section("Basic requirements")
-	//{
-		//const unsigned dimension = 2;
-		//require(quadrangle.getNumberOfVertices()==numberOfVertices);
-		//require(quadrangle.dimension==dimension);
-	//}
-	//section("Centroid")
-	//{
-		//const Eigen::Vector3d centroid(3.25, 1.0, 2.6);
-		//check(quadrangle.getCentroid()==centroid);
-	//}
-	//section("Area vector")
-	//{
-		//const Eigen::Vector3d areaVector(34.29260353, -7.960782962, -12.2473584);
-		//check(quadrangle.getAreaVector()==areaVector);
-	//}
-	//section("Volume")
-	//{
-		//const double volume = 37.2740460621782; // the area
-		//check(quadrangle.getVolume()==Approx(volume));
-	//}
-	//section("Shape function values")
-	//{
-		//Eigen::VectorXd shapeFunctionValues(3); shapeFunctionValues << 0.56, 0.14, 0.06, 0.24;
-		//check(quadrangle.getShapeFunctionValues(localCoordinates)==shapeFunctionValues);
-	//}
-	//section("Shape function derivatives")
-	//{
-		//Eigen::MatrixXd shapeFunctionDerivatives(3,3);
-			//shapeFunctionDerivatives << -0.7, -0.8, 0.0,
-										 //0.7, -0.2, 0.0,
-										 //0.3,  0.2, 0.0,
-										//-0.3,  0.8, 0.0;
-		//check(quadrangle.getShapeFunctionDerivatives(localCoordinates)==shapeFunctionDerivatives);
-	//}
-//}
+TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
+{
+	const unsigned numberOfVertices = 4;
+	std::vector<Vertex> vertices(numberOfVertices);
+		vertices[0] = Vertex( 2.0, -5.0,  3.0, 0);
+		vertices[1] = Vertex( 4.0, -1.0,  6.0, 1);
+		vertices[2] = Vertex( 4.0,  3.0,  3.4, 2);
+		vertices[3] = Vertex( 3.0,  7.0, -2.0, 3);
+	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
+	Quadrangle quadrangle;
+	for(Vertex& vertex: vertices)
+		quadrangle.addVertex(vertex);
+	section("Basic requirements")
+	{
+		const unsigned dimension = 2;
+		require(quadrangle.getNumberOfVertices()==numberOfVertices);
+		require(quadrangle.dimension==dimension);
+	}
+	section("Centroid")
+	{
+		const Eigen::Vector3d centroid(3.25, 1.0, 2.6);
+		check(quadrangle.getCentroid()==centroid);
+	}
+	section("Area vector")
+	{
+		const Eigen::Vector3d areaVector(-33.6, 7.8, 12);
+		Eigen::Vector3d quadrangleAreaVector = quadrangle.getAreaVector();
+		for(unsigned i=0 ; i<3 ; ++i)
+			check(quadrangleAreaVector(i)==Approx(areaVector(i)));
+	}
+	section("Volume")
+	{
+		const double volume = 36.5212267044797; // the area
+		check(quadrangle.getVolume()==Approx(volume));
+	}
+	section("Shape function values")
+	{
+		Eigen::Vector4d shapeFunctionValues(0.56, 0.14, 0.06, 0.24);
+		Eigen::Vector4d quadrangleShapeFunctionValues = quadrangle.getShapeFunctionValues(localCoordinates);
+		for(unsigned i=0 ; i<4 ; ++i)
+			check(quadrangleShapeFunctionValues(i)==Approx(shapeFunctionValues(i)));
+	}
+	section("Shape function derivatives")
+	{
+		const unsigned numberOfRows = 4;
+		const unsigned numberOfColumns = 3;
+		Eigen::MatrixXd shapeFunctionDerivatives(numberOfRows, numberOfColumns);
+			shapeFunctionDerivatives << -0.7, -0.8, 0.0,
+		                                 0.7, -0.2, 0.0,
+		                                 0.3,  0.2, 0.0,
+		                                -0.3,  0.8, 0.0;
+
+		Eigen::MatrixXd quadrangleShapeFunctionDerivatives = quadrangle.getShapeFunctionDerivatives(localCoordinates);
+		for(unsigned i=0 ; i<numberOfRows ; ++i)
+			for(unsigned j=0 ; j<numberOfColumns ; ++j)
+				check(quadrangleShapeFunctionDerivatives(i,j)==Approx(shapeFunctionDerivatives(i,j)));
+	}
+}
