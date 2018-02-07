@@ -6,6 +6,7 @@
 #include <Grid/VertexCollection.hpp>
 #include <Grid/Element.hpp>
 #include <Grid/Element2D.hpp>
+#include <Grid/Line.hpp>
 #include <Grid/Triangle.hpp>
 #include <Grid/Quadrangle.hpp>
 
@@ -98,6 +99,53 @@ TestCase("Element2D compute triangle area vector", "[Element2D]")
 	for(Vertex& vertex: vertices)
 		triangle.addVertex(vertex);
 	check(triangle.getAreaVector()==areaVector);
+}
+
+TestCase("Line", "[Element][Element2D][Line]")
+{
+	const unsigned numberOfVertices = 2;
+	std::vector<Vertex> vertices(numberOfVertices);
+		vertices[0] = Vertex( 2.0, -5.0,  3.0, 0);
+		vertices[1] = Vertex( 4.0, -1.0,  6.0, 1);
+	const Eigen::Vector3d localCoordinates(0.4, 0.0, 0.0);
+	Line line;
+	for(Vertex& vertex: vertices)
+		line.addVertex(vertex);
+	section("Basic requirements")
+	{
+		const unsigned dimension = 1;
+		require(line.getNumberOfVertices()==numberOfVertices);
+		require(line.dimension==dimension);
+	}
+	section("Centroid")
+	{
+		const Eigen::Vector3d centroid(3, -3, 4.5);
+		check(line.getCentroid()==centroid);
+	}
+	section("Volume")
+	{
+		const double volume = 5.385164807134504; // the length
+		check(line.getVolume()==Approx(volume));
+	}
+	section("Shape function values")
+	{
+		Eigen::Vector2d shapeFunctionValues(0.6, 0.4);
+		Eigen::Vector2d lineShapeFunctionValues = line.getShapeFunctionValues(localCoordinates);
+		for(unsigned i=0 ; i<2 ; ++i)
+			check(lineShapeFunctionValues(i)==Approx(shapeFunctionValues(i)));
+	}
+	section("Shape function derivatives")
+	{
+		const unsigned numberOfRows = 2;
+		const unsigned numberOfColumns = 3;
+		Eigen::MatrixXd shapeFunctionDerivatives(numberOfRows, numberOfColumns);
+			shapeFunctionDerivatives << -1.0, 0.0, 0.0,
+		                                 1.0, 0.0, 0.0;
+		Eigen::MatrixXd lineShapeFunctionDerivatives = line.getShapeFunctionDerivatives(localCoordinates);
+		for(unsigned i=0 ; i<numberOfRows ; ++i)
+			for(unsigned j=0 ; j<numberOfColumns ; ++j)
+				check(lineShapeFunctionDerivatives(i,j)==Approx(shapeFunctionDerivatives(i,j)));
+	}
 }
 
 TestCase("Triangle", "[Element][Element2D][Triangle]")
@@ -197,7 +245,6 @@ TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 		                                 0.7, -0.2, 0.0,
 		                                 0.3,  0.2, 0.0,
 		                                -0.3,  0.8, 0.0;
-
 		Eigen::MatrixXd quadrangleShapeFunctionDerivatives = quadrangle.getShapeFunctionDerivatives(localCoordinates);
 		for(unsigned i=0 ; i<numberOfRows ; ++i)
 			for(unsigned j=0 ; j<numberOfColumns ; ++j)
