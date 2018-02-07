@@ -2,7 +2,7 @@
 
 Eigen::Vector3d Triangle::getAreaVector(void)
 {
-	std::vector<Vertex *> vertices = this->getVertices();
+	std::vector<const Vertex *> vertices = this->getVertices();
 	return (1.0/2.0) * (*(vertices[1]) - *(vertices[0])).cross( *(vertices[2]) - *(vertices[0]));
 }
 

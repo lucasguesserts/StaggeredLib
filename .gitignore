@@ -18,3 +18,5 @@ build*
 *.aux
 *.log
 *.toc
+*.swp
+*.swo

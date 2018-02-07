@@ -5,7 +5,7 @@ VertexCollection::VertexCollection(const unsigned numberOfVertices)
 	vertices.reserve(numberOfVertices);
 }
 
-void VertexCollection::addVertex(Vertex& vertex)
+void VertexCollection::addVertex(const Vertex& vertex)
 {
 	vertices.push_back(&vertex);
 }
@@ -20,7 +20,7 @@ Vertex VertexCollection::getVertex(const unsigned vertexLocalHandle) const
 	return *(this->vertices[vertexLocalHandle]);
 }
 
-std::vector<Vertex *>& VertexCollection::getVertices(void)
+std::vector<const Vertex *>& VertexCollection::getVertices(void)
 {
 	return this->vertices;
 }

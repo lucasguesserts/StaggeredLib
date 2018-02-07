@@ -80,7 +80,7 @@ TestCase("Vertex collection", "[VertexCollection]")
 	}
 	section("Vertex pointers")
 	{
-		std::vector<Vertex *> vertexCollectionVector = vertexCollection.getVertices();
+		std::vector<const Vertex *> vertexCollectionVector = vertexCollection.getVertices();
 		for(unsigned i=0 ; i<numberOfVertices ; ++i)
 			check(&vertexVector[i]==vertexCollectionVector[i]);
 	}

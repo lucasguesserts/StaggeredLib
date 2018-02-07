@@ -8,13 +8,13 @@ class VertexCollection
 {
 	public:
 		explicit VertexCollection(const unsigned numberOfVertices = 0);
-		void addVertex(Vertex& vertex);
+		void addVertex(const Vertex& vertex);
 		unsigned getNumberOfVertices(void) const;
 		Vertex getVertex(const unsigned vertexLocalHandle) const;
-		std::vector<Vertex *>& getVertices(void);
+		std::vector<const Vertex *>& getVertices(void);
 
 	private:
-		std::vector<Vertex *> vertices;
+		std::vector<const Vertex *> vertices;
 };
 
 #endif
