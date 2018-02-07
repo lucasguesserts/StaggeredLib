@@ -3,6 +3,7 @@
 
 #include <Grid/Element.hpp>
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 class Element2D: public Element
 {

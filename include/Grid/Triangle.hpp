@@ -2,7 +2,6 @@
 #define TRIANGLE_HPP
 
 #include <Eigen/Core>
-#include <Eigen/Geometry>
 #include <Grid/Element2D.hpp>
 
 class Triangle: public Element2D

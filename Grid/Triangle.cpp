@@ -3,7 +3,7 @@
 Eigen::Vector3d Triangle::getAreaVector(void)
 {
 	std::vector<const Vertex *> vertices = this->getVertices();
-	return (1.0/2.0) * (*(vertices[1]) - *(vertices[0])).cross( *(vertices[2]) - *(vertices[0]));
+	return this->computeTriangleAreaVector(vertices[0], vertices[1], vertices[2]);
 }
 
 double Triangle::getVolume(void)
@@ -15,7 +15,6 @@ Eigen::VectorXd Triangle::getShapeFunctionValues(const Eigen::Vector3d localCoor
 {
 	const double xi = localCoordinates[0];
 	const double eta = localCoordinates[1];
-	const double zeta = localCoordinates[2];
 	Eigen::Vector3d shapeFunctionValues;
 	shapeFunctionValues[0] = 1 - xi - eta;
 	shapeFunctionValues[1] = xi;
