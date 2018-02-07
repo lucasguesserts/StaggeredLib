@@ -20,7 +20,7 @@ Vertex VertexCollection::getVertex(const unsigned vertexLocalHandle) const
 	return *(this->vertices[vertexLocalHandle]);
 }
 
-std::vector<const Vertex *>& VertexCollection::getVertices(void)
+std::vector<const Vertex *> VertexCollection::getVertices(void) const
 {
 	return this->vertices;
 }
