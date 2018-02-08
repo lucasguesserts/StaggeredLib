@@ -255,15 +255,17 @@ TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 
 TestCase("Grid data structure", "[Grid][GridData]")
 {
-	const unsigned numberOfVertices = 5;
+	const unsigned numberOfVertices = 7;
 	GridData gridData;
 	gridData.coordinates.resize(numberOfVertices,Eigen::NoChange);
 	gridData.coordinates <<
-		0,   0, 0,
-		1,   0, 0,
-		0,   1, 0,
-		1,   1, 0,
-		0.5, 2, 0;
+		0.0, 0.0, 0.0,
+		1.0, 0.0, 0.0,
+		0.0, 1.0, 0.0,
+		1.0, 1.0, 0.0,
+		0.5, 2.0, 0.0,
+		2.0, 1.5, 0.0,
+		1.5, 2.5, 0.0;
 	section("dimension")
 	{
 		const unsigned dimension = 2;
@@ -272,18 +274,22 @@ TestCase("Grid data structure", "[Grid][GridData]")
 	}
 	section("quadrangle connectivity")
 	{
-		Eigen::Matrix<unsigned,1,4> quadrangleConnectivity;
-		quadrangleConnectivity << 0, 1, 3, 2;
-		gridData.quadrangleConnectivity.resize(1,Eigen::NoChange);
-		gridData.quadrangleConnectivity << 0, 1, 3, 2;
+		Eigen::Matrix<unsigned,2,4> quadrangleConnectivity;
+		quadrangleConnectivity << 0, 1, 3, 2,
+		                          3, 5, 6, 4;
+		gridData.quadrangleConnectivity.resize(2,Eigen::NoChange);
+		gridData.quadrangleConnectivity << 0, 1, 3, 2,
+		                                   3, 5, 6, 4;
 		check(quadrangleConnectivity==quadrangleConnectivity);
 	}
 	section("Triangle connectivity")
 	{
-		Eigen::Matrix<unsigned,1,3> triangleConnectivity;
-		triangleConnectivity << 2, 3, 4;
-		gridData.triangleConnectivity.resize(1,Eigen::NoChange);
-		gridData.triangleConnectivity << 2, 3, 4;
+		Eigen::Matrix<unsigned,2,3> triangleConnectivity;
+		triangleConnectivity << 2, 3, 4,
+		                        1, 5, 3;
+		gridData.triangleConnectivity.resize(2,Eigen::NoChange);
+		gridData.triangleConnectivity << 2, 3, 4,
+		                                 1, 5, 3;
 		check(triangleConnectivity==triangleConnectivity);
 	}
 }
