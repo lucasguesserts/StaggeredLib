@@ -1,0 +1,3 @@
+- Implement some way to do not allocate VertexCollection
+  vertices dinamically. The sizes are know at compilation
+  time, so it's possible to optimize the code.

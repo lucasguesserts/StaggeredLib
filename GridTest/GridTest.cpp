@@ -9,6 +9,7 @@
 #include <Grid/Line.hpp>
 #include <Grid/Triangle.hpp>
 #include <Grid/Quadrangle.hpp>
+#include <Grid/GridData.hpp>
 
 TestCase("Entity", "[Entity]")
 {
@@ -249,5 +250,40 @@ TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 		for(unsigned i=0 ; i<numberOfRows ; ++i)
 			for(unsigned j=0 ; j<numberOfColumns ; ++j)
 				check(quadrangleShapeFunctionDerivatives(i,j)==Approx(shapeFunctionDerivatives(i,j)));
+	}
+}
+
+TestCase("Grid data structure", "[Grid][GridData]")
+{
+	const unsigned numberOfVertices = 5;
+	GridData gridData;
+	gridData.coordinates.resize(numberOfVertices,Eigen::NoChange);
+	gridData.coordinates <<
+		0,   0, 0,
+		1,   0, 0,
+		0,   1, 0,
+		1,   1, 0,
+		0.5, 2, 0;
+	section("dimension")
+	{
+		const unsigned dimension = 2;
+		gridData.dimension = dimension;
+		check(gridData.dimension==dimension);
+	}
+	section("quadrangle connectivity")
+	{
+		Eigen::Matrix<unsigned,1,4> quadrangleConnectivity;
+		quadrangleConnectivity << 0, 1, 3, 2;
+		gridData.quadrangleConnectivity.resize(1,Eigen::NoChange);
+		gridData.quadrangleConnectivity << 0, 1, 3, 2;
+		check(quadrangleConnectivity==quadrangleConnectivity);
+	}
+	section("Triangle connectivity")
+	{
+		Eigen::Matrix<unsigned,1,3> triangleConnectivity;
+		triangleConnectivity << 2, 3, 4;
+		gridData.triangleConnectivity.resize(1,Eigen::NoChange);
+		gridData.triangleConnectivity << 2, 3, 4;
+		check(triangleConnectivity==triangleConnectivity);
 	}
 }
