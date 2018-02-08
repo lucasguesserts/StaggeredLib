@@ -78,14 +78,24 @@ GridData GridReader::CGNS(const std::string fileName)
 			error = cg_ElementDataSize(file,base,zone,section,&elementDataSize); CHKERRQ(error);
 			elementConnectivity = new cgsize_t[elementDataSize];
 			error = cg_elements_read(file,base,zone,section,elementConnectivity,NULL); CHKERRQ(error);
-			//cout << endl;
-			//for(int count=0 ; count<elementDataSize ; ++count)
-				//cout << elementConnectivity[count] << endl;
+			if(elementDataSize%4 != 0) cg_error_exit();
 			const unsigned numberOfQuadrangles = elementDataSize / 4;
 			gridData.quadrangleConnectivity.resize(numberOfQuadrangles,Eigen::NoChange);
 			for(unsigned quadrangle=0 ; quadrangle<numberOfQuadrangles ; ++quadrangle)
 				for(unsigned vertexIndex=0 ; vertexIndex<4 ; ++vertexIndex)
 					gridData.quadrangleConnectivity(quadrangle,vertexIndex) = elementConnectivity[4*quadrangle+vertexIndex] - 1;
+		}
+		if(elementType==CGNS_ENUMV(TRI_3))
+		{
+			error = cg_ElementDataSize(file,base,zone,section,&elementDataSize); CHKERRQ(error);
+			elementConnectivity = new cgsize_t[elementDataSize];
+			error = cg_elements_read(file,base,zone,section,elementConnectivity,NULL); CHKERRQ(error);
+			if(elementDataSize%3 != 0) cg_error_exit();
+			const unsigned numberOfTriangles = elementDataSize / 3;
+			gridData.triangleConnectivity.resize(numberOfTriangles,Eigen::NoChange);
+			for(unsigned triangle=0 ; triangle<numberOfTriangles ; ++triangle)
+				for(unsigned vertexIndex=0 ; vertexIndex<3 ; ++vertexIndex)
+					gridData.triangleConnectivity(triangle,vertexIndex) = elementConnectivity[3*triangle+vertexIndex] - 1;
 		}
 	}
 	return gridData;

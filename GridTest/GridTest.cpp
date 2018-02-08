@@ -296,9 +296,9 @@ TestCase("Grid data structure", "[Grid][GridData]")
 	}
 }
 
-TestCase("grid reader from CGNS", "[Grid][GridReader][CGNS]")
+TestCase("grid reader from CGNS - quadrangle based", "[Grid][GridReader][CGNS]")
 {
-	const std::string cgnsGridFileName = GridReader::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = GridReader::projectGridDirectory + "GridReaderTest_CGNS_quadrangle.cgns";
 	GridData gridData = GridReader::CGNS(cgnsGridFileName);
 	section("coordinates")
 	{
@@ -332,5 +332,32 @@ TestCase("grid reader from CGNS", "[Grid][GridReader][CGNS]")
 		                          5, 6, 10, 9,
 		                          6, 7, 11, 10;
 		check(gridData.quadrangleConnectivity==quadrangleConnectivity);
+	}
+}
+
+TestCase("grid reader from CGNS - triangle based", "[Grid][GridReader][CGNS]")
+{
+	const std::string cgnsGridFileName = GridReader::projectGridDirectory + "GridReaderTest_CGNS_triangle.cgns";
+	GridData gridData = GridReader::CGNS(cgnsGridFileName);
+	section("coordinates")
+	{
+		const unsigned numberOfVertices = 4;
+		Eigen::MatrixXd verticesCoordinates;
+		verticesCoordinates.resize(numberOfVertices,3);
+		verticesCoordinates << 0.0, 0.0, 0.0,
+							   2.0, 0.0, 0.0,
+							   0.0, 2.0, 0.0,
+							   2.0, 2.0, 0.0;
+		check(gridData.coordinates==verticesCoordinates);
+	}
+	section("triangle connectivity")
+	{
+		const unsigned numberOfTriangles = 2;
+		const unsigned verticesPerTriangle = 3;
+		Eigen::Matrix<unsigned,Eigen::Dynamic,Eigen::Dynamic> triangleConnectivity;
+		triangleConnectivity.resize(numberOfTriangles,verticesPerTriangle);
+		triangleConnectivity << 0, 1, 3,
+		                        0, 3, 2;
+		check(gridData.triangleConnectivity==triangleConnectivity);
 	}
 }
