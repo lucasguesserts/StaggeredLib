@@ -21,6 +21,14 @@ endif ()
 include_directories ("${CMAKE_SOURCE_DIR}/include")
 include_directories ("${CMAKE_SOURCE_DIR}/Eigen")
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/findsCMake/")
+find_package (CGNS REQUIRED)
+if (CGNS_FOUND)
+    include_directories (${CGNS_INCLUDE_DIR})
+endif ()
+
+add_definitions("-DGRID_DIRECTORY=\"${CMAKE_SOURCE_DIR}/grids/\"")
+
 add_subdirectory(UtilsTest)
 add_subdirectory(Grid)
 add_subdirectory(GridTest)

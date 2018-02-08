@@ -1,5 +1,6 @@
 #include <Utils/Test.hpp>
 #include <vector>
+#include <string>
 
 #include <Grid/Entity.hpp>
 #include <Grid/Vertex.hpp>
@@ -10,6 +11,7 @@
 #include <Grid/Triangle.hpp>
 #include <Grid/Quadrangle.hpp>
 #include <Grid/GridData.hpp>
+#include <Grid/GridReader.hpp>
 
 TestCase("Entity", "[Entity]")
 {
@@ -292,4 +294,11 @@ TestCase("Grid data structure", "[Grid][GridData]")
 		                                 1, 5, 3;
 		check(triangleConnectivity==triangleConnectivity);
 	}
+}
+
+TestCase("grid reader from CGNS", "[Grid][GridReader][CGNS]")
+{
+	std::string cgnsGridFileName = GridReader::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	GridData gridData = GridReader::CGNS(cgnsGridFileName);
+	check(0==0);
 }
