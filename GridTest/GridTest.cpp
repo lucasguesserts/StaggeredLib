@@ -12,6 +12,7 @@
 #include <Grid/Quadrangle.hpp>
 #include <Grid/GridData.hpp>
 #include <Grid/GridReader.hpp>
+#include <Grid/Grid.hpp>
 
 TestCase("Entity", "[Entity]")
 {
@@ -360,4 +361,27 @@ TestCase("grid reader from CGNS - triangle based", "[Grid][GridReader][CGNS]")
 		                        0, 3, 2;
 		check(gridData.triangleConnectivity==triangleConnectivity);
 	}
+}
+
+TestCase("Grid structure", "[Grid]")
+{
+	const unsigned dimension = 2;
+	const unsigned numberOfVertices = 4;
+	Grid grid;
+	grid.dimension = dimension;
+	grid.vertices.resize(numberOfVertices);
+		grid.vertices[0] = Vertex( 2.0, -5.0,  3.0, 0);
+		grid.vertices[1] = Vertex( 4.0, -1.0,  6.0, 1);
+		grid.vertices[2] = Vertex( 4.0,  3.0,  3.4, 2);
+		grid.vertices[3] = Vertex( 3.0,  7.0, -2.0, 3);
+	const unsigned numberOfElements = 1;
+	Quadrangle quadrangle;
+	quadrangle.addVertex(grid.vertices[0]);
+	quadrangle.addVertex(grid.vertices[1]);
+	quadrangle.addVertex(grid.vertices[2]);
+	quadrangle.addVertex(grid.vertices[3]);
+	grid.elements.push_back(&quadrangle);
+	check(grid.vertices.size()==numberOfVertices);
+	check(grid.elements.size()==numberOfElements);
+	check(grid.dimension==dimension);
 }
