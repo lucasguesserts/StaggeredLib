@@ -30,34 +30,33 @@ TestCase("Entity", "[Entity]")
 	}
 }
 
-TestCase("Vertex default constructor", "[Vertex]")
+TestCase("Vertex constructor", "[Vertex]")
 {
-	const std::vector<double> defaultValues = {0.0, 0.0, 0.0};
-	const unsigned defaultHandle = 0;
-	Vertex vertex;
-	for(unsigned i=0 ; i<3 ; ++i)
-		check(vertex(i)==defaultValues[i]);
-	check(vertex.getHandle()==defaultHandle);
-}
-
-TestCase("Vertex", "[Vertex]")
-{
-	const unsigned handle = 4;
-	Vertex vertex;
-	vertex.setHandle(handle);
-	check(vertex.getHandle()==handle);
-}
-
-TestCase("Vertex explicit constructor", "[Vertex]")
-{
-	const std::vector<double> values = {3.2, 5.7, 9.4};
+	const std::vector<double> values = {3.2, -5.7, 9.4};
 	const unsigned handle = 4;
 	Vertex vertex(values[0], values[1], values[2], handle);
-	for(unsigned i=0 ; i<3 ; ++i)
-		check(vertex(i)==values[i]);
-	check(vertex.getHandle()==handle);
+	section("Handle")
+	{
+		check(vertex.getHandle()==handle);
+		const unsigned newHandle = 7;
+		vertex.setHandle(newHandle);
+		check(vertex.getHandle()==newHandle);
+	}
+	section("constructor values")
+	{
+		for(unsigned i=0 ; i<3 ; ++i)
+			check(vertex(i)==values[i]);
+	}
+	section("Eigen::Vector functionalities")
+	{
+		Eigen::Vector3d eigenVector(4.2, 9.3, -6.1);
+		Eigen::Vector3d sumAnswer(7.4, 3.6, 3.3);
+		Eigen::Vector3d sum = vertex + eigenVector;
+		for(unsigned i=0 ; i<3 ; ++i)
+		check(sum[i]==Approx(sumAnswer[i]));
+	}
 }
-
+/*
 TestCase("Vertex collection", "[VertexCollection]")
 {
 	// Create vector
@@ -385,3 +384,4 @@ TestCase("Grid structure", "[Grid]")
 	check(grid.elements.size()==numberOfElements);
 	check(grid.dimension==dimension);
 }
+*/

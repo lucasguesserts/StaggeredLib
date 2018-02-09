@@ -7,8 +7,7 @@
 class Vertex: public Eigen::Vector3d, public Entity
 {
 	public:
-		explicit Vertex(const double x, const double y, const double z, const unsigned handle);
-		Vertex(void);
+		Vertex(const double x, const double y, const double z, const unsigned handle);
 };
 
 #endif
