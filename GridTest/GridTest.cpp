@@ -115,18 +115,18 @@ TestCase("Line", "[Element][Element2D][Line]")
 				check(lineShapeFunctionDerivatives(i,j)==Approx(shapeFunctionDerivatives(i,j)));
 	}
 }
-/*
+
 TestCase("Triangle", "[Element][Element2D][Triangle]")
 {
 	const unsigned numberOfVertices = 3;
-	std::vector<Vertex> vertices(numberOfVertices);
-		vertices[0] = Vertex(2.0, -5.0, 3.0, 0);
-		vertices[1] = Vertex(3.0, 7.0, -2.0, 1);
-		vertices[2] = Vertex(-4.0, -1.0, 6.0, 2);
+	std::vector<Vertex> vertices;
+		vertices.push_back(Vertex(2.0, -5.0, 3.0, 0));
+		vertices.push_back(Vertex(3.0, 7.0, -2.0, 1));
+		vertices.push_back(Vertex(-4.0, -1.0, 6.0, 2));
 	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Triangle triangle;
 	for(Vertex& vertex: vertices)
-		triangle.addVertex(vertex);
+		triangle.vertices.push_back(&vertex);
 	section("Basic requirements")
 	{
 		require(triangle.getNumberOfVertices()==3);
@@ -165,15 +165,15 @@ TestCase("Triangle", "[Element][Element2D][Triangle]")
 TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 {
 	const unsigned numberOfVertices = 4;
-	std::vector<Vertex> vertices(numberOfVertices);
-		vertices[0] = Vertex( 2.0, -5.0,  3.0, 0);
-		vertices[1] = Vertex( 4.0, -1.0,  6.0, 1);
-		vertices[2] = Vertex( 4.0,  3.0,  3.4, 2);
-		vertices[3] = Vertex( 3.0,  7.0, -2.0, 3);
+	std::vector<Vertex> vertices;
+		vertices.push_back(Vertex( 2.0, -5.0,  3.0, 0));
+		vertices.push_back(Vertex( 4.0, -1.0,  6.0, 1));
+		vertices.push_back(Vertex( 4.0,  3.0,  3.4, 2));
+		vertices.push_back(Vertex( 3.0,  7.0, -2.0, 3));
 	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Quadrangle quadrangle;
 	for(Vertex& vertex: vertices)
-		quadrangle.addVertex(vertex);
+		quadrangle.vertices.push_back(&vertex);
 	section("Basic requirements")
 	{
 		const unsigned dimension = 2;
@@ -220,6 +220,7 @@ TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 	}
 }
 
+/*
 TestCase("Grid data structure", "[Grid][GridData]")
 {
 	const unsigned numberOfVertices = 7;
