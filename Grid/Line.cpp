@@ -2,8 +2,7 @@
 
 double Line::getVolume(void)
 {
-	std::vector<const Vertex*> vertices = this->getVertices();
-	return (*vertices[1] - *vertices[0]).norm();
+	return (*(this->vertices[1]) - *(this->vertices[0])).norm();
 }
 
 Eigen::VectorXd Line::getShapeFunctionValues(const Eigen::Vector3d localCoordinates) const

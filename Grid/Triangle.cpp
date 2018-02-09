@@ -2,8 +2,7 @@
 
 Eigen::Vector3d Triangle::getAreaVector(void)
 {
-	std::vector<const Vertex *> vertices = this->getVertices();
-	return this->computeTriangleAreaVector(vertices[0], vertices[1], vertices[2]);
+	return this->computeTriangleAreaVector(this->vertices[0], this->vertices[1], this->vertices[2]);
 }
 
 double Triangle::getVolume(void)

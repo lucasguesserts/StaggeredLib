@@ -2,9 +2,8 @@
 
 Eigen::Vector3d Quadrangle::getAreaVector(void)
 {
-	std::vector<const Vertex *> vertices = this->getVertices();
-	Eigen::Vector3d firstTriangle = this->computeTriangleAreaVector(vertices[0], vertices[1], vertices[2]);
-	Eigen::Vector3d secondTriangle = this->computeTriangleAreaVector(vertices[0], vertices[2], vertices[3]);
+	Eigen::Vector3d firstTriangle = this->computeTriangleAreaVector(this->vertices[0], this->vertices[1], this->vertices[2]);
+	Eigen::Vector3d secondTriangle = this->computeTriangleAreaVector(this->vertices[0], this->vertices[2], this->vertices[3]);
 	return firstTriangle + secondTriangle;
 }
 
