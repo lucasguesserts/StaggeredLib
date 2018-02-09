@@ -10,3 +10,7 @@ Eigen::Vector3d Element::getCentroid(void)
 	centroid /= this->vertices.size();
 	return centroid;
 }
+ unsigned Element::getNumberOfVertices(void)
+{
+	return this->vertices.size();
+}

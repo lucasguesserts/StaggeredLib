@@ -55,30 +55,30 @@ TestCase("Vertex constructor", "[Vertex]")
 		check(sum[i]==Approx(sumAnswer[i]));
 	}
 }
-/*
+
 TestCase("Element2D compute triangle area vector", "[Element2D]")
 {
-	std::vector<Vertex> vertices(3);
-	vertices[0] = Vertex(-5,  4,  7, 0);
-	vertices[1] = Vertex( 9, -2,  4, 1);
-	vertices[2] = Vertex( 3,  5, -6, 2);
+	std::vector<Vertex> vertices;
+	vertices.push_back(Vertex(-5,  4,  7, 0));
+	vertices.push_back(Vertex( 9, -2,  4, 1));
+	vertices.push_back(Vertex( 3,  5, -6, 2));
 	const Eigen::Vector3d areaVector(40.5, 79, 31);
 	Triangle triangle;
 	for(Vertex& vertex: vertices)
-		triangle.addVertex(vertex);
+		triangle.vertices.push_back(&vertex);
 	check(triangle.getAreaVector()==areaVector);
 }
 
 TestCase("Line", "[Element][Element2D][Line]")
 {
 	const unsigned numberOfVertices = 2;
-	std::vector<Vertex> vertices(numberOfVertices);
-		vertices[0] = Vertex( 2.0, -5.0,  3.0, 0);
-		vertices[1] = Vertex( 4.0, -1.0,  6.0, 1);
+	std::vector<Vertex> vertices;
+		vertices.push_back(Vertex( 2.0, -5.0,  3.0, 0));
+	 	vertices.push_back(Vertex( 4.0, -1.0,  6.0, 1));
 	const Eigen::Vector3d localCoordinates(0.4, 0.0, 0.0);
 	Line line;
 	for(Vertex& vertex: vertices)
-		line.addVertex(vertex);
+		line.vertices.push_back(&vertex);
 	section("Basic requirements")
 	{
 		const unsigned dimension = 1;
@@ -115,7 +115,7 @@ TestCase("Line", "[Element][Element2D][Line]")
 				check(lineShapeFunctionDerivatives(i,j)==Approx(shapeFunctionDerivatives(i,j)));
 	}
 }
-
+/*
 TestCase("Triangle", "[Element][Element2D][Triangle]")
 {
 	const unsigned numberOfVertices = 3;

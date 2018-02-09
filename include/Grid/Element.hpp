@@ -10,6 +10,7 @@ class Element: public Entity
 {
 	public:
 		std::vector<const Vertex*> vertices;
+		unsigned getNumberOfVertices(void);
 		Eigen::Vector3d getCentroid(void);
 		virtual double getVolume(void) = 0;
 		virtual Eigen::VectorXd getShapeFunctionValues(const Eigen::Vector3d localCoordinates) const = 0;
