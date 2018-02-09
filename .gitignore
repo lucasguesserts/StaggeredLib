@@ -1,6 +1,7 @@
 # Folders
 output
 build*
+tests*
 
 *.exe
 *.asv
