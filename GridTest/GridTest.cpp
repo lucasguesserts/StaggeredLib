@@ -220,7 +220,6 @@ TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 	}
 }
 
-/*
 TestCase("Grid data structure", "[Grid][GridData]")
 {
 	const unsigned numberOfVertices = 7;
@@ -334,20 +333,19 @@ TestCase("Grid structure", "[Grid]")
 	const unsigned numberOfVertices = 4;
 	Grid grid;
 	grid.dimension = dimension;
-	grid.vertices.resize(numberOfVertices);
-		grid.vertices[0] = Vertex( 2.0, -5.0,  3.0, 0);
-		grid.vertices[1] = Vertex( 4.0, -1.0,  6.0, 1);
-		grid.vertices[2] = Vertex( 4.0,  3.0,  3.4, 2);
-		grid.vertices[3] = Vertex( 3.0,  7.0, -2.0, 3);
+	grid.vertices.reserve(numberOfVertices);
+		grid.vertices.push_back(Vertex( 2.0, -5.0,  3.0, 0));
+		grid.vertices.push_back(Vertex( 4.0, -1.0,  6.0, 1));
+		grid.vertices.push_back(Vertex( 4.0,  3.0,  3.4, 2));
+		grid.vertices.push_back(Vertex( 3.0,  7.0, -2.0, 3));
 	const unsigned numberOfElements = 1;
 	Quadrangle quadrangle;
-	quadrangle.addVertex(grid.vertices[0]);
-	quadrangle.addVertex(grid.vertices[1]);
-	quadrangle.addVertex(grid.vertices[2]);
-	quadrangle.addVertex(grid.vertices[3]);
+	quadrangle.vertices.push_back(&grid.vertices[0]);
+	quadrangle.vertices.push_back(&grid.vertices[1]);
+	quadrangle.vertices.push_back(&grid.vertices[2]);
+	quadrangle.vertices.push_back(&grid.vertices[3]);
 	grid.elements.push_back(&quadrangle);
 	check(grid.vertices.size()==numberOfVertices);
 	check(grid.elements.size()==numberOfElements);
 	check(grid.dimension==dimension);
 }
-*/
