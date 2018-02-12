@@ -35,7 +35,7 @@ Grid2D GridBuilder::build2D(const GridData gridData)
 	for(unsigned quadrangleIndex=0 ; quadrangleIndex<numberOfQuadrangles ; ++quadrangleIndex)
 	{
 		Quadrangle quadrangle;
-		for(unsigned vertexIndexInQuadrangle=0 ; vertexIndexInQuadrangle<3 ; ++vertexIndexInQuadrangle)
+		for(unsigned vertexIndexInQuadrangle=0 ; vertexIndexInQuadrangle<4 ; ++vertexIndexInQuadrangle)
 		{
 			unsigned vertexIndex = gridData.quadrangleConnectivity(quadrangleIndex,vertexIndexInQuadrangle);
 			quadrangle.vertices.push_back(&(grid2D.vertices[vertexIndex]));

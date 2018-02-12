@@ -1,6 +1,7 @@
 #include <Utils/Test.hpp>
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include <Grid/Entity.hpp>
 #include <Grid/Vertex.hpp>
@@ -394,30 +395,49 @@ TestCase("Grid read 2D - quadrangle based", "[GridBuilder][Grid][Grid2D]")
 	Grid2D grid2D = GridBuilder::build2D(gridData);
 	section("vertices")
 	{
-		const unsigned numberOfVertices = 4;
 		std::vector<Vertex> vertices;
-		vertices.push_back(Vertex(0.0, 0.0, 0.0, 0));
-		vertices.push_back(Vertex(2.0, 0.0, 0.0, 1));
-		vertices.push_back(Vertex(0.0, 2.0, 0.0, 2));
-		vertices.push_back(Vertex(2.0, 2.0, 0.0, 3));
+		vertices.push_back(Vertex(0.0,     0.0, 0.0, 0));
+		vertices.push_back(Vertex(4.0/3.0, 0.0, 0.0, 1));
+		vertices.push_back(Vertex(8.0/3.0, 0.0, 0.0, 2));
+		vertices.push_back(Vertex(4.0,     0.0, 0.0, 3));
+		vertices.push_back(Vertex(0.0,     1.5, 0.0, 4));
+		vertices.push_back(Vertex(4.0/3.0, 1.5, 0.0, 5));
+		vertices.push_back(Vertex(8.0/3.0, 1.5, 0.0, 6));
+		vertices.push_back(Vertex(4.0,     1.5, 0.0, 7));
+		vertices.push_back(Vertex(0.0,     3.0, 0.0, 8));
+		vertices.push_back(Vertex(4.0/3.0, 3.0, 0.0, 9));
+		vertices.push_back(Vertex(8.0/3.0, 3.0, 0.0, 10));
+		vertices.push_back(Vertex(4.0,     3.0, 0.0, 11));
 		for(unsigned i=0 ; i<grid2D.vertices.size() ; ++i)
+		{
 			check(grid2D.vertices[i]==vertices[i]);
+		}
 	}
-	section("triangular elements centroid")
+	section("quadrangular elements centroid")
 	{
-		const Eigen::Vector3d centroidTriangle_0(4.0/3.0, 2.0/3.0, 0.0);
-		const Eigen::Vector3d centroidTriangle_1(2.0/3.0, 4.0/3.0, 0.0);
-		check(grid2D.elements[0]->getCentroid()==centroidTriangle_0);
-		check(grid2D.elements[1]->getCentroid()==centroidTriangle_1);
+		const unsigned numberOfQuadrangles = 6;
+		Eigen::Vector3d centroidQuadrangle[numberOfQuadrangles];
+		centroidQuadrangle[0] << 2.0/3.0, 3.0/4.0, 0.0;
+		centroidQuadrangle[1] << 2.0,     3.0/4.0, 0.0;
+		centroidQuadrangle[2] << 10.0/3.0, 3.0/4.0, 0.0;
+		centroidQuadrangle[3] << 2.0/3.0, 9.0/4.0, 0.0;
+		centroidQuadrangle[4] << 2.0,     9.0/4.0, 0.0;
+		centroidQuadrangle[5] << 10.0/3.0, 9.0/4.0, 0.0;
+		for(unsigned i=0 ; i<numberOfQuadrangles ; ++i)
+			for(unsigned entry=0 ; entry<3 ; ++entry)
+				check(grid2D.elements[i]->getCentroid()[entry]==Approx(centroidQuadrangle[i][entry]));
 		// It is necessary to test the handles.
 	}
 	section("elements vertices")
 	{
-		check(grid2D.elements[0]->vertices[0]==&(grid2D.vertices[0]));
-		check(grid2D.elements[0]->vertices[1]==&(grid2D.vertices[1]));
-		check(grid2D.elements[0]->vertices[2]==&(grid2D.vertices[3]));
-		check(grid2D.elements[1]->vertices[0]==&(grid2D.vertices[0]));
-		check(grid2D.elements[1]->vertices[1]==&(grid2D.vertices[3]));
-		check(grid2D.elements[1]->vertices[2]==&(grid2D.vertices[2]));
+		const unsigned numberOfQuadrangles = 6;
+		for(unsigned quadrangleIndex=0 ; quadrangleIndex<numberOfQuadrangles ; ++quadrangleIndex)
+		{
+			unsigned firstVertexIndex = quadrangleIndex%3 + 4*(quadrangleIndex/3); // 'quadrangleIndex/4': integer operation
+			check(grid2D.elements[quadrangleIndex]->vertices[0]==&(grid2D.vertices[firstVertexIndex]));
+			check(grid2D.elements[quadrangleIndex]->vertices[1]==&(grid2D.vertices[firstVertexIndex+1]));
+			check(grid2D.elements[quadrangleIndex]->vertices[2]==&(grid2D.vertices[firstVertexIndex+4+1]));
+			check(grid2D.elements[quadrangleIndex]->vertices[3]==&(grid2D.vertices[firstVertexIndex+4]));
+		}
 	}
 }
