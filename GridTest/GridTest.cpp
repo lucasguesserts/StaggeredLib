@@ -352,9 +352,44 @@ TestCase("Grid structure", "[Grid]")
 	check(grid.dimension==dimension);
 }
 
-TestCase("Grid read 2D", "[GridBuilder][Grid][Grid2D]")
+TestCase("Grid read 2D - triangle based", "[GridBuilder][Grid][Grid2D]")
 {
 	const std::string cgnsGridFileName = GridReader::projectGridDirectory + "GridReaderTest_CGNS_triangle.cgns";
+	GridData gridData = GridReader::CGNS(cgnsGridFileName);
+	Grid2D grid2D = GridBuilder::build2D(gridData);
+	section("vertices")
+	{
+		const unsigned numberOfVertices = 4;
+		std::vector<Vertex> vertices;
+		vertices.push_back(Vertex(0.0, 0.0, 0.0, 0));
+		vertices.push_back(Vertex(2.0, 0.0, 0.0, 1));
+		vertices.push_back(Vertex(0.0, 2.0, 0.0, 2));
+		vertices.push_back(Vertex(2.0, 2.0, 0.0, 3));
+		for(unsigned i=0 ; i<grid2D.vertices.size() ; ++i)
+			check(grid2D.vertices[i]==vertices[i]);
+	}
+	section("triangular elements centroid")
+	{
+		const Eigen::Vector3d centroidTriangle_0(4.0/3.0, 2.0/3.0, 0.0);
+		const Eigen::Vector3d centroidTriangle_1(2.0/3.0, 4.0/3.0, 0.0);
+		check(grid2D.elements[0]->getCentroid()==centroidTriangle_0);
+		check(grid2D.elements[1]->getCentroid()==centroidTriangle_1);
+		// It is necessary to test the handles.
+	}
+	section("elements vertices")
+	{
+		check(grid2D.elements[0]->vertices[0]==&(grid2D.vertices[0]));
+		check(grid2D.elements[0]->vertices[1]==&(grid2D.vertices[1]));
+		check(grid2D.elements[0]->vertices[2]==&(grid2D.vertices[3]));
+		check(grid2D.elements[1]->vertices[0]==&(grid2D.vertices[0]));
+		check(grid2D.elements[1]->vertices[1]==&(grid2D.vertices[3]));
+		check(grid2D.elements[1]->vertices[2]==&(grid2D.vertices[2]));
+	}
+}
+
+TestCase("Grid read 2D - quadrangle based", "[GridBuilder][Grid][Grid2D]")
+{
+	const std::string cgnsGridFileName = GridReader::projectGridDirectory + "GridReaderTest_CGNS_quadrangle.cgns";
 	GridData gridData = GridReader::CGNS(cgnsGridFileName);
 	Grid2D grid2D = GridBuilder::build2D(gridData);
 	section("vertices")
