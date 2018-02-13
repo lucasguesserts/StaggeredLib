@@ -32,6 +32,8 @@ add_definitions("-DGRID_DIRECTORY=\"${CMAKE_SOURCE_DIR}/grids/\"")
 add_subdirectory(UtilsTest)
 add_subdirectory(Grid)
 add_subdirectory(GridTest)
+add_subdirectory(SquareCavityHeatTransfer)
+add_subdirectory(SquareCavityHeatTransferTest)
 
 message ("\n-- Project: ${PROJECT_NAME} ${VERSION}")
 message ("-- Build type: ${CMAKE_BUILD_TYPE}")
