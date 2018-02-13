@@ -11,3 +11,5 @@
   will not allocate memory.
   I'd like to create an element as a template class that
   receives the number of vertices.
+- Improve the function Element::addVertex to properly
+  verify the number of vertices and to throw exception.
