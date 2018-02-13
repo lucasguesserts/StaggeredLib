@@ -6,3 +6,8 @@
 - At TestCase "Grid read 2D", section "triangular elements
   centroid", add handles test or implement an
     bool operator==(Vertex,Vertex)
+- Create a way to alloc memory to an Element when it
+  is created. Therefore the function Element::addVertex
+  will not allocate memory.
+  I'd like to create an element as a template class that
+  receives the number of vertices.

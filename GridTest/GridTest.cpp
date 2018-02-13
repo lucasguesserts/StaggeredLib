@@ -68,7 +68,7 @@ TestCase("Element2D compute triangle area vector", "[Element2D]")
 	const Eigen::Vector3d areaVector(40.5, 79, 31);
 	Triangle triangle;
 	for(Vertex& vertex: vertices)
-		triangle.vertices.push_back(&vertex);
+		triangle.addVertex(vertex);
 	check(triangle.getAreaVector()==areaVector);
 }
 
@@ -81,7 +81,7 @@ TestCase("Line", "[Element][Element2D][Line]")
 	const Eigen::Vector3d localCoordinates(0.4, 0.0, 0.0);
 	Line line;
 	for(Vertex& vertex: vertices)
-		line.vertices.push_back(&vertex);
+		line.addVertex(vertex);
 	section("Basic requirements")
 	{
 		const unsigned dimension = 1;
@@ -129,7 +129,7 @@ TestCase("Triangle", "[Element][Element2D][Triangle]")
 	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Triangle triangle;
 	for(Vertex& vertex: vertices)
-		triangle.vertices.push_back(&vertex);
+		triangle.addVertex(vertex);
 	section("Basic requirements")
 	{
 		require(triangle.getNumberOfVertices()==3);
@@ -176,7 +176,7 @@ TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Quadrangle quadrangle;
 	for(Vertex& vertex: vertices)
-		quadrangle.vertices.push_back(&vertex);
+		quadrangle.addVertex(vertex);
 	section("Basic requirements")
 	{
 		const unsigned dimension = 2;
@@ -326,10 +326,10 @@ TestCase("Grid structure", "[Grid]")
 		grid.vertices.push_back(Vertex( 3.0,  7.0, -2.0, 3));
 	const unsigned numberOfElements = 1;
 	Quadrangle quadrangle;
-	quadrangle.vertices.push_back(&grid.vertices[0]);
-	quadrangle.vertices.push_back(&grid.vertices[1]);
-	quadrangle.vertices.push_back(&grid.vertices[2]);
-	quadrangle.vertices.push_back(&grid.vertices[3]);
+	quadrangle.addVertex(grid.vertices[0]);
+	quadrangle.addVertex(grid.vertices[1]);
+	quadrangle.addVertex(grid.vertices[2]);
+	quadrangle.addVertex(grid.vertices[3]);
 	grid.elements.push_back(&quadrangle);
 	check(grid.vertices.size()==numberOfVertices);
 	check(grid.elements.size()==numberOfElements);

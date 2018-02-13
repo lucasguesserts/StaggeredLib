@@ -45,7 +45,7 @@ void GridBuilder::buildTrianglesOn2DGrid(const GridData& gridData, Grid2D& grid2
 		for(unsigned vertexLocalIndexInTriangle=0 ; vertexLocalIndexInTriangle<numberOfVerticesPerTriangle ; ++vertexLocalIndexInTriangle)
 		{
 			unsigned vertexIndex = gridData.triangleConnectivity(triangleIndex,vertexLocalIndexInTriangle);
-			triangle.vertices.push_back(&(grid2D.vertices[vertexIndex]));
+			triangle.addVertex(grid2D.vertices[vertexIndex]);
 		}
 		grid2D.triangles.push_back(triangle);
 	}
@@ -63,7 +63,7 @@ void GridBuilder::buildQuadranglesOn2DGrid(const GridData& gridData, Grid2D& gri
 		for(unsigned vertexLocalIndexInQuadrangle=0 ; vertexLocalIndexInQuadrangle<numberOfVerticesPerQuadrangle ; ++vertexLocalIndexInQuadrangle)
 		{
 			unsigned vertexIndex = gridData.quadrangleConnectivity(quadrangleIndex,vertexLocalIndexInQuadrangle);
-			quadrangle.vertices.push_back(&(grid2D.vertices[vertexIndex]));
+			quadrangle.addVertex(grid2D.vertices[vertexIndex]);
 		}
 		grid2D.quadrangles.push_back(quadrangle);
 	}
