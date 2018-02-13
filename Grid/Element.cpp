@@ -1,6 +1,17 @@
 #include <Grid/Element.hpp>
 #include <vector>
 
+void Element::addVertex(const Vertex& vertex)
+{
+	#ifndef NDEBUG
+	if(this->vertices.size()>=4)
+	{
+		// Add exception
+	}
+	#endif
+	this->vertices.push_back(&vertex);
+}
+
 Eigen::Vector3d Element::getCentroid(void)
 {
 	Eigen::Vector3d centroid(0.0, 0.0, 0.0);
