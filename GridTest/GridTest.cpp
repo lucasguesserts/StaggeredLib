@@ -5,7 +5,6 @@
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 #include <Grid/GridData.hpp>
-#include <Grid/GridReader.hpp>
 #include <Grid/Grid.hpp>
 #include <Grid/Grid2D.hpp>
 #include <Grid/GridBuilder.hpp>
@@ -53,8 +52,8 @@ TestCase("Grid data structure", "[Grid][GridData]")
 
 TestCase("grid reader from CGNS", "[Grid][GridReader][CGNS]")
 {
-	const std::string cgnsGridFileName = GridReader::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	GridData gridData = GridReader::CGNS(cgnsGridFileName);
+	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	GridData gridData(cgnsGridFileName);
 	section("dimension")
 	{
 		const unsigned dimension = 2;
@@ -125,8 +124,8 @@ TestCase("Grid structure", "[Grid]")
 
 TestCase("Grid builder 2D", "[GridBuilder][Grid][Grid2D]")
 {
-	const std::string cgnsGridFileName = GridReader::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	GridData gridData = GridReader::CGNS(cgnsGridFileName);
+	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	GridData gridData(cgnsGridFileName);
 	Grid2D grid2D = GridBuilder::build2D(gridData);
 	section("vertices")
 	{

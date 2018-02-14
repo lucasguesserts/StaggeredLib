@@ -1,24 +1,18 @@
-#include <Grid/GridReader.hpp>
+#include <Grid/GridData.hpp>
 #include <cgnslib.h>
-#include <Eigen/Core>
-#include <iostream>
-using std::cout;
-using std::endl;
+
+const std::string GridData::projectGridDirectory = GRID_DIRECTORY;
 
 #define NAME_LENGTH 200
 #define CHKERRQ(err) if((err)) cg_error_exit()
 
-const std::string GridReader::projectGridDirectory = GRID_DIRECTORY;
-
-GridData GridReader::CGNS(const std::string fileName)
+GridData::GridData(const std::string cgnsFileName)
 {
 	int error;
-	// GridData
-	GridData gridData;
-	gridData.dimension = 2;
+	this->dimension = 2;
 	// file
 	int file;
-		error = cg_open(fileName.c_str(),CG_MODE_READ,&file); CHKERRQ(error);
+		error = cg_open(cgnsFileName.c_str(),CGNS_ENUMV(CG_MODE_READ),&file); CHKERRQ(error);
 	// base
 	char baseName[NAME_LENGTH];
 	int base, numberOfBases, cellDimension, physicalDimension;
@@ -54,12 +48,12 @@ GridData GridReader::CGNS(const std::string fileName)
 		coordinatesY = (double *) malloc(size[0]*sizeof(double));
 		error = cg_coord_read(file, base, zone, "CoordinateX", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesX); CHKERRQ(error);
 		error = cg_coord_read(file, base, zone, "CoordinateY", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesY); CHKERRQ(error);
-	gridData.coordinates.resize(size[0],Eigen::NoChange);
+	this->coordinates.resize(size[0],Eigen::NoChange);
 	for(unsigned vertexIndex=0 ; vertexIndex<size[0] ; ++vertexIndex)
 	{
-		gridData.coordinates(vertexIndex,0) = coordinatesX[vertexIndex];
-		gridData.coordinates(vertexIndex,1) = coordinatesY[vertexIndex];
-		gridData.coordinates(vertexIndex,2) = 0.0;
+		this->coordinates(vertexIndex,0) = coordinatesX[vertexIndex];
+		this->coordinates(vertexIndex,1) = coordinatesY[vertexIndex];
+		this->coordinates(vertexIndex,2) = 0.0;
 	}
 	// Element connectivity - section
 	int numberOfSections;
@@ -80,10 +74,10 @@ GridData GridReader::CGNS(const std::string fileName)
 			error = cg_elements_read(file,base,zone,section,elementConnectivity,NULL); CHKERRQ(error);
 			if(elementDataSize%4 != 0) cg_error_exit();
 			const unsigned numberOfQuadrangles = elementDataSize / 4;
-			gridData.quadrangleConnectivity.resize(numberOfQuadrangles,Eigen::NoChange);
+			this->quadrangleConnectivity.resize(numberOfQuadrangles,Eigen::NoChange);
 			for(unsigned quadrangle=0 ; quadrangle<numberOfQuadrangles ; ++quadrangle)
 				for(unsigned vertexIndex=0 ; vertexIndex<4 ; ++vertexIndex)
-					gridData.quadrangleConnectivity(quadrangle,vertexIndex) = elementConnectivity[4*quadrangle+vertexIndex] - 1;
+					this->quadrangleConnectivity(quadrangle,vertexIndex) = elementConnectivity[4*quadrangle+vertexIndex] - 1;
 		}
 		if(elementType==CGNS_ENUMV(TRI_3))
 		{
@@ -92,11 +86,11 @@ GridData GridReader::CGNS(const std::string fileName)
 			error = cg_elements_read(file,base,zone,section,elementConnectivity,NULL); CHKERRQ(error);
 			if(elementDataSize%3 != 0) cg_error_exit();
 			const unsigned numberOfTriangles = elementDataSize / 3;
-			gridData.triangleConnectivity.resize(numberOfTriangles,Eigen::NoChange);
+			this->triangleConnectivity.resize(numberOfTriangles,Eigen::NoChange);
 			for(unsigned triangle=0 ; triangle<numberOfTriangles ; ++triangle)
 				for(unsigned vertexIndex=0 ; vertexIndex<3 ; ++vertexIndex)
-					gridData.triangleConnectivity(triangle,vertexIndex) = elementConnectivity[3*triangle+vertexIndex] - 1;
+					this->triangleConnectivity(triangle,vertexIndex) = elementConnectivity[3*triangle+vertexIndex] - 1;
 		}
 	}
-	return gridData;
+	return;
 }
