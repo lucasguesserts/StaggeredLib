@@ -5,11 +5,21 @@
 #include <GeometricEntity/Quadrangle.hpp>
 #include <GeometricEntity/Triangle.hpp>
 #include <Grid/Grid.hpp>
+#include <Grid/GridData.hpp>
 
 struct Grid2D: public Grid
 {
-	std::vector<Quadrangle> quadrangles;
-	std::vector<Triangle> triangles;
+	public:
+		Grid2D(const GridData& gridData);
+
+		std::vector<Quadrangle> quadrangles;
+		std::vector<Triangle> triangles;
+	private:
+		static bool gridIs2D(const GridData& gridData);
+		void buildVerticesOn2DGrid(const GridData& gridData);
+		void buildTrianglesOn2DGrid(const GridData& gridData);
+		void buildQuadranglesOn2DGrid(const GridData& gridData);
+		void assignElementsPointers(void);
 };
 
 #endif

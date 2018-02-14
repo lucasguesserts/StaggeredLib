@@ -1,7 +1,6 @@
 #include <Eigen/Core>
 #include <vector>
 #include <Grid/Grid2D.hpp>
-#include <Grid/GridBuilder.hpp>
 
 class SquareCavityHeatTransfer
 {

@@ -7,7 +7,6 @@
 #include <Grid/GridData.hpp>
 #include <Grid/Grid.hpp>
 #include <Grid/Grid2D.hpp>
-#include <Grid/GridBuilder.hpp>
 
 TestCase("Grid data structure", "[Grid][GridData]")
 {
@@ -50,7 +49,7 @@ TestCase("Grid data structure", "[Grid][GridData]")
 	}
 }
 
-TestCase("grid reader from CGNS", "[Grid][GridReader][CGNS]")
+TestCase("grid reader from CGNS", "[GridData][Grid][CGNS]")
 {
 	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
 	GridData gridData(cgnsGridFileName);
@@ -122,11 +121,11 @@ TestCase("Grid structure", "[Grid]")
 	check(grid.dimension==dimension);
 }
 
-TestCase("Grid builder 2D", "[GridBuilder][Grid][Grid2D]")
+TestCase("Grid 2D build", "[Grid][Grid2D]")
 {
 	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
 	GridData gridData(cgnsGridFileName);
-	Grid2D grid2D = GridBuilder::build2D(gridData);
+	Grid2D grid2D(gridData);
 	section("vertices")
 	{
 		const unsigned numberOfVertices = 9;
