@@ -1,4 +1,4 @@
-#include <Grid/Entity.hpp>
+#include <GeometricEntity/Entity.hpp>
 
 Entity::Entity(const unsigned handle)
 	: handle(handle) {}

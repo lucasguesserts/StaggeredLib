@@ -1,4 +1,4 @@
-#include <Grid/Quadrangle.hpp>
+#include <GeometricEntity/Quadrangle.hpp>
 
 Eigen::Vector3d Quadrangle::getAreaVector(void)
 {

@@ -1,3 +1,3 @@
-#include <Grid/Element1D.hpp>
+#include <GeometricEntity/Element1D.hpp>
 
 const unsigned Element1D::dimension = 1;

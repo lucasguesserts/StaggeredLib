@@ -1,7 +1,7 @@
 #ifndef ELEMENT1D_HPP
 #define ELEMENT1D_HPP
 
-#include <Grid/Element.hpp>
+#include <GeometricEntity/Element.hpp>
 
 class Element1D: public Element
 {

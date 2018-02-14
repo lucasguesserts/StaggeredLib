@@ -1,13 +1,12 @@
-#ifndef QUADRANGLE_HPP
-#define QUADRANGLE_HPP
+#ifndef LINE_HPP
+#define LINE_HPP
 
 #include <Eigen/Core>
-#include <Grid/Element2D.hpp>
+#include <GeometricEntity/Element1D.hpp>
 
-class Quadrangle: public Element2D
+class Line: public Element1D
 {
 	public:
-		virtual Eigen::Vector3d getAreaVector(void);
 		virtual double getVolume(void);
 		virtual Eigen::VectorXd getShapeFunctionValues(const Eigen::Vector3d localCoordinates) const;
 		virtual Eigen::MatrixXd getShapeFunctionDerivatives(const Eigen::Vector3d localCoordinates) const;

@@ -1,4 +1,4 @@
-#include <Grid/Line.hpp>
+#include <GeometricEntity/Line.hpp>
 
 double Line::getVolume(void)
 {

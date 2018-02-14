@@ -1,4 +1,4 @@
-#include <Grid/Triangle.hpp>
+#include <GeometricEntity/Triangle.hpp>
 
 Eigen::Vector3d Triangle::getAreaVector(void)
 {

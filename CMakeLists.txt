@@ -30,6 +30,8 @@ endif ()
 add_definitions("-DGRID_DIRECTORY=\"${CMAKE_SOURCE_DIR}/grids/\"")
 
 add_subdirectory(UtilsTest)
+add_subdirectory(GeometricEntity)
+add_subdirectory(GeometricEntityTest)
 add_subdirectory(Grid)
 add_subdirectory(GridTest)
 add_subdirectory(SquareCavityHeatTransfer)

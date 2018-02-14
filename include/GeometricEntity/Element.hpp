@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <Eigen/Core>
-#include <Grid/Entity.hpp>
-#include <Grid/Vertex.hpp>
+#include <GeometricEntity/Entity.hpp>
+#include <GeometricEntity/Vertex.hpp>
 
 class Element: public Entity
 {

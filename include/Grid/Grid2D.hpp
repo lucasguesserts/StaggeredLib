@@ -2,8 +2,8 @@
 #define GRID2D_HPP
 
 #include <vector>
-#include <Grid/Quadrangle.hpp>
-#include <Grid/Triangle.hpp>
+#include <GeometricEntity/Quadrangle.hpp>
+#include <GeometricEntity/Triangle.hpp>
 #include <Grid/Grid.hpp>
 
 struct Grid2D: public Grid

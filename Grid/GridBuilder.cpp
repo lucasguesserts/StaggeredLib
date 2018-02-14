@@ -1,5 +1,5 @@
 #include <Grid/GridBuilder.hpp>
-#include <Grid/Vertex.hpp>
+#include <GeometricEntity/Vertex.hpp>
 
 Grid2D GridBuilder::build2D(const GridData gridData)
 {

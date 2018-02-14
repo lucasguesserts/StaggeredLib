@@ -1,7 +1,7 @@
 #ifndef ELEMENT2D_HPP
 #define ELEMENT2D_HPP
 
-#include <Grid/Element.hpp>
+#include <GeometricEntity/Element.hpp>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 

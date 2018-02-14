@@ -1,7 +1,7 @@
 #ifndef VERTEX_HPP
 #define VERTEX_HPP
 
-#include <Grid/Entity.hpp>
+#include <GeometricEntity/Entity.hpp>
 #include <Eigen/Core>
 
 class Vertex: public Eigen::Vector3d, public Entity

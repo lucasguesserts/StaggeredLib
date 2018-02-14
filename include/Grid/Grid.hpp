@@ -2,8 +2,8 @@
 #define GRID_HPP
 
 #include <vector>
-#include <Grid/Element.hpp>
-#include <Grid/Vertex.hpp>
+#include <GeometricEntity/Element.hpp>
+#include <GeometricEntity/Vertex.hpp>
 
 struct Grid
 {
