@@ -142,6 +142,11 @@ TestCase("Grid 2D build", "[Grid][Grid2D]")
 		for(unsigned i=0 ; i<grid2D.vertices.size() ; ++i)
 			check(grid2D.vertices[i]==vertices[i]);
 	}
+	section("Elements handle")
+	{
+		for(unsigned elementHandle=0 ; elementHandle<grid2D.elements.size() ; ++elementHandle)
+			check(grid2D.elements[elementHandle]->getHandle()==elementHandle);
+	}
 	section("triangles")
 	{
 		const unsigned numberOfTriangles = 4;
@@ -154,7 +159,6 @@ TestCase("Grid 2D build", "[Grid][Grid2D]")
 			triangleCentroid[3] << 2.0, 2.5, 0.0;
 			for(unsigned elementIndex=0 ; elementIndex<numberOfTriangles ; ++elementIndex)
 				check(grid2D.elements[elementIndex]->getCentroid()==triangleCentroid[elementIndex]);
-			// It is necessary to test the handles.
 		}
 		section("elements vertices")
 		{
@@ -186,7 +190,6 @@ TestCase("Grid 2D build", "[Grid][Grid2D]")
 			quadrangleCentroid[1] << 2.25, 0.75, 0.0;
 			check(grid2D.elements[4]->getCentroid()==quadrangleCentroid[0]);
 			check(grid2D.elements[5]->getCentroid()==quadrangleCentroid[1]);
-			// It is necessary to test the handles.
 		}
 		section("elements vertices")
 		{
