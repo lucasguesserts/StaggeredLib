@@ -102,23 +102,23 @@ TestCase("Grid structure", "[Grid]")
 {
 	const unsigned dimension = 2;
 	const unsigned numberOfVertices = 4;
-	Grid grid;
-	grid.dimension = dimension;
-	grid.vertices.reserve(numberOfVertices);
-		grid.vertices.push_back(Vertex( 2.0, -5.0,  3.0, 0));
-		grid.vertices.push_back(Vertex( 4.0, -1.0,  6.0, 1));
-		grid.vertices.push_back(Vertex( 4.0,  3.0,  3.4, 2));
-		grid.vertices.push_back(Vertex( 3.0,  7.0, -2.0, 3));
-	const unsigned numberOfElements = 1;
-	Quadrangle quadrangle;
-	quadrangle.addVertex(grid.vertices[0]);
-	quadrangle.addVertex(grid.vertices[1]);
-	quadrangle.addVertex(grid.vertices[2]);
-	quadrangle.addVertex(grid.vertices[3]);
-	grid.elements.push_back(&quadrangle);
+	GridData gridData;
+	gridData.dimension = dimension;
+	gridData.coordinates.resize(numberOfVertices,Eigen::NoChange);
+	gridData.coordinates <<
+		2.0, -5.0,  3.0,
+		4.0, -1.0,  6.0,
+		4.0,  3.0,  3.4,
+		3.0,  7.0, -2.0;
+	Grid grid(gridData);
 	check(grid.vertices.size()==numberOfVertices);
-	check(grid.elements.size()==numberOfElements);
 	check(grid.dimension==dimension);
+	for(unsigned vertexIndex=0 ; vertexIndex<numberOfVertices ; ++vertexIndex)
+	{
+		for(unsigned i=0 ; i<3 ; ++i)
+			check(grid.vertices[vertexIndex](i)==gridData.coordinates(vertexIndex,i));
+		check(grid.vertices[vertexIndex].getHandle()==vertexIndex);
+	}
 }
 
 TestCase("Grid 2D build", "[Grid][Grid2D]")

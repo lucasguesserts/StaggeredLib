@@ -15,7 +15,6 @@ struct Grid2D: public Grid
 		std::vector<Quadrangle> quadrangles;
 		std::vector<Triangle> triangles;
 	private:
-		void buildVerticesOn2DGrid(const GridData& gridData);
 		void buildTrianglesOn2DGrid(const GridData& gridData);
 		void buildQuadranglesOn2DGrid(const GridData& gridData);
 		void assignElementsPointers(void);

@@ -1,29 +1,15 @@
 #include <Grid/Grid2D.hpp>
 
 Grid2D::Grid2D(const GridData& gridData)
+	: Grid(gridData)
 {
 	if(gridData.dimension==2)
 	{
 		this->dimension = 2;
-		this->buildVerticesOn2DGrid(gridData);
 		this->buildTrianglesOn2DGrid(gridData);
 		this->buildQuadranglesOn2DGrid(gridData);
 		this->assignElementsPointers();
 	}
-}
-
-void Grid2D::buildVerticesOn2DGrid(const GridData& gridData)
-{
-	const unsigned numberOfVertices = gridData.coordinates.rows();
-	this->vertices.reserve(numberOfVertices);
-	for(unsigned vertexIndex=0 ; vertexIndex<numberOfVertices ; ++vertexIndex)
-	{
-		const double x = gridData.coordinates(vertexIndex,0);
-		const double y = gridData.coordinates(vertexIndex,1);
-		const double z = gridData.coordinates(vertexIndex,2);
-		this->vertices.push_back(Vertex(x, y, z, vertexIndex));
-	}
-	return ;
 }
 
 void Grid2D::buildTrianglesOn2DGrid(const GridData& gridData)
