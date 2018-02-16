@@ -4,6 +4,7 @@
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <SquareCavityHeatTransfer/Grid2DVerticesWithNeighborElements.hpp>
 #include <SquareCavityHeatTransfer/ScalarStencil.hpp>
+#include <SquareCavityHeatTransfer/VectorStencil.hpp>
 
 TestCase("Analytical solution", "[SquareCavityHeatTransfer]")
 {
@@ -48,7 +49,7 @@ TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWith
 	}
 }
 
-TestCase("Scalar map", "[ScalarStencil]")
+TestCase("Scalar stencil", "[ScalarStencil]")
 {
 	section("operator +")
 	{
@@ -103,5 +104,33 @@ TestCase("Scalar map", "[ScalarStencil]")
 		check(result[2]==(scalar*value[0]));
 		check(result[4]==(value[2]));
 		check(result[7]==(scalar*value[1]+value[3]));
+	}
+}
+
+TestCase("Vector stencil", "[VectorStencil]")
+{
+	section("ScalarStencil * Eigen::Vector3d")
+	{
+		const double value[2] = {7.4, -8.3};
+		const unsigned index[2] = {2, 9};
+		ScalarStencil scalarStencil = { {index[0],value[0]}, {index[1],value[1]} };
+		Eigen::Vector3d vector(-6.3, 1.2, 4.5);
+		VectorStencil result = scalarStencil*vector;
+		check(result[index[0]]==(value[0]*vector));
+		check(result[index[1]]==(value[1]*vector));
+	}
+	section("VectorStencil + VectorStencil")
+	{
+		const Eigen::Vector3d vector[4] = {{2.7,-1.8,4.3}, {-12.9,0.8,2.2}, {18.7,3.9,8.74}, {7.9,-8.3,-0.9}};
+		const unsigned index[3] = {3, 27, 5};
+		VectorStencil first = {{index[0],vector[0]}, {index[1],vector[1]}};
+		VectorStencil second = {{index[1],vector[2]}, {index[2],vector[3]}};
+		VectorStencil result = first + second;
+		check(result[index[0]]==vector[0]);
+		check(result[index[1]]==(vector[1]+vector[2]));
+		check(result[index[2]]==vector[3]);
+	}
+	section("Eigen::Vector3d * VectorStencil")
+	{
 	}
 }
