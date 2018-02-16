@@ -92,4 +92,16 @@ TestCase("Scalar map", "[ScalarMap]")
 		ScalarMap product = scalarMultiplier * scalarMap;
 		check(product[handle]==(scalarMultiplier*scalarMapEntry));
 	}
+	section("+ and * mixed")
+	{
+		const unsigned handle[3] = {2, 7, 4};
+		const double value[4] = {5.8, -9.5, -3.2, 6.1};
+		ScalarMap first = {{handle[0], value[0]}, {handle[1], value[1]}};
+		ScalarMap second = {{handle[2], value[2]}, {handle[1], value[3]}};
+		const double scalar = 0.4;
+		ScalarMap result = scalar*first + second;
+		check(result[2]==(scalar*value[0]));
+		check(result[4]==(value[2]));
+		check(result[7]==(scalar*value[1]+value[3]));
+	}
 }
