@@ -114,7 +114,7 @@ TestCase("Vector stencil", "[VectorStencil]")
 		const double value[2] = {7.4, -8.3};
 		const unsigned index[2] = {2, 9};
 		ScalarStencil scalarStencil = { {index[0],value[0]}, {index[1],value[1]} };
-		Eigen::Vector3d vector(-6.3, 1.2, 4.5);
+		const Eigen::Vector3d vector(-6.3, 1.2, 4.5);
 		VectorStencil result = scalarStencil*vector;
 		check(result[index[0]]==(value[0]*vector));
 		check(result[index[1]]==(value[1]*vector));
@@ -132,6 +132,13 @@ TestCase("Vector stencil", "[VectorStencil]")
 	}
 	section("Eigen::Vector3d * VectorStencil")
 	{
+		const Eigen::Vector3d vector(-6.3, 1.2, 4.5);
+		const Eigen::Vector3d vec[2] = {{2.7,-1.8,4.3}, {-12.9,0.8,2.2}};
+		const unsigned index[2] = {3, 27};
+		VectorStencil vectorStencil = {{index[0],vec[0]}, {index[1],vec[1]}};
+		ScalarStencil result = vector * vectorStencil;
+		check(result[index[0]]==vector.dot(vec[0]));
+		check(result[index[1]]==vector.dot(vec[1]));
 	}
 	section("double * VectorStencil")
 	{
