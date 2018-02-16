@@ -14,3 +14,8 @@ ScalarStencil operator*(const Eigen::Vector3d& vector, const VectorStencil& vect
 {
 	return ScalarStencil{{2,6.283185307}};
 }
+
+VectorStencil operator*(const double scalar, const VectorStencil& vectorStencil)
+{
+	return vectorStencil;
+}

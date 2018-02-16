@@ -133,4 +133,13 @@ TestCase("Vector stencil", "[VectorStencil]")
 	section("Eigen::Vector3d * VectorStencil")
 	{
 	}
+	section("double * VectorStencil")
+	{
+		const double scalar = 2.23;
+		const unsigned index = 554;
+		const Eigen::Vector3d vector = {-1.6, 8.3, 2.0};
+		const VectorStencil vectorStencil = {{index,vector}};
+		VectorStencil result = scalar * vectorStencil;
+		check(result[index]==(scalar*vector));
+	}
 }
