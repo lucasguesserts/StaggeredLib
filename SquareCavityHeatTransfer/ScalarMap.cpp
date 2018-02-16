@@ -2,10 +2,16 @@
 
 ScalarMap operator+(const ScalarMap& lhs, const ScalarMap& rhs)
 {
-	return rhs;
+	ScalarMap result = lhs;
+	for(auto& keyValuePair: rhs)
+		result[keyValuePair.first] += keyValuePair.second;
+	return result;
 }
 
 ScalarMap operator*(const double scalar, const ScalarMap& scalarMap)
 {
-	return scalarMap;
+	ScalarMap result = scalarMap;
+	for(auto& keyValuePair: result)
+		result[keyValuePair.first] *= scalar;
+	return result;
 }
