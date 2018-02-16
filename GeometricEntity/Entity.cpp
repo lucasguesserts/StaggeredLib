@@ -1,15 +1,15 @@
 #include <GeometricEntity/Entity.hpp>
 
-Entity::Entity(const unsigned handle)
-	: handle(handle) {}
+Entity::Entity(const unsigned index)
+	: index(index) {}
 
-void Entity::setHandle(const unsigned handle)
+void Entity::setIndex(const unsigned index)
 {
-	this->handle = handle;
+	this->index = index;
 	return;
 }
 
-unsigned Entity::getHandle(void) const
+unsigned Entity::getIndex(void) const
 {
-	return this->handle;
+	return this->index;
 }

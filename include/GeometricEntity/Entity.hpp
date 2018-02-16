@@ -3,11 +3,11 @@
 
 class Entity {
 public:
-	explicit Entity(const unsigned handle = 0);
-	void setHandle(const unsigned handle);
-	unsigned getHandle(void) const;
+	explicit Entity(const unsigned index = 0);
+	void setIndex(const unsigned index);
+	unsigned getIndex(void) const;
 private:
-	unsigned handle;
+	unsigned index;
 };
 
 #endif

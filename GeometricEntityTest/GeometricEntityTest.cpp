@@ -13,31 +13,31 @@
 
 TestCase("Entity", "[Entity]")
 {
-	const unsigned handle = 3;
+	const unsigned index = 3;
 	section("constructor")
 	{
-		Entity entity(handle);
-		check(entity.getHandle()==handle);
+		Entity entity(index);
+		check(entity.getIndex()==index);
 	}
-	section("set handle")
+	section("set index")
 	{
 		Entity entity;
-		entity.setHandle(handle);
-		check(entity.getHandle()==handle);
+		entity.setIndex(index);
+		check(entity.getIndex()==index);
 	}
 }
 
 TestCase("Vertex constructor", "[Vertex]")
 {
 	const std::vector<double> values = {3.2, -5.7, 9.4};
-	const unsigned handle = 4;
-	Vertex vertex(values[0], values[1], values[2], handle);
-	section("Handle")
+	const unsigned index = 4;
+	Vertex vertex(values[0], values[1], values[2], index);
+	section("Index")
 	{
-		check(vertex.getHandle()==handle);
-		const unsigned newHandle = 7;
-		vertex.setHandle(newHandle);
-		check(vertex.getHandle()==newHandle);
+		check(vertex.getIndex()==index);
+		const unsigned newIndex = 7;
+		vertex.setIndex(newIndex);
+		check(vertex.getIndex()==newIndex);
 	}
 	section("constructor values")
 	{

@@ -15,8 +15,8 @@ void Grid2DVerticesWithNeighborElements::setVerticesNeighborElements(void)
 	{
 		for(const Vertex* const vertex: element->vertices)
 		{
-			const unsigned vertexHandle = vertex->getHandle();
-			this->verticesNeighborElements[vertexHandle].push_back(element);
+			const unsigned vertexIndex = vertex->getIndex();
+			this->verticesNeighborElements[vertexIndex].push_back(element);
 		}
 	}
 	return;

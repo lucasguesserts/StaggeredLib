@@ -50,18 +50,18 @@ void Grid2D::buildQuadranglesOn2DGrid(const GridData& gridData)
 
 void Grid2D::assignElementsPointers()
 {
-	unsigned handle = 0;
+	unsigned index = 0;
 	for(Triangle& triangle: this->triangles)
 	{
-		triangle.setHandle(handle);
+		triangle.setIndex(index);
 		this->elements.push_back((Element*) &triangle);
-		handle++;
+		index++;
 	}
 	for(Quadrangle& quadrangle: this->quadrangles)
 	{
-		quadrangle.setHandle(handle);
+		quadrangle.setIndex(index);
 		this->elements.push_back((Element*) &quadrangle);
-		handle++;
+		index++;
 	}
 	return ;
 }

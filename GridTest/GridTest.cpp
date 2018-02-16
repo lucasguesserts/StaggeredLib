@@ -117,7 +117,7 @@ TestCase("Grid structure", "[Grid]")
 	{
 		for(unsigned i=0 ; i<3 ; ++i)
 			check(grid.vertices[vertexIndex](i)==gridData.coordinates(vertexIndex,i));
-		check(grid.vertices[vertexIndex].getHandle()==vertexIndex);
+		check(grid.vertices[vertexIndex].getIndex()==vertexIndex);
 	}
 }
 
@@ -142,10 +142,10 @@ TestCase("Grid 2D build", "[Grid][Grid2D]")
 		for(unsigned i=0 ; i<grid2D.vertices.size() ; ++i)
 			check(grid2D.vertices[i]==vertices[i]);
 	}
-	section("Elements handle")
+	section("Elements index")
 	{
-		for(unsigned elementHandle=0 ; elementHandle<grid2D.elements.size() ; ++elementHandle)
-			check(grid2D.elements[elementHandle]->getHandle()==elementHandle);
+		for(unsigned elementIndex=0 ; elementIndex<grid2D.elements.size() ; ++elementIndex)
+			check(grid2D.elements[elementIndex]->getIndex()==elementIndex);
 	}
 	section("triangles")
 	{
