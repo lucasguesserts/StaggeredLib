@@ -32,7 +32,7 @@ TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWith
 	section("Vertex 3 neighborhood")
 	{
 		const unsigned vertexIndex = 3;
-		std::vector<Element*>& vertexNeighborhood = grid.verticesNeighborElements[vertexIndex];
+		std::vector<const Element*>& vertexNeighborhood = grid.verticesNeighborElements[vertexIndex];
 		section("Number of neighbor elements")
 		{
 			const unsigned numberOfNeighborElements = 3;
