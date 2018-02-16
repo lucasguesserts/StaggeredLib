@@ -28,6 +28,7 @@ if (CGNS_FOUND)
 endif ()
 
 add_definitions("-DGRID_DIRECTORY=\"${CMAKE_SOURCE_DIR}/grids/\"")
+enable_testing()
 
 add_subdirectory(UtilsTest)
 add_subdirectory(GeometricEntity)
