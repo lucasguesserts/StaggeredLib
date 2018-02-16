@@ -2,20 +2,37 @@
 
 VectorStencil operator*(const ScalarStencil& scalarStencil, const Eigen::Vector3d& vector)
 {
-	return VectorStencil{{2,Eigen::Vector3d(1,2,3)}};
+	VectorStencil vectorStencil;
+	for(auto& indexScalarPair: scalarStencil)
+		vectorStencil[indexScalarPair.first] = indexScalarPair.second * vector;
+	return vectorStencil;
 }
 
 VectorStencil operator+(const VectorStencil& lhs, const VectorStencil& rhs)
 {
-	return rhs;
+	VectorStencil sum = rhs;
+	for(auto& indexVectorPair: lhs)
+	{
+		if( sum.find(indexVectorPair.first) != sum.end() )
+			sum[indexVectorPair.first] += indexVectorPair.second;
+		else
+			sum[indexVectorPair.first] = indexVectorPair.second;
+	}
+	return sum;
 }
 
 ScalarStencil operator*(const Eigen::Vector3d& vector, const VectorStencil& vectorStencil)
 {
-	return ScalarStencil{{2,6.283185307}};
+	ScalarStencil scalarStencil;
+	for(auto& indexVectorPair: vectorStencil)
+		scalarStencil[indexVectorPair.first] = vector.dot(indexVectorPair.second);
+	return scalarStencil;
 }
 
 VectorStencil operator*(const double scalar, const VectorStencil& vectorStencil)
 {
-	return vectorStencil;
+	VectorStencil resultVectorStencil = vectorStencil;
+	for(auto& indexVectorPair: resultVectorStencil)
+		indexVectorPair.second *= scalar;
+	return resultVectorStencil;
 }
