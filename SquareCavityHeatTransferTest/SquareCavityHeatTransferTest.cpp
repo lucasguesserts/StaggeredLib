@@ -83,4 +83,13 @@ TestCase("Scalar map", "[ScalarMap]")
 			check(sum[handle[2]]==scalar[2]);
 		}
 	}
+	section("operator*(double scalar, ScalarMap scalarMap)")
+	{
+		const unsigned handle = 2;
+		const double scalarMapEntry = 6.7;
+		const double scalarMultiplier = 2.8;
+		ScalarMap scalarMap = { {handle,scalarMapEntry} };
+		ScalarMap product = scalarMultiplier * scalarMap;
+		check(product[handle]==(scalarMultiplier*scalarMapEntry));
+	}
 }
