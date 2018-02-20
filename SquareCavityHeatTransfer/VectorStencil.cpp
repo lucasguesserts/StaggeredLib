@@ -1,4 +1,5 @@
 #include <SquareCavityHeatTransfer/VectorStencil.hpp>
+#include <vector>
 
 VectorStencil operator*(const ScalarStencil& scalarStencil, const Eigen::Vector3d& vector)
 {
@@ -35,4 +36,16 @@ VectorStencil operator*(const double scalar, const VectorStencil& vectorStencil)
 	for(auto& indexVectorPair: resultVectorStencil)
 		indexVectorPair.second *= scalar;
 	return resultVectorStencil;
+}
+
+Eigen::Vector3d operator*(const VectorStencil& vectorStencil, const Eigen::VectorXd& scalarField)
+{
+	Eigen::Vector3d reconstructedValue = Eigen::Vector3d::Zero();
+	for(auto& keyValuePair: vectorStencil)
+	{
+		const unsigned index = keyValuePair.first;
+		const Eigen::Vector3d weightVector = keyValuePair.second;
+		reconstructedValue += scalarField[index] * weightVector;
+	}
+	return reconstructedValue;
 }
