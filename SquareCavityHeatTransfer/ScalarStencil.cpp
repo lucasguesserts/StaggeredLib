@@ -15,3 +15,15 @@ ScalarStencil operator*(const double scalar, const ScalarStencil& scalarMap)
 		result[keyValuePair.first] *= scalar;
 	return result;
 }
+
+double operator*(const ScalarStencil& scalarStencil, const Eigen::VectorXd& scalarField)
+{
+	double interpolatedValue = 0.0;
+	for(auto& keyValuePair: scalarStencil)
+	{
+		const unsigned index = keyValuePair.first;
+		const double weightValue = keyValuePair.second;
+		interpolatedValue += weightValue * scalarField[index];
+	}
+	return interpolatedValue;
+}

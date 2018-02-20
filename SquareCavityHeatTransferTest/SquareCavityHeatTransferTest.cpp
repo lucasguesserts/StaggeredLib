@@ -1,3 +1,5 @@
+#include <array>
+
 #include <Utils/Test.hpp>
 #include <Utils/contains.hpp>
 #include <Grid/GridData.hpp>
@@ -148,5 +150,39 @@ TestCase("Vector stencil", "[VectorStencil]")
 		const VectorStencil vectorStencil = {{index,vector}};
 		VectorStencil result = scalar * vectorStencil;
 		check(result[index]==(scalar*vector));
+	}
+}
+
+TestCase("ScalarStencil and scalar field used to interpolate a value", "[ScalarStencil]")
+{
+	const unsigned numberOfValues = 8;
+	Eigen::VectorXd scalarField;
+	scalarField.resize(numberOfValues);
+	scalarField << 8.1, 2.6, 6.7, 4.5, 1.8, 7.9, 1.3, 2.6;
+	section("interpolation with complete ScalarStencil")
+	{
+		const unsigned scalarStencilSize = 8;
+		const std::array<unsigned,scalarStencilSize> key = {0, 1, 2, 3, 4, 5, 6, 7};
+		const std::array<double,scalarStencilSize> value = {0.2, 0.4, 0.3, 0.8, 0.1, 0.7, 0.4, 0.2};
+		ScalarStencil scalarStencil;
+		for(unsigned i=0 ; i<scalarStencilSize ; ++i)
+			scalarStencil[key[i]] = value[i];
+		double correctInterpolatedValue = 0.0;
+		for(unsigned i=0 ; i<scalarStencilSize ; ++i)
+			interpolatedValue += scalarStencil[key[i]] * scalarField[key[i]];
+		check(correctInterpolatedValue==(scalarStencil*scalarField));
+	}
+	section("interpolation with partial ScalarStencil")
+	{
+		const unsigned scalarStencilSize = 4;
+		const std::array<unsigned,scalarStencilSize> key = {0, 2, 3, 5};
+		const std::array<double,scalarStencilSize> value = {0.2, 0.3, 0.8, 0.7};
+		ScalarStencil scalarStencil;
+		for(unsigned i=0 ; i<scalarStencilSize ; ++i)
+			scalarStencil[key[i]] = value[i];
+		double correctInterpolatedValue = 0.0;
+		for(unsigned i=0 ; i<scalarStencilSize ; ++i)
+			interpolatedValue += scalarStencil[key[i]] * scalarField[key[i]];
+		check(correctInterpolatedValue==(scalarStencil*scalarField));
 	}
 }
