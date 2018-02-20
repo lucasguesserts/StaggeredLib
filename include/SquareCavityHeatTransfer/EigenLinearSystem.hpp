@@ -1,4 +1,5 @@
 #include <Eigen/Core>
+#include <Eigen/LU>
 
 class EigenLinearSystem
 {
@@ -11,4 +12,8 @@ class EigenLinearSystem
 		}
 		Eigen::MatrixXd matrix;
 		Eigen::VectorXd independent;
+		Eigen::VectorXd solve(void)
+		{
+			return this->matrix.fullPivLu().solve(this->independent);
+		}
 };
