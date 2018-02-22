@@ -1,3 +1,6 @@
+#ifndef EIGEN_LINEAR_SYSTEM_HPP
+#define EIGEN_LINEAR_SYSTEM_HPP
+
 #include <Eigen/Core>
 
 class EigenLinearSystem
@@ -9,3 +12,5 @@ class EigenLinearSystem
 		Eigen::MatrixXd matrix;
 		Eigen::VectorXd independent;
 };
+
+#endif
