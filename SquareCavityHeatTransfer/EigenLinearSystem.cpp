@@ -3,8 +3,19 @@
 
 void EigenLinearSystem::setSize(const unsigned size)
 {
-	this->matrix.resize(size,size);
-	this->independent.resize(size);
+	this->matrix = Eigen::MatrixXd::Zero(size,size);
+	this->independent = Eigen::VectorXd::Zero(size);
+	return;
+}
+
+void EigenLinearSystem::addScalarStencil(const unsigned line, const ScalarStencil& scalarStencil)
+{
+	for(auto& keyValuePair: scalarStencil)
+	{
+		const unsigned key = keyValuePair.first;
+		const double value = keyValuePair.second;
+		this->matrix(line,key) = value;
+	}
 	return;
 }
 
