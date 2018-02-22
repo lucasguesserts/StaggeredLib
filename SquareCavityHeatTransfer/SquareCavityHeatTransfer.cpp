@@ -6,10 +6,10 @@ SquareCavityHeatTransfer::SquareCavityHeatTransfer(const GridData& gridData)
 	: grid2D(gridData)
 {
 	const unsigned numberOfElements = this->grid2D.elements.size();
-	this->linearSystem.matrix.resize(numberOfElements,numberOfElements);
-	this->linearSystem.independent.resize(numberOfElements);
-	this->oldTemperature.resize(numberOfElements);
-	this->temperature.resize(numberOfElements);
+	this->linearSystem.matrix = Eigen::MatrixXd::Zero(numberOfElements,numberOfElements);
+	this->linearSystem.independent = Eigen::VectorXd::Zero(numberOfElements);
+	this->oldTemperature = Eigen::VectorXd::Zero(numberOfElements);
+	this->temperature = Eigen::VectorXd::Zero(numberOfElements);
 	return;
 }
 

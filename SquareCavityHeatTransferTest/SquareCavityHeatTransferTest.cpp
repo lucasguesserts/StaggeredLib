@@ -261,12 +261,12 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 		const unsigned numberOfElements = problem.grid2D.elements.size();
 		Eigen::VectorXd independent;
 		independent.resize(numberOfElements);
-		independent << 1.125 * 0.0,
-					   1.125 * 1.0,
+		independent << 1.125 * 3.0,
 					   1.125 * 2.0,
-					   1.125 * 3.0,
-					   2.250 * 4.0,
-					   2.250 * 5.0;
+					   1.125 * 5.0,
+					   1.125 * 4.0,
+					   2.250 * 0.0,
+					   2.250 * 1.0;
 		check(problem.linearSystem.independent==independent);
 	}
 	section("matrix")
