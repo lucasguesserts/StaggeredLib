@@ -250,7 +250,8 @@ TestCase("Linear system build", "[Eigen][EigenSolver]")
 TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	SquareCavityHeatTransfer problem(cgnsGridFileName);
+	GridData gridData(cgnsGridFileName);
+	SquareCavityHeatTransfer problem(gridData);
 	problem.rho = 1;
 	problem.cp = 1;
 	problem.oldTemperature << 3.0, 2.0, 5.0, 4.0, 0.0, 1.0;
@@ -284,7 +285,7 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 	section("solve")
 	{
 		const unsigned numberOfElements = problem.grid2D.elements.size();
-		VectorXd temperature;
+		Eigen::VectorXd temperature;
 		temperature.resize(numberOfElements);
 		temperature << 3.0, 2.0, 5.0, 4.0, 0.0, 1.0;
 		problem.temperature = problem.linearSystem.solve();
