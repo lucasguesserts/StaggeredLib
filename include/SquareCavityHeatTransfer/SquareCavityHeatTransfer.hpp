@@ -19,4 +19,7 @@ class SquareCavityHeatTransfer
 		Eigen::VectorXd oldTemperature;
 		Eigen::VectorXd temperature;
 
+	private:
+		void initializeLinearSystem(void);
+		void initializeTemperatureVectors(void);
 };
