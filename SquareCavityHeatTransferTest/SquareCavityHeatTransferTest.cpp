@@ -246,3 +246,48 @@ TestCase("Linear system build", "[Eigen][EigenSolver]")
 	for(unsigned index=0 ; index<linearSystemSize ; ++index)
 		check(solution[index]==Approx(linearSystemSolution[index]));
 }
+
+TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
+{
+	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	SquareCavityHeatTransfer problem(cgnsGridFileName);
+	problem.rho = 1;
+	problem.cp = 1;
+	problem.oldTemperature << 3.0, 2.0, 5.0, 4.0, 0.0, 1.0;
+	problem.addAccumulationTerm();
+	section("independent")
+	{
+		const unsigned numberOfElements = problem.grid2D.elements.size();
+		Eigen::VectorXd independent;
+		independent.resize(numberOfElements);
+		independent << 1.125 * 0.0,
+					   1.125 * 1.0,
+					   1.125 * 2.0,
+					   1.125 * 3.0,
+					   2.250 * 4.0,
+					   2.250 * 5.0;
+		check(problem.linearSystem.independent==independent);
+	}
+	section("matrix")
+	{
+		const unsigned numberOfElements = problem.grid2D.elements.size();
+		Eigen::MatrixXd matrix;
+		matrix.resize(numberOfElements,numberOfElements);
+		matrix << 1.125, 0.000, 0.000, 0.000, 0.000, 0.000,
+		          0.000, 1.125, 0.000, 0.000, 0.000, 0.000,
+		          0.000, 0.000, 1.125, 0.000, 0.000, 0.000,
+		          0.000, 0.000, 0.000, 1.125, 0.000, 0.000,
+		          0.000, 0.000, 0.000, 0.000, 2.250, 0.000,
+		          0.000, 0.000, 0.000, 0.000, 0.000, 2.250;
+		check(problem.linearSystem.matrix==matrix);
+	}
+	section("solve")
+	{
+		const unsigned numberOfElements = problem.grid2D.elements.size();
+		VectorXd temperature;
+		temperature.resize(numberOfElements);
+		temperature << 3.0, 2.0, 5.0, 4.0, 0.0, 1.0;
+		problem.temperature = problem.linearSystem.solve();
+		check(problem.temperature==temperature);
+	}
+}
