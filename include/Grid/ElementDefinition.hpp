@@ -4,7 +4,7 @@
 #include <Eigen/Core>
 
 template <unsigned NumberOfVertices>
-struct ElementConnectivity
+struct ElementDefinition
 {
 	unsigned index;
 	Eigen::Matrix<unsigned,NumberOfVertices,1> connectivity;

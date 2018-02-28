@@ -4,23 +4,23 @@
 
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
-#include <Grid/ElementConnectivity.hpp>
+#include <Grid/ElementDefinition.hpp>
 #include <Grid/GridData.hpp>
 #include <Grid/Grid.hpp>
 #include <Grid/Grid2D.hpp>
 
-TestCase("Element connectivity structure", "[ElementConnectivity]")
+TestCase("Element definition for GridData", "[ElementDefinition]")
 {
 	constexpr unsigned numberOfVertices = 4;
 	constexpr unsigned index = 7;
 	Eigen::Matrix<unsigned,numberOfVertices,1> connectivity;
 	connectivity << 1, 7, 4, 2;
-	ElementConnectivity<numberOfVertices> elementConnectivity;
-	elementConnectivity.index = index;
-	elementConnectivity.connectivity << 1, 7, 4, 2;
-	check(elementConnectivity.index==index);
-	check(elementConnectivity.connectivity.size()==numberOfVertices);
-	check(elementConnectivity.connectivity==connectivity);
+	ElementDefinition<numberOfVertices> elementDefinition;
+	elementDefinition.index = index;
+	elementDefinition.connectivity << 1, 7, 4, 2;
+	check(elementDefinition.index==index);
+	check(elementDefinition.connectivity.size()==numberOfVertices);
+	check(elementDefinition.connectivity==connectivity);
 }
 
 TestCase("Grid data structure", "[Grid][GridData]")
