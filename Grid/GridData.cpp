@@ -112,12 +112,12 @@ void GridData::readElementConnectivity(void)
 			error = cg_elements_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementConnectivity,NULL); CHKERRQ(error);
 			const unsigned numberOfQuadrangles = numberOfElementConnectivityDataValues / 4;
 			if( numberOfQuadrangles != (lastElementIndex - firstElementIndex + 1)) cg_error_exit();
-			this->quadrangleConnectivity.resize(numberOfQuadrangles,Eigen::NoChange);
-			for(unsigned quadrangle=0 ; quadrangle<numberOfQuadrangles ; ++quadrangle)
+			this->quadrangle.resize(numberOfQuadrangles);
+			for(unsigned quadrangleCount=0 ; quadrangleCount<numberOfQuadrangles ; ++quadrangleCount)
 			{
-				this->quadrangleConnectivity(quadrangle,0) = firstElementIndex + quadrangle;
+				this->quadrangle[quadrangleCount].index = firstElementIndex + quadrangleCount;
 				for(unsigned vertexIndex=0 ; vertexIndex<4 ; ++vertexIndex)
-					this->quadrangleConnectivity(quadrangle,vertexIndex+1) = elementConnectivity[4*quadrangle+vertexIndex] - 1;
+					this->quadrangle[quadrangleCount].connectivity(vertexIndex) = elementConnectivity[4*quadrangleCount+vertexIndex] - 1;
 			}
 			delete elementConnectivity;
 		}
@@ -129,12 +129,12 @@ void GridData::readElementConnectivity(void)
 			error = cg_elements_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementConnectivity,NULL); CHKERRQ(error);
 			const unsigned numberOfTriangles = numberOfElementConnectivityDataValues / 3;
 			if( numberOfTriangles != (lastElementIndex - firstElementIndex + 1)) cg_error_exit();
-			this->triangleConnectivity.resize(numberOfTriangles,Eigen::NoChange);
-			for(unsigned triangle=0 ; triangle<numberOfTriangles ; ++triangle)
+			this->triangle.resize(numberOfTriangles);
+			for(unsigned triangleCount=0 ; triangleCount<numberOfTriangles ; ++triangleCount)
 			{
-				this->triangleConnectivity(triangle,0) = firstElementIndex + triangle;
+				this->triangle[triangleCount].index = firstElementIndex + triangleCount;
 				for(unsigned vertexIndex=0 ; vertexIndex<3 ; ++vertexIndex)
-					this->triangleConnectivity(triangle,vertexIndex+1) = elementConnectivity[3*triangle+vertexIndex] - 1;
+					this->triangle[triangleCount].connectivity(vertexIndex) = elementConnectivity[3*triangleCount+vertexIndex] - 1;
 			}
 			delete elementConnectivity;
 		}

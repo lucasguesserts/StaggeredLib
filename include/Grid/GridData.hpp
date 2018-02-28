@@ -3,6 +3,8 @@
 
 #include <Eigen/Core>
 #include <string>
+#include <vector>
+#include <Grid/ElementDefinition.hpp>
 
 struct GridData
 {
@@ -12,8 +14,8 @@ struct GridData
 
 	unsigned dimension;
 	Eigen::Matrix<double,Eigen::Dynamic,3> coordinates;
-	Eigen::Matrix<unsigned,Eigen::Dynamic,1+3> triangleConnectivity;
-	Eigen::Matrix<unsigned,Eigen::Dynamic,1+4> quadrangleConnectivity;
+	std::vector<ElementDefinition<3>> triangle;
+	std::vector<ElementDefinition<4>> quadrangle;
 
 	private:
 		int fileIndex, zoneIndex, baseIndex, numberOfSections;
