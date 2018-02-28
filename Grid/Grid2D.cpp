@@ -14,54 +14,49 @@ Grid2D::Grid2D(const GridData& gridData)
 
 void Grid2D::buildTrianglesOn2DGrid(const GridData& gridData)
 {
-	const unsigned numberOfVerticesPerTriangle = 3;
-	const unsigned numberOfTriangles = gridData.triangleConnectivity.rows();
+	constexpr unsigned numberOfVerticesPerTriangle = 3;
+	const unsigned numberOfTriangles = gridData.triangle.size();
 	this->triangles.reserve(numberOfTriangles);
-	for(unsigned triangleCounter=0 ; triangleCounter<numberOfTriangles ; ++triangleCounter)
+	for(const ElementDefinition<3>& triangleDefinition: gridData.triangle)
 	{
 		Triangle triangle;
+		triangle.setIndex(triangleDefinition.index);
 		for(unsigned vertexLocalIndexInTriangle=0 ; vertexLocalIndexInTriangle<numberOfVerticesPerTriangle ; ++vertexLocalIndexInTriangle)
 		{
-			unsigned vertexIndex = gridData.triangleConnectivity(triangleCounter,vertexLocalIndexInTriangle);
+			unsigned vertexIndex = triangleDefinition.connectivity(vertexLocalIndexInTriangle);
 			triangle.addVertex(this->vertices[vertexIndex]);
 		}
 		this->triangles.push_back(triangle);
 	}
-	return ;
+	return;
 }
 
 void Grid2D::buildQuadranglesOn2DGrid(const GridData& gridData)
 {
-	const unsigned numberOfVerticesPerQuadrangle = 4;
-	const unsigned numberOfQuadrangles = gridData.quadrangleConnectivity.rows();
+	constexpr unsigned numberOfVerticesPerQuadrangle = 4;
+	const unsigned numberOfQuadrangles = gridData.quadrangle.size();
 	this->quadrangles.reserve(numberOfQuadrangles);
-	for(unsigned quadrangleIndex=0 ; quadrangleIndex<numberOfQuadrangles ; ++quadrangleIndex)
+	for(const ElementDefinition<4>& quadrangleDefinition: gridData.quadrangle)
 	{
 		Quadrangle quadrangle;
+		quadrangle.setIndex(quadrangleDefinition.index);
 		for(unsigned vertexLocalIndexInQuadrangle=0 ; vertexLocalIndexInQuadrangle<numberOfVerticesPerQuadrangle ; ++vertexLocalIndexInQuadrangle)
 		{
-			unsigned vertexIndex = gridData.quadrangleConnectivity(quadrangleIndex,vertexLocalIndexInQuadrangle);
+			unsigned vertexIndex = quadrangleDefinition.connectivity(vertexLocalIndexInQuadrangle);
 			quadrangle.addVertex(this->vertices[vertexIndex]);
 		}
 		this->quadrangles.push_back(quadrangle);
 	}
-	return ;
+	return;
 }
 
 void Grid2D::assignElementsPointers()
 {
-	unsigned index = 0;
+	const unsigned numberOfElements = this->triangles.size() + this->quadrangles.size();
+	this->elements.resize(numberOfElements);
 	for(Triangle& triangle: this->triangles)
-	{
-		triangle.setIndex(index);
-		this->elements.push_back((Element*) &triangle);
-		index++;
-	}
+		this->elements[triangle.getIndex()] = (Element*) &triangle;
 	for(Quadrangle& quadrangle: this->quadrangles)
-	{
-		quadrangle.setIndex(index);
-		this->elements.push_back((Element*) &quadrangle);
-		index++;
-	}
-	return ;
+		this->elements[quadrangle.getIndex()] = (Element*) &quadrangle;
+	return;
 }

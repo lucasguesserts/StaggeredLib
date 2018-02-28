@@ -5,6 +5,7 @@
 #include <GeometricEntity/Quadrangle.hpp>
 #include <GeometricEntity/Triangle.hpp>
 #include <Grid/Grid.hpp>
+#include <Grid/ElementDefinition.hpp>
 #include <Grid/GridData.hpp>
 
 struct Grid2D: public Grid
