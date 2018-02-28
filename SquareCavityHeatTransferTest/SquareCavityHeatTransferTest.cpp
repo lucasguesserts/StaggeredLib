@@ -330,7 +330,7 @@ TestCase("Export scalar field to cgns file")
 	GridData gridData(tempFileName);
 	const unsigned numberOfElements = gridData.quadrangleConnectivity.rows() + gridData.triangleConnectivity.rows();
 	Eigen::VectorXd temperature = Eigen::VectorXd::Zero(numberOfElements);
-	temperature << 0.0, 1.0, 2.0, 3.0, 4.0, 5.0;
+	temperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 	GridSave::savePermanentScalarFieldToCGNS("solution test", "Temperature", temperature, tempFileName);
 		// TODO:
 		// verify in some way that the field was written
