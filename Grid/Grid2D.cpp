@@ -17,12 +17,12 @@ void Grid2D::buildTrianglesOn2DGrid(const GridData& gridData)
 	const unsigned numberOfVerticesPerTriangle = 3;
 	const unsigned numberOfTriangles = gridData.triangleConnectivity.rows();
 	this->triangles.reserve(numberOfTriangles);
-	for(unsigned triangleIndex=0 ; triangleIndex<numberOfTriangles ; ++triangleIndex)
+	for(unsigned triangleCounter=0 ; triangleCounter<numberOfTriangles ; ++triangleCounter)
 	{
 		Triangle triangle;
 		for(unsigned vertexLocalIndexInTriangle=0 ; vertexLocalIndexInTriangle<numberOfVerticesPerTriangle ; ++vertexLocalIndexInTriangle)
 		{
-			unsigned vertexIndex = gridData.triangleConnectivity(triangleIndex,vertexLocalIndexInTriangle);
+			unsigned vertexIndex = gridData.triangleConnectivity(triangleCounter,vertexLocalIndexInTriangle);
 			triangle.addVertex(this->vertices[vertexIndex]);
 		}
 		this->triangles.push_back(triangle);
