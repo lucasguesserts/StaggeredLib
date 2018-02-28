@@ -6,58 +6,86 @@ const std::string GridData::projectGridDirectory = GRID_DIRECTORY;
 #define NAME_LENGTH 200
 #define CHKERRQ(err) if((err)) cg_error_exit()
 
-GridData::GridData(const std::string cgnsFileName)
+void GridData::openFile(const std::string cgnsFileName)
 {
 	int error;
-	this->dimension = 2;
-	// file
-	int file;
-		error = cg_open(cgnsFileName.c_str(),CGNS_ENUMV(CG_MODE_READ),&file); CHKERRQ(error);
-	// base
+	error = cg_open(cgnsFileName.c_str(),CGNS_ENUMV(CG_MODE_READ),&(this->fileIndex)); CHKERRQ(error);
+	return;
+}
+
+void GridData::openBase(void)
+{
+	int error;
 	char baseName[NAME_LENGTH];
 	int base, numberOfBases, cellDimension, physicalDimension;
-		error = cg_nbases(file, &numberOfBases); CHKERRQ(error);
+	this->dimension = 2;
+	error = cg_nbases(this->fileIndex, &numberOfBases); CHKERRQ(error);
 		if(numberOfBases!=1) cg_error_exit();
-		else base = 1;
-		error = cg_base_read(file,base,baseName,&cellDimension,&physicalDimension); CHKERRQ(error);
-		if(cellDimension!=2) cg_error_exit();
-		if(physicalDimension!=2) cg_error_exit();
-	// zone
+		else this->baseIndex = 1;
+	error = cg_base_read(this->fileIndex,this->baseIndex,baseName,&cellDimension,&physicalDimension); CHKERRQ(error);
+		if(cellDimension!=this->dimension) cg_error_exit();
+		if(physicalDimension!=this->dimension) cg_error_exit();
+	return;
+}
+
+void GridData::openZone(void)
+{
+	int error;
 	char zoneName[NAME_LENGTH];
 	int zone, numberOfZones;
 	ZoneType_t zoneType;
 	cgsize_t size[3];
-		error = cg_nzones(file, base, &numberOfZones); CHKERRQ(error);
+	error = cg_nzones(this->fileIndex,this->baseIndex, &numberOfZones); CHKERRQ(error);
 		if(numberOfZones!=1) cg_error_exit();
-		else zone = 1;
-		error = cg_zone_type(file,base,zone,&zoneType); CHKERRQ(error);
-		if(zoneType!=Unstructured) cg_error_exit();
-		error = cg_zone_read(file,base,zone,zoneName,size); CHKERRQ(error);
-			// 'size' for 2D unstructured: NVertex, NCell2D, NBoundVertex
-	// grid
+		else this->zoneIndex = 1;
+	error = cg_zone_type(this->fileIndex,this->baseIndex,this->zoneIndex,&zoneType); CHKERRQ(error);
+		if(zoneType!=CGNS_ENUMV(Unstructured)) cg_error_exit();
+	error = cg_zone_read(this->fileIndex,this->baseIndex,this->zoneIndex,zoneName,size); CHKERRQ(error);
+	this->numberOfVertices = size[0];
+	this->numberOfElements = size[1];
+	return;
+}
+
+void GridData::verifyNumberOfGrids(void)
+{
+	int error;
 	int numberOfGrids;
-		error = cg_ngrids(file,base,zone,&numberOfGrids); CHKERRQ(error);
-		if(numberOfGrids!=1) cg_error_exit();
+	error = cg_ngrids(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfGrids); CHKERRQ(error);
+	if(numberOfGrids!=1) cg_error_exit();
+	return;
+}
+
+GridData::GridData(const std::string cgnsFileName)
+{
+	int error;
+	this->dimension = 2;
+
+	this->openFile(cgnsFileName);
+	this->openBase();
+	this->openZone();
+	this->verifyNumberOfGrids();
 	// coordinates
 	int numberOfCoordinates;
-	cgsize_t range_min=1, range_max=size[0];
+	cgsize_t range_min=1, range_max=this->numberOfVertices;
 	double *coordinatesX, *coordinatesY;
-		error = cg_ncoords(file,base,zone,&numberOfCoordinates); CHKERRQ(error);
+		error = cg_ncoords(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfCoordinates); CHKERRQ(error);
 		if(numberOfCoordinates!=2) cg_error_exit();
-		coordinatesX = (double *) malloc(size[0]*sizeof(double));
-		coordinatesY = (double *) malloc(size[0]*sizeof(double));
-		error = cg_coord_read(file, base, zone, "CoordinateX", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesX); CHKERRQ(error);
-		error = cg_coord_read(file, base, zone, "CoordinateY", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesY); CHKERRQ(error);
-	this->coordinates.resize(size[0],Eigen::NoChange);
-	for(unsigned vertexIndex=0 ; vertexIndex<size[0] ; ++vertexIndex)
+		coordinatesX = new double[this->numberOfVertices];
+		coordinatesY = new double[this->numberOfVertices];
+		error = cg_coord_read(this->fileIndex, this->baseIndex, this->zoneIndex, "CoordinateX", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesX); CHKERRQ(error);
+		error = cg_coord_read(this->fileIndex, this->baseIndex, this->zoneIndex, "CoordinateY", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesY); CHKERRQ(error);
+	this->coordinates.resize(this->numberOfVertices,Eigen::NoChange);
+	for(unsigned vertexIndex=0 ; vertexIndex<this->numberOfVertices ; ++vertexIndex)
 	{
 		this->coordinates(vertexIndex,0) = coordinatesX[vertexIndex];
 		this->coordinates(vertexIndex,1) = coordinatesY[vertexIndex];
 		this->coordinates(vertexIndex,2) = 0.0;
 	}
+	delete coordinatesX;
+	delete coordinatesY;
 	// Element connectivity - section
 	int numberOfSections;
-	error = cg_nsections(file,base,zone,&numberOfSections); CHKERRQ(error);
+	error = cg_nsections(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfSections); CHKERRQ(error);
 	if(numberOfSections<1) cg_error_exit();
 	for(int section=1 ; section<=numberOfSections ; ++section)
 	{
@@ -66,12 +94,12 @@ GridData::GridData(const std::string cgnsFileName)
 		cgsize_t sectionStart, sectionEnd, elementDataSize;
 		cgsize_t *elementConnectivity;
 		int numberOfBoundaries, parentFlag;
-		error = cg_section_read(file,base,zone,section,elementSectionName,&elementType,&sectionStart,&sectionEnd,&numberOfBoundaries,&parentFlag); CHKERRQ(error);
+		error = cg_section_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementSectionName,&elementType,&sectionStart,&sectionEnd,&numberOfBoundaries,&parentFlag); CHKERRQ(error);
 		if(elementType==CGNS_ENUMV(QUAD_4))
 		{
-			error = cg_ElementDataSize(file,base,zone,section,&elementDataSize); CHKERRQ(error);
+			error = cg_ElementDataSize(this->fileIndex,this->baseIndex,this->zoneIndex,section,&elementDataSize); CHKERRQ(error);
 			elementConnectivity = new cgsize_t[elementDataSize];
-			error = cg_elements_read(file,base,zone,section,elementConnectivity,NULL); CHKERRQ(error);
+			error = cg_elements_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementConnectivity,NULL); CHKERRQ(error);
 			if(elementDataSize%4 != 0) cg_error_exit();
 			const unsigned numberOfQuadrangles = elementDataSize / 4;
 			this->quadrangleConnectivity.resize(numberOfQuadrangles,Eigen::NoChange);
@@ -81,9 +109,9 @@ GridData::GridData(const std::string cgnsFileName)
 		}
 		if(elementType==CGNS_ENUMV(TRI_3))
 		{
-			error = cg_ElementDataSize(file,base,zone,section,&elementDataSize); CHKERRQ(error);
+			error = cg_ElementDataSize(this->fileIndex,this->baseIndex,this->zoneIndex,section,&elementDataSize); CHKERRQ(error);
 			elementConnectivity = new cgsize_t[elementDataSize];
-			error = cg_elements_read(file,base,zone,section,elementConnectivity,NULL); CHKERRQ(error);
+			error = cg_elements_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementConnectivity,NULL); CHKERRQ(error);
 			if(elementDataSize%3 != 0) cg_error_exit();
 			const unsigned numberOfTriangles = elementDataSize / 3;
 			this->triangleConnectivity.resize(numberOfTriangles,Eigen::NoChange);
