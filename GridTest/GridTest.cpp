@@ -1,4 +1,5 @@
 #include <Utils/Test.hpp>
+#include <array>
 #include <vector>
 #include <string>
 
@@ -86,54 +87,66 @@ TestCase("Grid data structure", "[Grid][GridData]")
 	}
 }
 
-//TestCase("grid reader from CGNS", "[GridData][CGNS]")
-//{
-	//const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	//GridData gridData(cgnsGridFileName);
-	//section("dimension")
-	//{
-		//const unsigned dimension = 2;
-		//check(gridData.dimension==dimension);
-	//}
-	//section("coordinates")
-	//{
-		//const unsigned numberOfVertices = 9;
-		//Eigen::MatrixXd verticesCoordinates;
-		//verticesCoordinates.resize(numberOfVertices,3);
-		//verticesCoordinates << 0.0, 0.0, 0.0,
-							   //1.5, 0.0, 0.0,
-							   //3.0, 0.0, 0.0,
-							   //0.0, 1.5, 0.0,
-							   //1.5, 1.5, 0.0,
-							   //3.0, 1.5, 0.0,
-							   //0.0, 3.0, 0.0,
-							   //1.5, 3.0, 0.0,
-							   //3.0, 3.0, 0.0;
-		//check(gridData.coordinates==verticesCoordinates);
-	//}
-	//section("quadrangle connectivity")
-	//{
-		//constexpr unsigned numberOfQuadrangles = 2;
-		//constexpr unsigned verticesPerQuadrangle = 4;
-		//Eigen::Matrix<unsigned,Eigen::Dynamic,Eigen::Dynamic> quadrangleConnectivity;
-		//quadrangleConnectivity.resize(numberOfQuadrangles,1+verticesPerQuadrangle);
-		//quadrangleConnectivity << 0, 0, 1, 4, 3,
-								  //1, 1, 2, 5, 4;
-		//check(gridData.quadrangleConnectivity==quadrangleConnectivity);
-	//}
-	//section("triangle connectivity")
-	//{
-		//const unsigned numberOfTriangles = 4;
-		//const unsigned verticesPerTriangle = 3;
-		//Eigen::Matrix<unsigned,Eigen::Dynamic,Eigen::Dynamic> triangleConnectivity;
-		//triangleConnectivity.resize(numberOfTriangles,1+verticesPerTriangle);
-		//triangleConnectivity << 2, 3, 4, 7,
-								//3, 3, 7, 6,
-								//4, 4, 5, 8,
-								//5, 4, 8, 7;
-		//check(gridData.triangleConnectivity==triangleConnectivity);
-	//}
-//}
+TestCase("grid reader from CGNS", "[GridData][CGNS]")
+{
+	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	GridData gridData(cgnsGridFileName);
+	section("dimension")
+	{
+		const unsigned dimension = 2;
+		check(gridData.dimension==dimension);
+	}
+	section("coordinates")
+	{
+		const unsigned numberOfVertices = 9;
+		Eigen::MatrixXd verticesCoordinates;
+		verticesCoordinates.resize(numberOfVertices,3);
+		verticesCoordinates << 0.0, 0.0, 0.0,
+							   1.5, 0.0, 0.0,
+							   3.0, 0.0, 0.0,
+							   0.0, 1.5, 0.0,
+							   1.5, 1.5, 0.0,
+							   3.0, 1.5, 0.0,
+							   0.0, 3.0, 0.0,
+							   1.5, 3.0, 0.0,
+							   3.0, 3.0, 0.0;
+		check(gridData.coordinates==verticesCoordinates);
+	}
+	section("quadrangle connectivity")
+	{
+		constexpr unsigned numberOfQuadrangles = 2;
+		constexpr unsigned verticesPerQuadrangle = 4;
+		std::array<ElementDefinition<4>,numberOfQuadrangles> quadrangleDefinition;
+		quadrangleDefinition[0].index = 0;
+		quadrangleDefinition[0].connectivity << 0, 1, 4, 3;
+		quadrangleDefinition[1].index = 1;
+		quadrangleDefinition[1].connectivity << 1, 2, 5, 4;
+		for(unsigned count=0 ; count<numberOfQuadrangles ; ++count)
+		{
+			check(gridData.quadrangle[count].index==quadrangleDefinition[count].index);
+			check(gridData.quadrangle[count].connectivity==quadrangleDefinition[count].connectivity);
+		}
+	}
+	section("triangle connectivity")
+	{
+		constexpr unsigned numberOfTriangles = 4;
+		constexpr unsigned verticesPerTriangle = 3;
+		std::array<ElementDefinition<3>,numberOfTriangles> triangleDefinition;
+		triangleDefinition[0].index = 2;
+		triangleDefinition[0].connectivity << 3, 4, 7;
+		triangleDefinition[1].index = 3;
+		triangleDefinition[1].connectivity << 3, 7, 6;
+		triangleDefinition[2].index = 4;
+		triangleDefinition[2].connectivity << 4, 5, 8;
+		triangleDefinition[3].index = 5;
+		triangleDefinition[3].connectivity << 4, 8, 7;
+		for(unsigned count=0 ; count<numberOfTriangles ; ++count)
+		{
+			check(gridData.triangle[count].index==triangleDefinition[count].index);
+			check(gridData.triangle[count].connectivity==triangleDefinition[count].connectivity);
+		}
+	}
+}
 
 TestCase("Grid structure", "[Grid]")
 {
