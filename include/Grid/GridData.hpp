@@ -16,13 +16,17 @@ struct GridData
 	Eigen::Matrix<unsigned,Eigen::Dynamic,4> quadrangleConnectivity;
 
 	private:
-		int fileIndex, zoneIndex, baseIndex;
+		int fileIndex, zoneIndex, baseIndex, numberOfSections;
 		unsigned numberOfVertices, numberOfElements;
 
 		void openFile(const std::string cgnsFileName);
 		void openBase(void);
 		void openZone(void);
 		void verifyNumberOfGrids(void);
+		void verifyNumberOfCoordinates(void);
+		void readCoordinates(void);
+		void readNumberOfSections(void);
+		void readElementConnectivity(void);
 };
 
 #endif

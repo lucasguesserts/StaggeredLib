@@ -55,25 +55,23 @@ void GridData::verifyNumberOfGrids(void)
 	return;
 }
 
-GridData::GridData(const std::string cgnsFileName)
+void GridData::verifyNumberOfCoordinates(void)
 {
 	int error;
-	this->dimension = 2;
-
-	this->openFile(cgnsFileName);
-	this->openBase();
-	this->openZone();
-	this->verifyNumberOfGrids();
-	// coordinates
 	int numberOfCoordinates;
+	error = cg_ncoords(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfCoordinates); CHKERRQ(error);
+	if(numberOfCoordinates!=2) cg_error_exit();
+	return;
+}
+
+void GridData::readCoordinates(void)
+{
+	int error;
 	cgsize_t range_min=1, range_max=this->numberOfVertices;
-	double *coordinatesX, *coordinatesY;
-		error = cg_ncoords(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfCoordinates); CHKERRQ(error);
-		if(numberOfCoordinates!=2) cg_error_exit();
-		coordinatesX = new double[this->numberOfVertices];
-		coordinatesY = new double[this->numberOfVertices];
-		error = cg_coord_read(this->fileIndex, this->baseIndex, this->zoneIndex, "CoordinateX", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesX); CHKERRQ(error);
-		error = cg_coord_read(this->fileIndex, this->baseIndex, this->zoneIndex, "CoordinateY", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesY); CHKERRQ(error);
+	double * coordinatesX = new double[this->numberOfVertices];
+	double * coordinatesY = new double[this->numberOfVertices];
+	error = cg_coord_read(this->fileIndex, this->baseIndex, this->zoneIndex, "CoordinateX", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesX); CHKERRQ(error);
+	error = cg_coord_read(this->fileIndex, this->baseIndex, this->zoneIndex, "CoordinateY", CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinatesY); CHKERRQ(error);
 	this->coordinates.resize(this->numberOfVertices,Eigen::NoChange);
 	for(unsigned vertexIndex=0 ; vertexIndex<this->numberOfVertices ; ++vertexIndex)
 	{
@@ -83,11 +81,21 @@ GridData::GridData(const std::string cgnsFileName)
 	}
 	delete coordinatesX;
 	delete coordinatesY;
-	// Element connectivity - section
-	int numberOfSections;
-	error = cg_nsections(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfSections); CHKERRQ(error);
-	if(numberOfSections<1) cg_error_exit();
-	for(int section=1 ; section<=numberOfSections ; ++section)
+	return;
+}
+
+void GridData::readNumberOfSections(void)
+{
+	int error;
+	error = cg_nsections(this->fileIndex,this->baseIndex,this->zoneIndex,&(this->numberOfSections)); CHKERRQ(error);
+	if(this->numberOfSections < 1) cg_error_exit();
+	return;
+}
+
+void GridData::readElementConnectivity(void)
+{
+	int error;
+	for(int section=1 ; section<=this->numberOfSections ; ++section)
 	{
 		char elementSectionName[NAME_LENGTH];
 		ElementType_t elementType;
@@ -120,5 +128,21 @@ GridData::GridData(const std::string cgnsFileName)
 					this->triangleConnectivity(triangle,vertexIndex) = elementConnectivity[3*triangle+vertexIndex] - 1;
 		}
 	}
+	return;
+}
+
+GridData::GridData(const std::string cgnsFileName)
+{
+	int error;
+	this->dimension = 2;
+
+	this->openFile(cgnsFileName);
+	this->openBase();
+	this->openZone();
+	this->verifyNumberOfGrids();
+	this->verifyNumberOfCoordinates();
+	this->readCoordinates();
+	this->readNumberOfSections();
+	this->readElementConnectivity();
 	return;
 }
