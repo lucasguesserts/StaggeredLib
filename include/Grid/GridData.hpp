@@ -12,8 +12,8 @@ struct GridData
 
 	unsigned dimension;
 	Eigen::Matrix<double,Eigen::Dynamic,3> coordinates;
-	Eigen::Matrix<unsigned,Eigen::Dynamic,3> triangleConnectivity;
-	Eigen::Matrix<unsigned,Eigen::Dynamic,4> quadrangleConnectivity;
+	Eigen::Matrix<unsigned,Eigen::Dynamic,1+3> triangleConnectivity;
+	Eigen::Matrix<unsigned,Eigen::Dynamic,1+4> quadrangleConnectivity;
 
 	private:
 		int fileIndex, zoneIndex, baseIndex, numberOfSections;

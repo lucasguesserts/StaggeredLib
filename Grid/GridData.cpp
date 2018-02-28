@@ -95,37 +95,48 @@ void GridData::readNumberOfSections(void)
 void GridData::readElementConnectivity(void)
 {
 	int error;
+	unsigned elementIndex = 0;
 	for(int section=1 ; section<=this->numberOfSections ; ++section)
 	{
 		char elementSectionName[NAME_LENGTH];
 		ElementType_t elementType;
-		cgsize_t sectionStart, sectionEnd, elementDataSize;
-		cgsize_t *elementConnectivity;
+		cgsize_t firstElementIndex, lastElementIndex, numberOfElementConnectivityDataValues, *elementConnectivity;
 		int numberOfBoundaries, parentFlag;
-		error = cg_section_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementSectionName,&elementType,&sectionStart,&sectionEnd,&numberOfBoundaries,&parentFlag); CHKERRQ(error);
+		error = cg_section_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementSectionName,&elementType,&firstElementIndex,&lastElementIndex,&numberOfBoundaries,&parentFlag); CHKERRQ(error);
+			--firstElementIndex; --lastElementIndex; // The CGNS enumeration starts at 1, Here it starts at 0.
 		if(elementType==CGNS_ENUMV(QUAD_4))
 		{
-			error = cg_ElementDataSize(this->fileIndex,this->baseIndex,this->zoneIndex,section,&elementDataSize); CHKERRQ(error);
-			elementConnectivity = new cgsize_t[elementDataSize];
+			error = cg_ElementDataSize(this->fileIndex,this->baseIndex,this->zoneIndex,section,&numberOfElementConnectivityDataValues); CHKERRQ(error);
+			if(numberOfElementConnectivityDataValues%4 != 0) cg_error_exit();
+			elementConnectivity = new cgsize_t[numberOfElementConnectivityDataValues];
 			error = cg_elements_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementConnectivity,NULL); CHKERRQ(error);
-			if(elementDataSize%4 != 0) cg_error_exit();
-			const unsigned numberOfQuadrangles = elementDataSize / 4;
+			const unsigned numberOfQuadrangles = numberOfElementConnectivityDataValues / 4;
+			if( numberOfQuadrangles != (lastElementIndex - firstElementIndex + 1)) cg_error_exit();
 			this->quadrangleConnectivity.resize(numberOfQuadrangles,Eigen::NoChange);
 			for(unsigned quadrangle=0 ; quadrangle<numberOfQuadrangles ; ++quadrangle)
+			{
+				this->quadrangleConnectivity(quadrangle,0) = firstElementIndex + quadrangle;
 				for(unsigned vertexIndex=0 ; vertexIndex<4 ; ++vertexIndex)
-					this->quadrangleConnectivity(quadrangle,vertexIndex) = elementConnectivity[4*quadrangle+vertexIndex] - 1;
+					this->quadrangleConnectivity(quadrangle,vertexIndex+1) = elementConnectivity[4*quadrangle+vertexIndex] - 1;
+			}
+			delete elementConnectivity;
 		}
 		if(elementType==CGNS_ENUMV(TRI_3))
 		{
-			error = cg_ElementDataSize(this->fileIndex,this->baseIndex,this->zoneIndex,section,&elementDataSize); CHKERRQ(error);
-			elementConnectivity = new cgsize_t[elementDataSize];
+			error = cg_ElementDataSize(this->fileIndex,this->baseIndex,this->zoneIndex,section,&numberOfElementConnectivityDataValues); CHKERRQ(error);
+			if(numberOfElementConnectivityDataValues%3 != 0) cg_error_exit();
+			elementConnectivity = new cgsize_t[numberOfElementConnectivityDataValues];
 			error = cg_elements_read(this->fileIndex,this->baseIndex,this->zoneIndex,section,elementConnectivity,NULL); CHKERRQ(error);
-			if(elementDataSize%3 != 0) cg_error_exit();
-			const unsigned numberOfTriangles = elementDataSize / 3;
+			const unsigned numberOfTriangles = numberOfElementConnectivityDataValues / 3;
+			if( numberOfTriangles != (lastElementIndex - firstElementIndex + 1)) cg_error_exit();
 			this->triangleConnectivity.resize(numberOfTriangles,Eigen::NoChange);
 			for(unsigned triangle=0 ; triangle<numberOfTriangles ; ++triangle)
+			{
+				this->triangleConnectivity(triangle,0) = firstElementIndex + triangle;
 				for(unsigned vertexIndex=0 ; vertexIndex<3 ; ++vertexIndex)
-					this->triangleConnectivity(triangle,vertexIndex) = elementConnectivity[3*triangle+vertexIndex] - 1;
+					this->triangleConnectivity(triangle,vertexIndex+1) = elementConnectivity[3*triangle+vertexIndex] - 1;
+			}
+			delete elementConnectivity;
 		}
 	}
 	return;
