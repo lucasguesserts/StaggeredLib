@@ -59,10 +59,7 @@ TestCase("Grid data structure", "[Grid][GridData]")
 		gridData.quadrangle[1].index = 17;
 		gridData.quadrangle[1].connectivity << 3, 5, 6, 4;
 		for(unsigned quadrangleCount=0 ; quadrangleCount<numberOfQuadrangles ; ++quadrangleCount)
-		{
-			check(gridData.quadrangle[quadrangleCount].index==quadrangleDefinition[quadrangleCount].index);
-			check(gridData.quadrangle[quadrangleCount].connectivity==quadrangleDefinition[quadrangleCount].connectivity);
-		}
+			check(gridData.quadrangle[quadrangleCount]==quadrangleDefinition[quadrangleCount]);
 	}
 	section("triangle connectivity")
 	{
@@ -80,10 +77,7 @@ TestCase("Grid data structure", "[Grid][GridData]")
 		gridData.triangle[1].index = 94;
 		gridData.triangle[1].connectivity << 8, 1, 6;
 		for(unsigned triangleCount=0 ; triangleCount<numberOfTriangles ; ++triangleCount)
-		{
-			check(gridData.triangle[triangleCount].index==triangleDefinition[triangleCount].index);
-			check(gridData.triangle[triangleCount].connectivity==triangleDefinition[triangleCount].connectivity);
-		}
+			check(gridData.triangle[triangleCount]==triangleDefinition[triangleCount]);
 	}
 }
 
@@ -122,10 +116,7 @@ TestCase("grid reader from CGNS", "[GridData][CGNS]")
 		quadrangleDefinition[1].index = 1;
 		quadrangleDefinition[1].connectivity << 1, 2, 5, 4;
 		for(unsigned count=0 ; count<numberOfQuadrangles ; ++count)
-		{
-			check(gridData.quadrangle[count].index==quadrangleDefinition[count].index);
-			check(gridData.quadrangle[count].connectivity==quadrangleDefinition[count].connectivity);
-		}
+			check(gridData.quadrangle[count]==quadrangleDefinition[count]);
 	}
 	section("triangle connectivity")
 	{
@@ -141,10 +132,7 @@ TestCase("grid reader from CGNS", "[GridData][CGNS]")
 		triangleDefinition[3].index = 5;
 		triangleDefinition[3].connectivity << 4, 8, 7;
 		for(unsigned count=0 ; count<numberOfTriangles ; ++count)
-		{
-			check(gridData.triangle[count].index==triangleDefinition[count].index);
-			check(gridData.triangle[count].connectivity==triangleDefinition[count].connectivity);
-		}
+			check(gridData.triangle[count]==triangleDefinition[count]);
 	}
 }
 
