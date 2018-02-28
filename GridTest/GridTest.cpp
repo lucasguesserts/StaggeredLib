@@ -23,46 +23,68 @@ TestCase("Element definition for GridData", "[ElementDefinition]")
 	check(elementDefinition.connectivity==connectivity);
 }
 
-//TestCase("Grid data structure", "[Grid][GridData]")
-//{
-	//const unsigned numberOfVertices = 7;
-	//GridData gridData;
-	//gridData.coordinates.resize(numberOfVertices,Eigen::NoChange);
-	//gridData.coordinates <<
-		//0.0, 0.0, 0.0,
-		//1.0, 0.0, 0.0,
-		//0.0, 1.0, 0.0,
-		//1.0, 1.0, 0.0,
-		//0.5, 2.0, 0.0,
-		//2.0, 1.5, 0.0,
-		//1.5, 2.5, 0.0;
-	//section("dimension")
-	//{
-		//const unsigned dimension = 2;
-		//gridData.dimension = dimension;
-		//check(gridData.dimension==dimension);
-	//}
-	//section("quadrangle connectivity")
-	//{
-		//Eigen::Matrix<unsigned,2,1+4> quadrangleConnectivity;
-		//quadrangleConnectivity << 0, 0, 1, 3, 2,
-								  //1, 3, 5, 6, 4;
-		//gridData.quadrangleConnectivity.resize(2,Eigen::NoChange);
-		//gridData.quadrangleConnectivity << 0, 0, 1, 3, 2,
-										   //1, 3, 5, 6, 4;
-		//check(quadrangleConnectivity==quadrangleConnectivity);
-	//}
-	//section("Triangle connectivity")
-	//{
-		//Eigen::Matrix<unsigned,2,1+3> triangleConnectivity;
-		//triangleConnectivity << 0, 2, 3, 4,
-								//1, 1, 5, 3;
-		//gridData.triangleConnectivity.resize(2,Eigen::NoChange);
-		//gridData.triangleConnectivity << 0, 2, 3, 4,
-										 //1, 1, 5, 3;
-		//check(triangleConnectivity==triangleConnectivity);
-	//}
-//}
+TestCase("Grid data structure", "[Grid][GridData]")
+{
+	const unsigned numberOfVertices = 7;
+	GridData gridData;
+	gridData.coordinates.resize(numberOfVertices,Eigen::NoChange);
+	gridData.coordinates <<
+		0.0, 0.0, 0.0,
+		1.0, 0.0, 0.0,
+		0.0, 1.0, 0.0,
+		1.0, 1.0, 0.0,
+		0.5, 2.0, 0.0,
+		2.0, 1.5, 0.0,
+		1.5, 2.5, 0.0;
+	section("dimension")
+	{
+		const unsigned dimension = 2;
+		gridData.dimension = dimension;
+		check(gridData.dimension==dimension);
+	}
+	section("quadrangle connectivity")
+	{
+		constexpr unsigned numberOfQuadrangles = 2;
+		std::array<ElementDefinition<4>,numberOfQuadrangles> quadrangleDefinition;
+		// Two answer quadrangles
+		quadrangleDefinition[0].index = 12;
+		quadrangleDefinition[0].connectivity << 0, 1, 3, 2;
+		quadrangleDefinition[1].index = 17;
+		quadrangleDefinition[1].connectivity << 3, 5, 6, 4;
+		// Two quadrangles in GridData to test
+		gridData.quadrangle.resize(numberOfQuadrangles);
+		gridData.quadrangle[0].index = 12;
+		gridData.quadrangle[0].connectivity << 0, 1, 3, 2;
+		gridData.quadrangle[1].index = 17;
+		gridData.quadrangle[1].connectivity << 3, 5, 6, 4;
+		for(unsigned quadrangleCount=0 ; quadrangleCount<numberOfQuadrangles ; ++quadrangleCount)
+		{
+			check(gridData.quadrangle[quadrangleCount].index==quadrangleDefinition[quadrangleCount].index);
+			check(gridData.quadrangle[quadrangleCount].connectivity==quadrangleDefinition[quadrangleCount].connectivity);
+		}
+	}
+	section("triangle connectivity")
+	{
+		constexpr unsigned numberOfTriangles = 2;
+		std::array<ElementDefinition<3>,numberOfTriangles> triangleDefinition;
+		// Two answer triangles
+		triangleDefinition[0].index = 48;
+		triangleDefinition[0].connectivity << 5, 7, 1;
+		triangleDefinition[1].index = 94;
+		triangleDefinition[1].connectivity << 8, 1, 6;
+		// Two triangles in GridData to test
+		gridData.triangle.resize(numberOfTriangles);
+		gridData.triangle[0].index = 48;
+		gridData.triangle[0].connectivity << 5, 7, 1;
+		gridData.triangle[1].index = 94;
+		gridData.triangle[1].connectivity << 8, 1, 6;
+		for(unsigned triangleCount=0 ; triangleCount<numberOfTriangles ; ++triangleCount)
+		{
+			check(gridData.triangle[triangleCount].index==triangleDefinition[triangleCount].index);
+			check(gridData.triangle[triangleCount].connectivity==triangleDefinition[triangleCount].connectivity);
+		}
+	}
+}
 
 //TestCase("grid reader from CGNS", "[GridData][CGNS]")
 //{
