@@ -96,6 +96,18 @@ TestCase("CGNS file structure", "[CGNSFile]")
 		check(cgnsFile.numberOfVertices==9);
 		check(cgnsFile.numberOfElements==6);
 	}
+	section("read coordinates X")
+	{
+		std::vector<double> verticesCoordinateX{0.0, 1.5, 3.0, 0.0, 1.5, 3.0, 0.0, 1.5, 3.0};
+		std::vector<double> readCoordinateX = cgnsFile.readCoordinates("CoordinateX");
+		check(readCoordinateX==verticesCoordinateX);
+	}
+	section("read coordinates Y")
+	{
+		std::vector<double> verticesCoordinateY{0.0, 0.0, 0.0, 1.5, 1.5, 1.5, 3.0, 3.0, 3.0};
+		std::vector<double> readCoordinateY = cgnsFile.readCoordinates("CoordinateY");
+		check(readCoordinateY==verticesCoordinateY);
+	}
 }
 
 TestCase("grid reader from CGNS", "[GridData][CGNS]")

@@ -46,3 +46,32 @@ void CGNSFile::openZone(void)
 	this->numberOfElements = size[1];
 	return;
 }
+
+std::vector<double> CGNSFile::readCoordinates(const std::string& coordinateName)
+{
+	this->verifyNumberOfGrids();
+	this->verifyNumberOfCoordinates();
+	int error;
+	cgsize_t range_min=1, range_max=this->numberOfVertices;
+	std::vector<double> coordinates(numberOfVertices);
+	error = cg_coord_read(this->fileIndex, this->baseIndex, this->zoneIndex, coordinateName.c_str(), CGNS_ENUMV(RealDouble), &range_min, &range_max, coordinates.data()); CHKERRQ(error);
+	return coordinates;
+}
+
+void CGNSFile::verifyNumberOfGrids(void)
+{
+	int error;
+	int numberOfGrids;
+	error = cg_ngrids(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfGrids); CHKERRQ(error);
+	if(numberOfGrids!=1) cg_error_exit();
+	return;
+}
+
+void CGNSFile::verifyNumberOfCoordinates(void)
+{
+	int error;
+	int numberOfCoordinates;
+	error = cg_ncoords(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfCoordinates); CHKERRQ(error);
+	if(numberOfCoordinates!=this->physicalDimension) cg_error_exit();
+	return;
+}
