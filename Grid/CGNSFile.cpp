@@ -50,7 +50,7 @@ void CGNSFile::openZone(void)
 	return;
 }
 
-std::vector<double> CGNSFile::readCoordinates(const std::string& coordinateName)
+std::vector<double> CGNSFile::readCoordinate(const std::string& coordinateName)
 {
 	this->verifyNumberOfGrids();
 	this->verifyNumberOfCoordinates();

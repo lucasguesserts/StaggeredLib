@@ -99,13 +99,13 @@ TestCase("CGNS file structure", "[CGNSFile]")
 	section("read coordinates X")
 	{
 		std::vector<double> verticesCoordinateX{0.0, 1.5, 3.0, 0.0, 1.5, 3.0, 0.0, 1.5, 3.0};
-		std::vector<double> readCoordinateX = cgnsFile.readCoordinates("CoordinateX");
+		std::vector<double> readCoordinateX = cgnsFile.readCoordinate("CoordinateX");
 		check(readCoordinateX==verticesCoordinateX);
 	}
 	section("read coordinates Y")
 	{
 		std::vector<double> verticesCoordinateY{0.0, 0.0, 0.0, 1.5, 1.5, 1.5, 3.0, 3.0, 3.0};
-		std::vector<double> readCoordinateY = cgnsFile.readCoordinates("CoordinateY");
+		std::vector<double> readCoordinateY = cgnsFile.readCoordinate("CoordinateY");
 		check(readCoordinateY==verticesCoordinateY);
 	}
 }

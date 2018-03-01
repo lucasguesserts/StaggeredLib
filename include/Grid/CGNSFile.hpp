@@ -8,7 +8,7 @@ class CGNSFile
 {
 	public:
 		CGNSFile(const std::string cgnsFileName);
-		std::vector<double> readCoordinates(const std::string& coordinateName);
+		std::vector<double> readCoordinate(const std::string& coordinateName);
 
 		int fileIndex, zoneIndex, baseIndex;
 		int cellDimension, physicalDimension; // read in base
