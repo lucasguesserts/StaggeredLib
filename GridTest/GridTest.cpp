@@ -6,6 +6,7 @@
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 #include <Grid/ElementDefinition.hpp>
+#include <Grid/CGNSFile.hpp>
 #include <Grid/GridData.hpp>
 #include <Grid/Grid.hpp>
 #include <Grid/Grid2D.hpp>
@@ -78,6 +79,22 @@ TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 		gridData.triangle[1].connectivity << 8, 1, 6;
 		for(unsigned triangleCount=0 ; triangleCount<numberOfTriangles ; ++triangleCount)
 			check(gridData.triangle[triangleCount]==triangleDefinition[triangleCount]);
+	}
+}
+
+TestCase("CGNS file structure", "[CGNSFile]")
+{
+	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	section("basic cgns file opening")
+	{
+		check(cgnsFile.fileIndex==1);
+		check(cgnsFile.baseIndex==1);
+		check(cgnsFile.zoneIndex==1);
+		check(cgnsFile.cellDimension==2);
+		check(cgnsFile.physicalDimension==2);
+		check(cgnsFile.numberOfVertices==9);
+		check(cgnsFile.numberOfElements==6);
 	}
 }
 
