@@ -44,3 +44,15 @@ void GridSave::savePermanentScalarFieldToCGNS(const std::string solutionName, co
 	error = cg_close(file); CHKERRQ(error);
 	return;
 }
+
+Eigen::VectorXd GridSave::readPermanentSolutionFromCGNSFile(const std::string cgnsFileName)
+{
+	Eigen::VectorXd permanentField;
+	int error;
+	int fileIndex=1, baseIndex=1, zoneIndex=1, solutionIndex=1;
+	permanentField.resize(6);
+	cgsize_t rangeMin=1, rangeMax=6;
+	error = cg_open(cgnsFileName.c_str(), CG_MODE_READ, &fileIndex);
+	error = cg_field_read(fileIndex, baseIndex, zoneIndex, solutionIndex, "Temperature", CGNS_ENUMV(RealDouble), &rangeMin, &rangeMax, &permanentField[0]);
+	return permanentField;
+}

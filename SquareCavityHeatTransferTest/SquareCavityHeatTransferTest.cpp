@@ -332,8 +332,8 @@ TestCase("Export scalar field to cgns file")
 	Eigen::VectorXd temperature = Eigen::VectorXd::Zero(numberOfElements);
 	temperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 	GridSave::savePermanentScalarFieldToCGNS("solution test", "Temperature", temperature, tempFileName);
-		// TODO:
-		// verify in some way that the field was written
+	Eigen::VectorXd readTemperature = GridSave::readPermanentSolutionFromCGNSFile(tempFileName);
+	check(temperature==readTemperature);
 	// Delete temporary file
 	boost::filesystem::remove(tempFilePath);
 	checkFalse(boost::filesystem::exists(tempFilePath));
