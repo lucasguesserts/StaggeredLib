@@ -49,8 +49,8 @@ TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWith
 		section("Neighbor elements")
 		{
 			check(contains(vertexNeighborhood, grid.elements[0]));
-			check(contains(vertexNeighborhood, grid.elements[1]));
-			check(contains(vertexNeighborhood, grid.elements[4]));
+			check(contains(vertexNeighborhood, grid.elements[2]));
+			check(contains(vertexNeighborhood, grid.elements[3]));
 		}
 	}
 }
@@ -257,19 +257,19 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 	SquareCavityHeatTransfer problem(gridData);
 	problem.rho = 1;
 	problem.cp = 1;
-	problem.oldTemperature << 3.0, 2.0, 5.0, 4.0, 0.0, 1.0;
+	problem.oldTemperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 	problem.addAccumulationTerm();
 	section("independent")
 	{
 		const unsigned numberOfElements = problem.grid2D.elements.size();
 		Eigen::VectorXd independent;
 		independent.resize(numberOfElements);
-		independent << 1.125 * 3.0,
+		independent << 2.250 * 0.0,
+					   2.250 * 1.0,
+		               1.125 * 3.0,
 					   1.125 * 2.0,
 					   1.125 * 5.0,
-					   1.125 * 4.0,
-					   2.250 * 0.0,
-					   2.250 * 1.0;
+					   1.125 * 4.0;
 		check(problem.linearSystem.independent==independent);
 	}
 	section("matrix")
@@ -277,12 +277,12 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 		const unsigned numberOfElements = problem.grid2D.elements.size();
 		Eigen::MatrixXd matrix;
 		matrix.resize(numberOfElements,numberOfElements);
-		matrix << 1.125, 0.000, 0.000, 0.000, 0.000, 0.000,
-		          0.000, 1.125, 0.000, 0.000, 0.000, 0.000,
+		matrix << 2.250, 0.000, 0.000, 0.000, 0.000, 0.000,
+		          0.000, 2.250, 0.000, 0.000, 0.000, 0.000,
 		          0.000, 0.000, 1.125, 0.000, 0.000, 0.000,
 		          0.000, 0.000, 0.000, 1.125, 0.000, 0.000,
-		          0.000, 0.000, 0.000, 0.000, 2.250, 0.000,
-		          0.000, 0.000, 0.000, 0.000, 0.000, 2.250;
+		          0.000, 0.000, 0.000, 0.000, 1.125, 0.000,
+		          0.000, 0.000, 0.000, 0.000, 0.000, 1.125;
 		check(problem.linearSystem.matrix==matrix);
 	}
 	section("solve")
@@ -290,7 +290,7 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 		const unsigned numberOfElements = problem.grid2D.elements.size();
 		Eigen::VectorXd temperature;
 		temperature.resize(numberOfElements);
-		temperature << 3.0, 2.0, 5.0, 4.0, 0.0, 1.0;
+		temperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 		problem.temperature = problem.linearSystem.solve();
 		check(problem.temperature==temperature);
 	}
@@ -328,7 +328,7 @@ TestCase("Export scalar field to cgns file")
 	check(boost::filesystem::exists(tempFilePath));
 	// Write temperature field
 	GridData gridData(tempFileName);
-	const unsigned numberOfElements = gridData.quadrangleConnectivity.rows() + gridData.triangleConnectivity.rows();
+	const unsigned numberOfElements = gridData.quadrangle.size() + gridData.triangle.size();
 	Eigen::VectorXd temperature = Eigen::VectorXd::Zero(numberOfElements);
 	temperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 	GridSave::savePermanentScalarFieldToCGNS("solution test", "Temperature", temperature, tempFileName);
