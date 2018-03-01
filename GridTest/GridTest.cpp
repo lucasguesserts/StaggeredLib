@@ -108,6 +108,10 @@ TestCase("CGNS file structure", "[CGNSFile]")
 		std::vector<double> readCoordinateY = cgnsFile.readCoordinate("CoordinateY");
 		check(readCoordinateY==verticesCoordinateY);
 	}
+	section("element connectivity")
+	{
+		check(1==1);
+	}
 }
 
 TestCase("grid reader from CGNS", "[GridData][CGNS]")
