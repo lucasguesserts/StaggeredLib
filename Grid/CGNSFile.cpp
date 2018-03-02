@@ -79,29 +79,14 @@ void CGNSFile::readNumberOfSections(void)
 {
 	int error;
 	error = cgns::cg_nsections(this->fileIndex,this->baseIndex,this->zoneIndex,&(this->numberOfSections)); CHKERRQ(error);
-	if(this->numberOfSections < 1) cgns::cg_error_exit();
+	this->checkNumberOfSections();
 	return;
 }
 
-
-std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t> CGNSFile::readSection(const int sectionIndex)
+void CGNSFile::checkNumberOfSections(void)
 {
-	int error;
-	char elementSectionName[NAME_LENGTH];
-	cgns::ElementType_t elementType;
-	cgns::cgsize_t firstElementIndex, lastElementIndex;
-	int numberOfBoundaries, parentFlag;
-	error = cg_section_read(this->fileIndex,this->baseIndex,this->zoneIndex,sectionIndex,elementSectionName,&elementType,&firstElementIndex,&lastElementIndex,&numberOfBoundaries,&parentFlag); CHKERRQ(error);
-		--firstElementIndex; --lastElementIndex; // The CGNS enumeration starts at 1, Here it starts at 0.
-	return std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t>(firstElementIndex,lastElementIndex,elementType);
-}
-
-cgns::cgsize_t CGNSFile::readSizeOfElementConnectivityDataArray(const int sectionIndex)
-{
-	int error;
-	cgns::cgsize_t sizeOfElementConnectivityDataArray;
-	error = cgns::cg_ElementDataSize(this->fileIndex,this->baseIndex,this->zoneIndex,sectionIndex,&sizeOfElementConnectivityDataArray); CHKERRQ(error);
-	return sizeOfElementConnectivityDataArray;
+	if(this->numberOfSections < 1) cgns::cg_error_exit();
+	return;
 }
 
 std::vector<cgns::cgsize_t> CGNSFile::readElementConnectivity(const int sectionIndex)
@@ -113,13 +98,34 @@ std::vector<cgns::cgsize_t> CGNSFile::readElementConnectivity(const int sectionI
 	return elementConnectivity;
 }
 
+cgns::cgsize_t CGNSFile::readSizeOfElementConnectivityDataArray(const int sectionIndex)
+{
+	int error;
+	cgns::cgsize_t sizeOfElementConnectivityDataArray;
+	error = cgns::cg_ElementDataSize(this->fileIndex,this->baseIndex,this->zoneIndex,sectionIndex,&sizeOfElementConnectivityDataArray); CHKERRQ(error);
+	return sizeOfElementConnectivityDataArray;
+}
+
 unsigned CGNSFile::getNumberOfElementsOfType(const cgns::ElementType_t elementType)
 {
 	unsigned numberOfElements = 0;
+	this->readNumberOfSections();
 	for(int sectionIndex=1 ; sectionIndex<=this->numberOfSections ; ++sectionIndex)
 	{
 		std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t> sectionData = this->readSection(sectionIndex);
 		if(std::get<2>(sectionData)==elementType) numberOfElements += (std::get<1>(sectionData) - std::get<0>(sectionData) + 1);
 	}
 	return numberOfElements;
+}
+
+std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t> CGNSFile::readSection(const int sectionIndex)
+{
+	int error;
+	char elementSectionName[NAME_LENGTH];
+	cgns::ElementType_t elementType;
+	cgns::cgsize_t firstElementIndex, lastElementIndex;
+	int numberOfBoundaries, parentFlag;
+	error = cg_section_read(this->fileIndex,this->baseIndex,this->zoneIndex,sectionIndex,elementSectionName,&elementType,&firstElementIndex,&lastElementIndex,&numberOfBoundaries,&parentFlag); CHKERRQ(error);
+		--firstElementIndex; --lastElementIndex; // The CGNS enumeration starts at 1, Here it starts at 0.
+	return std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t>(firstElementIndex,lastElementIndex,elementType);
 }

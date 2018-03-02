@@ -34,6 +34,11 @@ class CGNSFile
 		std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t> readSection(const int sectionIndex);
 		cgns::cgsize_t readSizeOfElementConnectivityDataArray(const int sectionIndex);
 		std::vector<cgns::cgsize_t> readElementConnectivity(const int sectionIndex);
+		void checkNumberOfSections(void);
+		template <unsigned NumberOfVerticesPerElement, cgns::ElementType_t ElementType>
+			void setElementsDefinitionUsingSection(std::vector< ElementDefinition<NumberOfVerticesPerElement> >& element, const int sectionIndex);
+		template <unsigned NumberOfVerticesPerElement>
+			ElementDefinition<NumberOfVerticesPerElement> getElementDefinitionFromElementConnectivity(const std::vector<cgns::cgsize_t>& elementConnectivity,cgns::cgsize_t firstElementIndex, unsigned elementCount);
 };
 
 #include <Grid/CGNSFile.tpp>

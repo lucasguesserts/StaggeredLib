@@ -124,6 +124,29 @@ TestCase("CGNS file structure", "[CGNSFile]")
 		std::vector< ElementDefinition<3> > readTriangle = cgnsFile.readElementsDefinition<3,cgns::TRI_3>();
 		check(readTriangle==triangle);
 	}
+	section("read lines")
+	{
+		constexpr unsigned numberOfLines = 8;
+		std::vector< ElementDefinition<2> > line(numberOfLines);
+			line[0].index = 6;
+			line[0].connectivity << 1, 0;
+			line[1].index = 7;
+			line[1].connectivity << 2, 1;
+			line[2].index = 8;
+			line[2].connectivity << 6, 7;
+			line[3].index = 9;
+			line[3].connectivity << 7, 8;
+			line[4].index = 10;
+			line[4].connectivity << 3, 0;
+			line[5].index = 11;
+			line[5].connectivity << 6, 3;
+			line[6].index = 12;
+			line[6].connectivity << 5, 2;
+			line[7].index = 13;
+			line[7].connectivity << 8, 5;
+		std::vector< ElementDefinition<2> > readLine = cgnsFile.readElementsDefinition<2,cgns::BAR_2>();
+		check(readLine==line);
+	}
 }
 
 TestCase("grid reader from CGNS", "[GridData][CGNS]")
