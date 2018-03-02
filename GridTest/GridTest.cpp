@@ -116,7 +116,7 @@ TestCase("CGNS file structure", "[CGNSFile]")
 			quadrangle[0].connectivity << 0, 1, 4, 3;
 			quadrangle[1].index = 1;
 			quadrangle[1].connectivity << 1, 2, 5, 4;
-		std::vector< ElementDefinition<4> > readQuadrangle = cgnsFile.readQuadrangleElementsDefinition();
+		std::vector< ElementDefinition<4> > readQuadrangle = cgnsFile.readElementsDefinition<4,cgns::QUAD_4>();
 		check(readQuadrangle==quadrangle);
 	}
 	section("read triangles")
@@ -131,7 +131,7 @@ TestCase("CGNS file structure", "[CGNSFile]")
 			triangle[2].connectivity << 4, 5, 8;
 			triangle[3].index = 5;
 			triangle[3].connectivity << 4, 8, 7;
-		std::vector< ElementDefinition<3> > readTriangle = cgnsFile.readTriangleElementsDefinition();
+		std::vector< ElementDefinition<3> > readTriangle = cgnsFile.readElementsDefinition<3,cgns::TRI_3>();
 		check(readTriangle==triangle);
 	}
 }
