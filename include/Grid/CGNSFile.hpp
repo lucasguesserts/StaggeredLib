@@ -17,10 +17,11 @@ class CGNSFile
 		std::vector<double> readCoordinate(const std::string& coordinateName);
 		template <unsigned NumberOfVerticesPerElement, cgns::ElementType_t ElementType>
 			std::vector< ElementDefinition<NumberOfVerticesPerElement> > readElementsDefinition(void);
-	private:
-		int fileIndex, zoneIndex, baseIndex;
+
 		int cellDimension, physicalDimension; // read in base
 		unsigned numberOfVertices, numberOfElements; // read in zone
+	private:
+		int fileIndex, zoneIndex, baseIndex;
 		int numberOfSections;
 
 		// TODO: add exceptions.

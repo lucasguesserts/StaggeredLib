@@ -4,31 +4,24 @@
 #include <Eigen/Core>
 #include <string>
 #include <vector>
-#include <Grid/ElementDefinition.hpp>
+#include <Grid/CGNSFile.hpp>
 
-struct GridData
+class GridData
 {
-	GridData(){}
-	GridData(const std::string cgnsFileName);
-	static const std::string projectGridDirectory;
+	public:
+		GridData() = default;
+		GridData(const std::string){};
+		GridData(CGNSFile& cgnsFile);
 
-	unsigned dimension;
-	Eigen::Matrix<double,Eigen::Dynamic,3> coordinates;
-	std::vector<ElementDefinition<3>> triangle;
-	std::vector<ElementDefinition<4>> quadrangle;
+		static const std::string projectGridDirectory;
+		unsigned dimension;
+		Eigen::Matrix<double,Eigen::Dynamic,3> coordinates;
+		std::vector<ElementDefinition<3>> triangle;
+		std::vector<ElementDefinition<4>> quadrangle;
 
 	private:
-		int fileIndex, zoneIndex, baseIndex, numberOfSections;
-		unsigned numberOfVertices, numberOfElements;
-
-		void openFile(const std::string cgnsFileName);
-		void openBase(void);
-		void openZone(void);
-		void verifyNumberOfGrids(void);
-		void verifyNumberOfCoordinates(void);
-		void readCoordinates(void);
-		void readNumberOfSections(void);
-		void readElementConnectivity(void);
+		void readCoordinates(CGNSFile& cgnsFile);
+		void readElementConnectivity(CGNSFile& cgnsFile);
 };
 
 #endif

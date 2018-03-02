@@ -152,7 +152,8 @@ TestCase("CGNS file structure", "[CGNSFile]")
 TestCase("grid reader from CGNS", "[GridData][CGNS]")
 {
 	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	GridData gridData(cgnsGridFileName);
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
 	section("dimension")
 	{
 		const unsigned dimension = 2;
