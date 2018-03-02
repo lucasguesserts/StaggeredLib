@@ -108,9 +108,16 @@ TestCase("CGNS file structure", "[CGNSFile]")
 		std::vector<double> readCoordinateY = cgnsFile.readCoordinate("CoordinateY");
 		check(readCoordinateY==verticesCoordinateY);
 	}
-	section("element connectivity")
+	section("read quadrangles")
 	{
-		check(1==1);
+		constexpr unsigned numberOfQuadrangles = 2;
+		std::vector< ElementDefinition<4> > quadrangle(numberOfQuadrangles);
+			quadrangle[0].index = 0;
+			quadrangle[0].connectivity << 0, 1, 4, 3;
+			quadrangle[1].index = 1;
+			quadrangle[1].connectivity << 1, 2, 5, 4;
+		std::vector< ElementDefinition<4> > readQuadrangle = cgnsFile.readQuadrangleElementsDefinition();
+		check(readQuadrangle==quadrangle);
 	}
 }
 

@@ -92,6 +92,7 @@ std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t> CGNSFile::readSect
 	cgns::cgsize_t firstElementIndex, lastElementIndex;
 	int numberOfBoundaries, parentFlag;
 	error = cg_section_read(this->fileIndex,this->baseIndex,this->zoneIndex,sectionIndex,elementSectionName,&elementType,&firstElementIndex,&lastElementIndex,&numberOfBoundaries,&parentFlag); CHKERRQ(error);
+		--firstElementIndex; --lastElementIndex; // The CGNS enumeration starts at 1, Here it starts at 0.
 	return std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t>(firstElementIndex,lastElementIndex,elementType);
 }
 
@@ -109,6 +110,7 @@ std::vector<cgns::cgsize_t> CGNSFile::readElementConnectivity(const int sectionI
 	cgns::cgsize_t sizeOfElementConnectivityDataArray = readSizeOfElementConnectivityDataArray(sectionIndex);
 	std::vector<cgns::cgsize_t> elementConnectivity(sizeOfElementConnectivityDataArray);
 	error = cgns::cg_elements_read(this->fileIndex,this->baseIndex,this->zoneIndex,sectionIndex,elementConnectivity.data(),NULL); CHKERRQ(error);
+	return elementConnectivity;
 }
 
 unsigned CGNSFile::getNumberOfElementsOfType(const cgns::ElementType_t elementType)
@@ -122,7 +124,7 @@ unsigned CGNSFile::getNumberOfElementsOfType(const cgns::ElementType_t elementTy
 	return numberOfElements;
 }
 
-std::vector< ElementDefinition<4> > CGNSFile::readQuadrangleElementsDefinition(const int sectionIndex)
+std::vector< ElementDefinition<4> > CGNSFile::readQuadrangleElementsDefinition(void)
 {
 	CGNSFile::readNumberOfSections();
 	unsigned numberOfQuadrangles = this->getNumberOfElementsOfType(cgns::QUAD_4);
@@ -133,7 +135,7 @@ std::vector< ElementDefinition<4> > CGNSFile::readQuadrangleElementsDefinition(c
 		if(std::get<2>(sectionData)==cgns::QUAD_4)
 		{
 			const cgns::cgsize_t firstElementIndex = std::get<0>(sectionData);
-			const cgns::cgsize_t lastElementIndex = std::get<0>(sectionData);
+			const cgns::cgsize_t lastElementIndex = std::get<1>(sectionData);
 			std::vector<cgns::cgsize_t> elementConnectivity = this->readElementConnectivity(sectionIndex);
 			for(unsigned quadrangleCount=0 ; quadrangleCount<numberOfQuadrangles ; ++quadrangleCount)
 			{
