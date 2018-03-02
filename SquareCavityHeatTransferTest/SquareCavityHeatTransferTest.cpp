@@ -35,7 +35,8 @@ TestCase("Analytical solution", "[SquareCavityHeatTransfer]")
 TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWithNeighborElements]")
 {
 	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	GridData gridData(cgnsGridFileName);
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
 	Grid2DVerticesWithNeighborElements grid(gridData);
 	section("Vertex 3 neighborhood")
 	{
@@ -253,7 +254,8 @@ TestCase("Linear system build", "[Eigen][EigenSolver]")
 TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	GridData gridData(cgnsGridFileName);
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
 	SquareCavityHeatTransfer problem(gridData);
 	problem.rho = 1;
 	problem.cp = 1;
@@ -327,7 +329,8 @@ TestCase("Export scalar field to cgns file")
 	boost::filesystem::copy(filePath, tempFilePath);
 	check(boost::filesystem::exists(tempFilePath));
 	// Write temperature field
-	GridData gridData(tempFileName);
+	CGNSFile cgnsFile(tempFileName);
+	GridData gridData(cgnsFile);
 	const unsigned numberOfElements = gridData.quadrangle.size() + gridData.triangle.size();
 	Eigen::VectorXd temperature = Eigen::VectorXd::Zero(numberOfElements);
 	temperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
