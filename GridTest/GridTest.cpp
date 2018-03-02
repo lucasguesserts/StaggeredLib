@@ -86,16 +86,6 @@ TestCase("CGNS file structure", "[CGNSFile]")
 {
 	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	section("basic cgns file opening")
-	{
-		check(cgnsFile.fileIndex==1);
-		check(cgnsFile.baseIndex==1);
-		check(cgnsFile.zoneIndex==1);
-		check(cgnsFile.cellDimension==2);
-		check(cgnsFile.physicalDimension==2);
-		check(cgnsFile.numberOfVertices==9);
-		check(cgnsFile.numberOfElements==6);
-	}
 	section("read coordinates X")
 	{
 		std::vector<double> verticesCoordinateX{0.0, 1.5, 3.0, 0.0, 1.5, 3.0, 0.0, 1.5, 3.0};
