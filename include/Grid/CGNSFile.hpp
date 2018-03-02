@@ -16,6 +16,7 @@ class CGNSFile
 		CGNSFile(const std::string cgnsFileName);
 		std::vector<double> readCoordinate(const std::string& coordinateName);
 		std::vector< ElementDefinition<4> > readQuadrangleElementsDefinition(void);
+		std::vector< ElementDefinition<3> > readTriangleElementsDefinition(void);
 
 		int fileIndex, zoneIndex, baseIndex;
 		int cellDimension, physicalDimension; // read in base

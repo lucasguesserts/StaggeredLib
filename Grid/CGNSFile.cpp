@@ -124,6 +124,30 @@ unsigned CGNSFile::getNumberOfElementsOfType(const cgns::ElementType_t elementTy
 	return numberOfElements;
 }
 
+std::vector< ElementDefinition<3> > CGNSFile::readTriangleElementsDefinition(void)
+{
+	CGNSFile::readNumberOfSections();
+	unsigned numberOfTriangles = this->getNumberOfElementsOfType(cgns::TRI_3);
+	std::vector< ElementDefinition<3> > triangle(numberOfTriangles);
+	for(int sectionIndex=1 ; sectionIndex<=this->numberOfSections ; ++sectionIndex)
+	{
+		std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t> sectionData = this->readSection(sectionIndex);
+		if(std::get<2>(sectionData)==cgns::TRI_3)
+		{
+			const cgns::cgsize_t firstElementIndex = std::get<0>(sectionData);
+			const cgns::cgsize_t lastElementIndex = std::get<1>(sectionData);
+			std::vector<cgns::cgsize_t> elementConnectivity = this->readElementConnectivity(sectionIndex);
+			for(unsigned triangleCount=0 ; triangleCount<numberOfTriangles ; ++triangleCount)
+			{
+				triangle[triangleCount].index = firstElementIndex + triangleCount;
+				for(unsigned vertexIndex=0 ; vertexIndex<3 ; ++vertexIndex)
+					triangle[triangleCount].connectivity(vertexIndex) = elementConnectivity[3*triangleCount+vertexIndex] - 1;
+			}
+		}
+	}
+	return triangle;
+}
+
 std::vector< ElementDefinition<4> > CGNSFile::readQuadrangleElementsDefinition(void)
 {
 	CGNSFile::readNumberOfSections();
