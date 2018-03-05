@@ -132,14 +132,58 @@ std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t> CGNSFile::readSect
 
 void CGNSFile::writeSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName, const Eigen::VectorXd& scalarField)
 {
+	int error;
+	const double* scalarFieldRawData = &scalarField[0];
+	int solutionIndex, fieldIndex;
+	error = cgns::cg_sol_write(this->fileIndex,this->baseIndex,this->zoneIndex, solutionName.c_str(), CGNS_ENUMV(cgns::CellCenter), &solutionIndex); CHKERRQ(error);
+	error = cgns::cg_field_write(this->fileIndex,this->baseIndex,this->zoneIndex, solutionIndex, CGNS_ENUMV(cgns::RealDouble), scalarFieldName.c_str(), scalarFieldRawData, &fieldIndex); CHKERRQ(error);
 	return;
 }
 
 Eigen::VectorXd CGNSFile::readSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName)
 {
-	constexpr unsigned numberOfElements = 6;
+	const int solutionIndex = this->getSolutionIndex(solutionName);
+	this->verifyGridLocationOfSolution(solutionIndex);
+	const cgns::cgsize_t solutionSize = this->readSolutionSize(solutionIndex);
 	Eigen::VectorXd steadySolution;
-	steadySolution.resize(numberOfElements);
-	steadySolution << 0.0, 1.0, 2.0, 3.0, 4.0, 5.0;
+	steadySolution.resize(solutionSize);
+	cgns::cgsize_t rangeMin=1, rangeMax=solutionSize;
+	int error;
+	error = cgns::cg_field_read(this->fileIndex,this->baseIndex,this->zoneIndex,solutionIndex,scalarFieldName.c_str(),CGNS_ENUMV(cgns::RealDouble),&rangeMin,&rangeMax,&steadySolution[0]); CHKERRQ(error);
 	return steadySolution;
+}
+
+int CGNSFile::getSolutionIndex(const std::string solutionName)
+{
+	int error;
+	int numberOfSolutions;
+	error = cgns::cg_nsols(this->fileIndex,this->baseIndex,this->zoneIndex,&numberOfSolutions); CHKERRQ(error);
+	int solutionIndex;
+	for(solutionIndex=1 ; solutionIndex<=numberOfSolutions ; ++solutionIndex)
+	{
+		char readSolutionName[NAME_LENGTH];
+		cgns::GridLocation_t gridLocation;
+		error = cg_sol_info(this->fileIndex,this->baseIndex,this->zoneIndex,solutionIndex,readSolutionName,&gridLocation); CHKERRQ(error);
+		if(solutionName.compare(readSolutionName)==0) break;
+	}
+	return solutionIndex;
+}
+
+void CGNSFile::verifyGridLocationOfSolution(const int solutionIndex)
+{
+	int error;
+	char solutionName[NAME_LENGTH];
+	cgns::GridLocation_t gridLocation;
+	error = cgns::cg_sol_info(this->fileIndex,this->baseIndex,this->zoneIndex,solutionIndex,solutionName,&gridLocation); CHKERRQ(error);
+	if(gridLocation!=CGNS_ENUMV(cgns::CellCenter)) cgns::cg_error_exit();
+	return;
+}
+
+cgns::cgsize_t CGNSFile::readSolutionSize(const int solutionIndex)
+{
+	int error;
+	int solutionDimension;
+	cgns::cgsize_t solutionSize;
+	error = cgns::cg_sol_size(this->fileIndex,this->baseIndex,this->zoneIndex,solutionIndex,&solutionDimension,&solutionSize);
+	return solutionSize;
 }

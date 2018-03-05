@@ -42,6 +42,9 @@ class CGNSFile
 			void setElementsDefinitionUsingSection(std::vector< ElementDefinition<NumberOfVerticesPerElement> >& element, const int sectionIndex);
 		template <unsigned NumberOfVerticesPerElement>
 			ElementDefinition<NumberOfVerticesPerElement> getElementDefinitionFromElementConnectivity(const std::vector<cgns::cgsize_t>& elementConnectivity,cgns::cgsize_t firstElementIndex, unsigned elementCount);
+		int getSolutionIndex(const std::string solutionName);
+		void verifyGridLocationOfSolution(const int solutionIndex);
+		cgns::cgsize_t readSolutionSize(const int solutionIndex);
 };
 
 #include <Grid/CGNSFile.tpp>

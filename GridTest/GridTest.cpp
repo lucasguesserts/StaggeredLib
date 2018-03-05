@@ -2,6 +2,7 @@
 #include <array>
 #include <vector>
 #include <string>
+#include <boost/filesystem.hpp>
 
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
@@ -151,14 +152,22 @@ TestCase("CGNS file structure basic - coordinates and element connectivity", "[C
 
 TestCase("CGNS file structure - steady solution","[CGNSFile]")
 {
-	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
+	// create temporary file
+	const std::string fileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	boost::filesystem::path filePath(fileName);
+	const std::string tempFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS_temp.cgns";
+	boost::filesystem::path tempFilePath(tempFileName);
+	if(boost::filesystem::exists(tempFilePath))
+		boost::filesystem::remove(tempFilePath);
+	boost::filesystem::copy(filePath, tempFilePath);
+	require(boost::filesystem::exists(tempFilePath));
+
+	CGNSFile cgnsFile(tempFileName);
 	constexpr unsigned numberOfElements = 6;
 	const std::string solutionName = "steady solution";
 	const std::string scalarFieldName = "Temperature";
 	section("write and read")
 	{
-
 		Eigen::VectorXd steadySolution;
 		steadySolution.resize(numberOfElements);
 		steadySolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
@@ -166,6 +175,9 @@ TestCase("CGNS file structure - steady solution","[CGNSFile]")
 		Eigen::VectorXd readSolution = cgnsFile.readSteadyScalarField(solutionName,scalarFieldName);
 		check(readSolution==steadySolution);
 	}
+	// TODO: add exceptions and create failures tests
+	boost::filesystem::remove(tempFilePath);
+	checkFalse(boost::filesystem::exists(tempFilePath));
 }
 
 TestCase("grid reader from CGNS", "[GridData][CGNS]")
