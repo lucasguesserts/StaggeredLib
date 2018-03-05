@@ -5,7 +5,6 @@
 #include <Utils/Test.hpp>
 #include <Utils/contains.hpp>
 #include <Grid/GridData.hpp>
-#include <SquareCavityHeatTransfer/GridSave.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <SquareCavityHeatTransfer/Grid2DVerticesWithNeighborElements.hpp>
 #include <SquareCavityHeatTransfer/ScalarStencil.hpp>
@@ -315,29 +314,4 @@ TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLine
 	          scalarStencil[1][0], scalarStencil[1][1], scalarStencil[1][2],
 	          scalarStencil[2][0], scalarStencil[2][1], scalarStencil[2][2];
 	check(linearSystem.matrix==matrix);
-}
-
-TestCase("Export scalar field to cgns file")
-{
-	// Create temporary file
-	const std::string fileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
-	const std::string tempFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS_temp.cgns";
-	boost::filesystem::path filePath(fileName);
-	boost::filesystem::path tempFilePath(tempFileName);
-	if(boost::filesystem::exists(tempFilePath))
-		boost::filesystem::remove(tempFilePath);
-	boost::filesystem::copy(filePath, tempFilePath);
-	check(boost::filesystem::exists(tempFilePath));
-	// Write temperature field
-	CGNSFile cgnsFile(tempFileName);
-	GridData gridData(cgnsFile);
-	const unsigned numberOfElements = gridData.quadrangle.size() + gridData.triangle.size();
-	Eigen::VectorXd temperature = Eigen::VectorXd::Zero(numberOfElements);
-	temperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
-	GridSave::savePermanentScalarFieldToCGNS("solution test", "Temperature", temperature, tempFileName);
-	Eigen::VectorXd readTemperature = GridSave::readPermanentSolutionFromCGNSFile(tempFileName);
-	check(temperature==readTemperature);
-	// Delete temporary file
-	boost::filesystem::remove(tempFilePath);
-	checkFalse(boost::filesystem::exists(tempFilePath));
 }
