@@ -82,7 +82,7 @@ TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 	}
 }
 
-TestCase("CGNS file structure", "[CGNSFile]")
+TestCase("CGNS file structure basic - coordinates and element connectivity", "[CGNSFile]")
 {
 	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -146,6 +146,25 @@ TestCase("CGNS file structure", "[CGNSFile]")
 			line[7].connectivity << 8, 5;
 		std::vector< ElementDefinition<2> > readLine = cgnsFile.readElementsDefinition<2,cgns::BAR_2>();
 		check(readLine==line);
+	}
+}
+
+TestCase("CGNS file structure - steady solution","[CGNSFile]")
+{
+	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	constexpr unsigned numberOfElements = 6;
+	const std::string solutionName = "steady solution";
+	const std::string scalarFieldName = "Temperature";
+	section("write and read")
+	{
+
+		Eigen::VectorXd steadySolution;
+		steadySolution.resize(numberOfElements);
+		steadySolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
+		cgnsFile.writeSteadyScalarField(solutionName,scalarFieldName,steadySolution);
+		Eigen::VectorXd readSolution = cgnsFile.readSteadyScalarField(solutionName,scalarFieldName);
+		check(readSolution==steadySolution);
 	}
 }
 

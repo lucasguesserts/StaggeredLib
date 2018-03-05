@@ -17,6 +17,8 @@ class CGNSFile
 		std::vector<double> readCoordinate(const std::string& coordinateName);
 		template <unsigned NumberOfVerticesPerElement, cgns::ElementType_t ElementType>
 			std::vector< ElementDefinition<NumberOfVerticesPerElement> > readElementsDefinition(void);
+		void writeSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName, const Eigen::VectorXd& scalarField);
+		Eigen::VectorXd readSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName);
 
 		int cellDimension, physicalDimension; // read in base
 		unsigned numberOfVertices, numberOfElements; // read in zone

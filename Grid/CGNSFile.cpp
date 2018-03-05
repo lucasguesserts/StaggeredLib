@@ -129,3 +129,17 @@ std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t> CGNSFile::readSect
 		--firstElementIndex; --lastElementIndex; // The CGNS enumeration starts at 1, Here it starts at 0.
 	return std::tuple<cgns::cgsize_t,cgns::cgsize_t,cgns::ElementType_t>(firstElementIndex,lastElementIndex,elementType);
 }
+
+void CGNSFile::writeSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName, const Eigen::VectorXd& scalarField)
+{
+	return;
+}
+
+Eigen::VectorXd CGNSFile::readSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName)
+{
+	constexpr unsigned numberOfElements = 6;
+	Eigen::VectorXd steadySolution;
+	steadySolution.resize(numberOfElements);
+	steadySolution << 0.0, 1.0, 2.0, 3.0, 4.0, 5.0;
+	return steadySolution;
+}
