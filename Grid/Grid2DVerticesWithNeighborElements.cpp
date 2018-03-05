@@ -1,4 +1,4 @@
-#include <SquareCavityHeatTransfer/Grid2DVerticesWithNeighborElements.hpp>
+#include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 #include <GeometricEntity/Vertex.hpp>
 
 Grid2DVerticesWithNeighborElements::Grid2DVerticesWithNeighborElements(const GridData& gridData)

@@ -1,4 +1,5 @@
 #include <Utils/Test.hpp>
+#include <Utils/contains.hpp>
 #include <array>
 #include <vector>
 #include <string>
@@ -11,6 +12,7 @@
 #include <Grid/GridData.hpp>
 #include <Grid/Grid.hpp>
 #include <Grid/Grid2D.hpp>
+#include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 
 TestCase("Element definition for GridData", "[ElementDefinition]")
 {
@@ -343,6 +345,30 @@ TestCase("Grid 2D build", "[Grid][Grid2D]")
 			check(grid2D.elements[1]->vertices[1]==&(grid2D.vertices[2]));
 			check(grid2D.elements[1]->vertices[2]==&(grid2D.vertices[5]));
 			check(grid2D.elements[1]->vertices[3]==&(grid2D.vertices[4]));
+		}
+	}
+}
+
+TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWithNeighborElements]")
+{
+	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DVerticesWithNeighborElements grid(gridData);
+	section("Vertex 3 neighborhood")
+	{
+		const unsigned vertexIndex = 3;
+		std::vector<const Element*>& vertexNeighborhood = grid.verticesNeighborElements[vertexIndex];
+		section("Number of neighbor elements")
+		{
+			const unsigned numberOfNeighborElements = 3;
+			check(vertexNeighborhood.size()==numberOfNeighborElements);
+		}
+		section("Neighbor elements")
+		{
+			check(contains(vertexNeighborhood, grid.elements[0]));
+			check(contains(vertexNeighborhood, grid.elements[2]));
+			check(contains(vertexNeighborhood, grid.elements[3]));
 		}
 	}
 }
