@@ -207,7 +207,7 @@ TestCase("CGNS file structure - transient solution","[CGNSFile]")
 		{
 			transientSolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 			transientSolution *= timeStep;
-			cgnsFile.writeTransientScalarField(scalarFieldName,timeStep);
+			cgnsFile.writeTransientScalarField(scalarFieldName,timeStep,transientSolution);
 		}
 		Eigen::VectorXd timeInstants;
 		timeInstants.resize(numberOfTimeSteps);

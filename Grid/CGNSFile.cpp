@@ -187,3 +187,18 @@ cgns::cgsize_t CGNSFile::readSolutionSize(const int solutionIndex)
 	error = cgns::cg_sol_size(this->fileIndex,this->baseIndex,this->zoneIndex,solutionIndex,&solutionDimension,&solutionSize);
 	return solutionSize;
 }
+
+void CGNSFile::writeTransientScalarField(const std::string& scalarFieldName, const unsigned timeStep, const Eigen::VectorXd scalarField)
+{
+	int error;
+	std::string solutionName = scalarFieldName + "_" + std::to_string(timeStep);
+	int solutionIndex, fieldIndex;
+	error = cgns::cg_sol_write(this->fileIndex,this->baseIndex,this->zoneIndex,solutionName.c_str(),CGNS_ENUMV(cgns::CellCenter),&solutionIndex); CHKERRQ(error);
+	error = cgns::cg_field_write(this->fileIndex,this->baseIndex,this->zoneIndex,solutionIndex,CGNS_ENUMV(cgns::RealDouble),scalarFieldName.c_str(),&scalarField[0], &fieldIndex); CHKERRQ(error);
+	return;
+}
+
+void CGNSFile::writeTransientInformation(const std::string& scalarFieldName, const Eigen::VectorXd timeInstants)
+{
+	return;
+}
