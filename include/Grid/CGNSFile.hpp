@@ -14,13 +14,14 @@ class CGNSFile
 {
 	public:
 		CGNSFile(const std::string cgnsFileName);
+		~CGNSFile() { cgns::cg_close(this->fileIndex); }
 		std::vector<double> readCoordinate(const std::string& coordinateName);
 		template <unsigned NumberOfVerticesPerElement, cgns::ElementType_t ElementType>
 			std::vector< ElementDefinition<NumberOfVerticesPerElement> > readElementsDefinition(void);
 		void writeSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName, const Eigen::VectorXd& scalarField);
 		Eigen::VectorXd readSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName);
 		void writeTransientScalarField(const std::string& scalarFieldName, const unsigned timeStep, const Eigen::VectorXd scalarField);
-		void writeTransientInformation(const std::string& scalarFieldName, const Eigen::VectorXd timeInstants);
+		void writeTransientInformation(const std::string& scalarFieldName, const Eigen::VectorXd& timeInstants);
 
 		int cellDimension, physicalDimension; // read in base
 		unsigned numberOfVertices, numberOfElements; // read in zone
@@ -47,6 +48,10 @@ class CGNSFile
 		int getSolutionIndex(const std::string solutionName);
 		void verifyGridLocationOfSolution(const int solutionIndex);
 		cgns::cgsize_t readSolutionSize(const int solutionIndex);
+		void writeTimeIterativeBase(const std::string& timeIterativeBaseName, const int numberOfTimeSteps);
+		void writeTimeInstantsInIterativeBase(const std::string& timeIterativeBaseName, const Eigen::VectorXd& timeInstants);
+		void writeTimeIterativeZone(const std::string& scalarFieldName, const std::string& timeIterativeZoneName, const Eigen::VectorXd& timeInstants);
+		void writeSimulationType(void);
 };
 
 #include <Grid/CGNSFile.tpp>

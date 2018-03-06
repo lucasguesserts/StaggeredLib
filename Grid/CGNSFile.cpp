@@ -1,4 +1,6 @@
 #include <Grid/CGNSFile.hpp>
+#include <iomanip>
+#include <sstream>
 
 #define NAME_LENGTH 200
 #define CHKERRQ(err) if((err)) cgns::cg_error_exit()
@@ -198,7 +200,53 @@ void CGNSFile::writeTransientScalarField(const std::string& scalarFieldName, con
 	return;
 }
 
-void CGNSFile::writeTransientInformation(const std::string& scalarFieldName, const Eigen::VectorXd timeInstants)
+void CGNSFile::writeTransientInformation(const std::string& scalarFieldName, const Eigen::VectorXd& timeInstants)
 {
+	const std::string timeIterativeBaseName = scalarFieldName + "_base";
+	const std::string timeIterativeZoneName = scalarFieldName + "_zone";
+	this->writeTimeIterativeBase(timeIterativeBaseName,timeInstants.size());
+	this->writeTimeInstantsInIterativeBase(timeIterativeBaseName,timeInstants);
+	this->writeTimeIterativeZone(scalarFieldName,timeIterativeZoneName,timeInstants);
+	this->writeSimulationType();
+	return;
+}
+
+void CGNSFile::writeTimeIterativeBase(const std::string& timeIterativeBaseName, const int numberOfTimeSteps)
+{
+	int error;
+	error = cgns::cg_biter_write(this->fileIndex,this->baseIndex,timeIterativeBaseName.c_str(),numberOfTimeSteps); CHKERRQ(error);
+	return;
+}
+
+void CGNSFile::writeTimeInstantsInIterativeBase(const std::string& timeIterativeBaseName, const Eigen::VectorXd& timeInstants)
+{
+	int error;
+	cgns::cgsize_t timeArrayDimension[1] = { static_cast<cgns::cgsize_t>(timeInstants.size()) };
+	error = cgns::cg_goto(this->fileIndex,this->baseIndex,timeIterativeBaseName.c_str(),0,"end"); CHKERRQ(error);
+	error = cgns::cg_array_write("Time_Instants",CGNS_ENUMV(cgns::RealDouble),1,timeArrayDimension,&timeInstants[0]); CHKERRQ(error);
+	return;
+}
+
+void CGNSFile::writeTimeIterativeZone(const std::string& scalarFieldName, const std::string& timeIterativeZoneName, const Eigen::VectorXd& timeInstants)
+{
+	int error;
+	const unsigned numberOfTimeSteps = timeInstants.size();
+	error = cgns::cg_ziter_write(this->fileIndex,this->baseIndex,this->zoneIndex,timeIterativeZoneName.c_str()); CHKERRQ(error);
+	error = cgns::cg_goto(this->fileIndex,this->baseIndex,"Zone_t",this->zoneIndex,timeIterativeZoneName.c_str(),0,"end"); CHKERRQ(error);
+	cgns::cgsize_t solutionNameDimension[2];
+	solutionNameDimension[0] = scalarFieldName.size() + 1;
+	solutionNameDimension[1] = static_cast<cgns::cgsize_t>(numberOfTimeSteps);
+	const unsigned timeWidthInSolutionName = 5;
+	const unsigned solutionNameSize = scalarFieldName.size() + timeWidthInSolutionName;
+	std::stringstream solutionNames;
+	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
+		solutionNames << scalarFieldName << std::setfill('0') << std::setw(2) << timeStep;
+	error = cgns::cg_array_write("SolutionPointers",CGNS_ENUMV(cgns::Character),2,solutionNameDimension,solutionNames.str().c_str()); CHKERRQ(error);
+	return;
+}
+
+void CGNSFile::writeSimulationType(void)
+{
+	int error = cgns::cg_simulation_type_write(this->fileIndex,this->baseIndex,CGNS_ENUMV(cgns::TimeAccurate)); CHKERRQ(error);
 	return;
 }
