@@ -199,32 +199,38 @@ TestCase("CGNS file structure - transient solution","[CGNSFile]")
 	constexpr unsigned numberOfTimeSteps = 30;
 	constexpr unsigned numberOfElements = 6;
 	const std::string scalarFieldName = "Temperature";
-	section("write transient solution")
+	// write transient field
+	Eigen::VectorXd transientSolution;
+	transientSolution.resize(numberOfElements);
+	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
 	{
-		Eigen::VectorXd transientSolution;
-		transientSolution.resize(numberOfElements);
+		transientSolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
+		transientSolution *= timeStep;
+		cgnsFile.writeTransientScalarField(scalarFieldName,timeStep,transientSolution);
+	}
+	Eigen::VectorXd timeInstants;
+	timeInstants.resize(numberOfTimeSteps);
+	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
+		timeInstants[timeStep] = timeStep*deltaT;
+	cgnsFile.writeTransientInformation(scalarFieldName,timeInstants);
+	section("read transient solution")
+	{
 		for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
 		{
-			transientSolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
-			transientSolution *= timeStep;
-			cgnsFile.writeTransientScalarField(scalarFieldName,timeStep,transientSolution);
-		}
-		Eigen::VectorXd timeInstants;
-		timeInstants.resize(numberOfTimeSteps);
-		for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
-			timeInstants[timeStep] = timeStep*deltaT;
-		cgnsFile.writeTransientInformation(scalarFieldName,timeInstants);
-		for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
-		{
-			Eigen::VectorXd readTransientScalarField = cgnsFile.readTransientScalarField();
+			Eigen::VectorXd readTransientScalarField = cgnsFile.readTransientScalarField(scalarFieldName,timeStep);
 			transientSolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 			transientSolution *= timeStep;
 			check(readTransientScalarField==transientSolution);
 		}
 	}
+	section("read number of time steps")
+	{
+		const unsigned readNumberOfTimeSteps = cgnsFile.readNumberOfTimeSteps();
+		check(readNumberOfTimeSteps==numberOfTimeSteps);
+	}
 	// TODO: add exceptions and create failures tests
-	//boost::filesystem::remove(tempFilePath);
-	//checkFalse(boost::filesystem::exists(tempFilePath));
+	boost::filesystem::remove(tempFilePath);
+	checkFalse(boost::filesystem::exists(tempFilePath));
 }
 
 TestCase("grid reader from CGNS", "[GridData][CGNS]")

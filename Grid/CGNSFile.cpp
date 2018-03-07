@@ -264,3 +264,18 @@ void CGNSFile::writeSimulationType(void)
 	int error = cgns::cg_simulation_type_write(this->fileIndex,this->baseIndex,CGNS_ENUMV(cgns::TimeAccurate)); CHKERRQ(error);
 	return;
 }
+
+Eigen::VectorXd CGNSFile::readTransientScalarField(const std::string& scalarFieldName, const unsigned timeStep)
+{
+	std::string solutionName = this->getSolutionName(scalarFieldName,timeStep);
+	return readSteadyScalarField(solutionName,scalarFieldName);
+}
+
+unsigned CGNSFile::readNumberOfTimeSteps(void)
+{
+	int error;
+	char timeIterativeBaseName[NAME_LENGTH];
+	int numberOfTimeSteps;
+	error = cgns::cg_biter_read(this->fileIndex,this->baseIndex,timeIterativeBaseName,&numberOfTimeSteps); CHKERRQ(error);
+	return static_cast<unsigned>(numberOfTimeSteps);
+}
