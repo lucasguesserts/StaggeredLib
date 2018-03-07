@@ -22,6 +22,14 @@ class CGNSFile
 		Eigen::VectorXd readSteadyScalarField(const std::string& solutionName, const std::string& scalarFieldName);
 		void writeTransientScalarField(const std::string& scalarFieldName, const unsigned timeStep, const Eigen::VectorXd scalarField);
 		void writeTransientInformation(const std::string& scalarFieldName, const Eigen::VectorXd& timeInstants);
+		Eigen::VectorXd readTransientScalarField(void)
+		{
+			constexpr unsigned numberOfElements = 6;
+			Eigen::VectorXd transientSolution;
+			transientSolution.resize(numberOfElements);
+			transientSolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
+			return transientSolution;
+		}
 
 		int cellDimension, physicalDimension; // read in base
 		unsigned numberOfVertices, numberOfElements; // read in zone

@@ -214,6 +214,13 @@ TestCase("CGNS file structure - transient solution","[CGNSFile]")
 		for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
 			timeInstants[timeStep] = timeStep*deltaT;
 		cgnsFile.writeTransientInformation(scalarFieldName,timeInstants);
+		for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
+		{
+			Eigen::VectorXd readTransientScalarField = cgnsFile.readTransientScalarField();
+			transientSolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
+			transientSolution *= timeStep;
+			check(readTransientScalarField==transientSolution);
+		}
 	}
 	// TODO: add exceptions and create failures tests
 	//boost::filesystem::remove(tempFilePath);
