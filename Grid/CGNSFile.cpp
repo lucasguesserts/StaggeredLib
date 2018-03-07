@@ -220,9 +220,10 @@ void CGNSFile::writeTimeIterativeBase(const std::string& timeIterativeBaseName, 
 void CGNSFile::writeTimeInstantsInIterativeBase(const std::string& timeIterativeBaseName, const Eigen::VectorXd& timeInstants)
 {
 	int error;
-	cgns::cgsize_t timeArrayDimension[1] = { static_cast<cgns::cgsize_t>(timeInstants.size()) };
+	constexpr int arraySize = 1;
+	cgns::cgsize_t timeArrayDimension[arraySize] = { static_cast<cgns::cgsize_t>(timeInstants.size()) };
 	error = cgns::cg_goto(this->fileIndex,this->baseIndex,timeIterativeBaseName.c_str(),0,"end"); CHKERRQ(error);
-	error = cgns::cg_array_write("Time_Instants",CGNS_ENUMV(cgns::RealDouble),1,timeArrayDimension,&timeInstants[0]); CHKERRQ(error);
+	error = cgns::cg_array_write("Time_Instants",CGNS_ENUMV(cgns::RealDouble),arraySize,timeArrayDimension,&timeInstants[0]); CHKERRQ(error);
 	return;
 }
 
@@ -278,4 +279,30 @@ unsigned CGNSFile::readNumberOfTimeSteps(void)
 	int numberOfTimeSteps;
 	error = cgns::cg_biter_read(this->fileIndex,this->baseIndex,timeIterativeBaseName,&numberOfTimeSteps); CHKERRQ(error);
 	return static_cast<unsigned>(numberOfTimeSteps);
+}
+
+Eigen::VectorXd CGNSFile::readAllTimeInstants(void)
+{
+	int error;
+	// get array index
+	int numberOfArrays;
+	error = cgns::cg_narrays(&numberOfArrays); CHKERRQ(error);
+	if(numberOfArrays!=1) cgns::cg_error_exit();
+	int arrayIndex = 1;
+	// read and verify array information
+	error = cgns::cg_goto(this->fileIndex,this->baseIndex,"BaseIterativeData_t",1,"end"); CHKERRQ(error);
+	Eigen::VectorXd timeInstants;
+	char arrayName[NAME_LENGTH];
+	int dataDimension;
+	cgns::cgsize_t dataDimensionVector[12];
+	cgns::DataType_t arrayDataType;
+	error = cgns::cg_array_info(arrayIndex,arrayName,&arrayDataType,&dataDimension,dataDimensionVector); CHKERRQ(error);
+	if(arrayDataType!=CGNS_ENUMV(cgns::RealDouble)) cgns::cg_error_exit();
+	constexpr int arraySize = 1; if(dataDimension!=arraySize) cgns::cg_error_exit();
+	unsigned numberOfTimeInstants = dataDimensionVector[0];
+	// read time array data
+	Eigen::VectorXd allTimeInstants;
+	allTimeInstants.resize(numberOfTimeInstants);
+	error = cgns::cg_array_read(arrayIndex, &allTimeInstants[0]); CHKERRQ(error);
+	return allTimeInstants;
 }

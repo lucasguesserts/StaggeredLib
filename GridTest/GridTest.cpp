@@ -228,6 +228,11 @@ TestCase("CGNS file structure - transient solution","[CGNSFile]")
 		const unsigned readNumberOfTimeSteps = cgnsFile.readNumberOfTimeSteps();
 		check(readNumberOfTimeSteps==numberOfTimeSteps);
 	}
+	section("read time steps")
+	{
+		Eigen::VectorXd allReadTimeInstants = cgnsFile.readAllTimeInstants();
+		check(allReadTimeInstants==timeInstants);
+	}
 	// TODO: add exceptions and create failures tests
 	boost::filesystem::remove(tempFilePath);
 	checkFalse(boost::filesystem::exists(tempFilePath));

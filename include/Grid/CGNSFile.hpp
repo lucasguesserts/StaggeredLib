@@ -24,6 +24,7 @@ class CGNSFile
 		void writeTransientInformation(const std::string& scalarFieldName, const Eigen::VectorXd& timeInstants);
 		unsigned readNumberOfTimeSteps(void);
 		Eigen::VectorXd readTransientScalarField(const std::string& scalarFieldName, const unsigned timeStep);
+		Eigen::VectorXd readAllTimeInstants(void);
 
 		int cellDimension, physicalDimension; // read in base
 		unsigned numberOfVertices, numberOfElements; // read in zone
