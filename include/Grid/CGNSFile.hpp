@@ -52,6 +52,7 @@ class CGNSFile
 		void writeTimeInstantsInIterativeBase(const std::string& timeIterativeBaseName, const Eigen::VectorXd& timeInstants);
 		void writeTimeIterativeZone(const std::string& scalarFieldName, const std::string& timeIterativeZoneName, const Eigen::VectorXd& timeInstants);
 		std::string getSolutionName(const std::string& scalarFieldName, const unsigned timeStep);
+		std::string getSolutionNamesForTimeIterativeZone(const std::string& scalarFieldName, const unsigned numberOfTimeSteps);
 		void writeSimulationType(void);
 };
 
