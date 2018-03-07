@@ -196,7 +196,7 @@ TestCase("CGNS file structure - transient solution","[CGNSFile]")
 
 	CGNSFile cgnsFile(tempFileName);
 	constexpr double deltaT = 2;
-	constexpr unsigned numberOfTimeSteps = 3;
+	constexpr unsigned numberOfTimeSteps = 30;
 	constexpr unsigned numberOfElements = 6;
 	const std::string scalarFieldName = "Temperature";
 	section("write transient solution")
@@ -211,7 +211,8 @@ TestCase("CGNS file structure - transient solution","[CGNSFile]")
 		}
 		Eigen::VectorXd timeInstants;
 		timeInstants.resize(numberOfTimeSteps);
-		timeInstants << 0*deltaT, 1*deltaT, 2*deltaT;
+		for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
+			timeInstants[timeStep] = timeStep*deltaT;
 		cgnsFile.writeTransientInformation(scalarFieldName,timeInstants);
 	}
 	// TODO: add exceptions and create failures tests
