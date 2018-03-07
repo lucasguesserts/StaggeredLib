@@ -1,6 +1,5 @@
 #include <Grid/CGNSFile.hpp>
-#include <iomanip>
-#include <sstream>
+#include <boost/format.hpp>
 
 #define NAME_LENGTH 200
 #define CHKERRQ(err) if((err)) cgns::cg_error_exit()
@@ -193,7 +192,7 @@ cgns::cgsize_t CGNSFile::readSolutionSize(const int solutionIndex)
 void CGNSFile::writeTransientScalarField(const std::string& scalarFieldName, const unsigned timeStep, const Eigen::VectorXd scalarField)
 {
 	int error;
-	std::string solutionName = scalarFieldName + "_" + std::to_string(timeStep);
+	std::string solutionName = this->getSolutionName(scalarFieldName, timeStep);
 	int solutionIndex, fieldIndex;
 	error = cgns::cg_sol_write(this->fileIndex,this->baseIndex,this->zoneIndex,solutionName.c_str(),CGNS_ENUMV(cgns::CellCenter),&solutionIndex); CHKERRQ(error);
 	error = cgns::cg_field_write(this->fileIndex,this->baseIndex,this->zoneIndex,solutionIndex,CGNS_ENUMV(cgns::RealDouble),scalarFieldName.c_str(),&scalarField[0], &fieldIndex); CHKERRQ(error);
@@ -231,18 +230,27 @@ void CGNSFile::writeTimeIterativeZone(const std::string& scalarFieldName, const 
 {
 	int error;
 	const unsigned numberOfTimeSteps = timeInstants.size();
+	const unsigned timeWidthInSolutionName = 5;
 	error = cgns::cg_ziter_write(this->fileIndex,this->baseIndex,this->zoneIndex,timeIterativeZoneName.c_str()); CHKERRQ(error);
 	error = cgns::cg_goto(this->fileIndex,this->baseIndex,"Zone_t",this->zoneIndex,timeIterativeZoneName.c_str(),0,"end"); CHKERRQ(error);
 	cgns::cgsize_t solutionNameDimension[2];
-	solutionNameDimension[0] = scalarFieldName.size() + 1;
+	solutionNameDimension[0] = scalarFieldName.size() + 1 + timeWidthInSolutionName;
 	solutionNameDimension[1] = static_cast<cgns::cgsize_t>(numberOfTimeSteps);
-	const unsigned timeWidthInSolutionName = 5;
-	const unsigned solutionNameSize = scalarFieldName.size() + timeWidthInSolutionName;
-	std::stringstream solutionNames;
+	//const unsigned solutionNameSize = scalarFieldName.size() + timeWidthInSolutionName;
+	std::string solutionNames;
 	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
-		solutionNames << scalarFieldName << std::setfill('0') << std::setw(2) << timeStep;
-	error = cgns::cg_array_write("SolutionPointers",CGNS_ENUMV(cgns::Character),2,solutionNameDimension,solutionNames.str().c_str()); CHKERRQ(error);
+		solutionNames += this->getSolutionName(scalarFieldName, timeStep);
+	error = cgns::cg_array_write("SolutionPointers",CGNS_ENUMV(cgns::Character),2,solutionNameDimension,solutionNames.c_str()); CHKERRQ(error);
 	return;
+}
+
+std::string CGNSFile::getSolutionName(const std::string& scalarFieldName, const unsigned timeStep)
+{
+	constexpr unsigned timeWidthInSolutionName = 5;
+	const unsigned solutionNameSize = scalarFieldName.size() + timeWidthInSolutionName;
+	char* solutionName = new char[solutionNameSize];
+	sprintf(solutionName, "%s_%05d", scalarFieldName.c_str(), timeStep+1); /* Paraview start at one */
+	return std::string(solutionName);
 }
 
 void CGNSFile::writeSimulationType(void)
