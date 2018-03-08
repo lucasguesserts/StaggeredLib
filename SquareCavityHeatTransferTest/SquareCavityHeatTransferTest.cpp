@@ -226,7 +226,7 @@ TestCase("Linear system build", "[Eigen][EigenSolver]")
 
 TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 {
-	const std::string cgnsGridFileName = GridData::projectGridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	SquareCavityHeatTransfer problem(gridData);

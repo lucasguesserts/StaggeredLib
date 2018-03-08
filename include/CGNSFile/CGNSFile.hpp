@@ -8,7 +8,7 @@ namespace cgns
 {
 	#include <cgnslib.h>
 }
-#include <Grid/ElementDefinition.hpp>
+#include <CGNSFile/ElementDefinition.hpp>
 
 class CGNSFile
 {
@@ -26,6 +26,7 @@ class CGNSFile
 		Eigen::VectorXd readTransientScalarField(const std::string& scalarFieldName, const unsigned timeStep);
 		Eigen::VectorXd readAllTimeInstants(void);
 
+		static const std::string gridDirectory;
 		int cellDimension, physicalDimension; // read in base
 		unsigned numberOfVertices, numberOfElements; // read in zone
 	private:
@@ -62,6 +63,6 @@ class CGNSFile
 		Eigen::VectorXd readTimeArrayData(const int arrayIndex);
 };
 
-#include <Grid/CGNSFile.tpp>
+#include <CGNSFile/CGNSFile.tpp>
 
 #endif

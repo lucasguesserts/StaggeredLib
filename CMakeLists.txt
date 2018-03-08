@@ -35,6 +35,8 @@ add_definitions("-DGRID_DIRECTORY=\"${CMAKE_SOURCE_DIR}/grids/\"")
 enable_testing()
 
 add_subdirectory(UtilsTest)
+add_subdirectory(CGNSFile)
+add_subdirectory(CGNSFileTest)
 add_subdirectory(GeometricEntity)
 add_subdirectory(GeometricEntityTest)
 add_subdirectory(Grid)

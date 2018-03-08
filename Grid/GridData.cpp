@@ -1,7 +1,5 @@
 #include <Grid/GridData.hpp>
 
-const std::string GridData::projectGridDirectory = GRID_DIRECTORY;
-
 void GridData::readCoordinates(CGNSFile& cgnsFile)
 {
 	this->coordinates.resize(cgnsFile.numberOfVertices,Eigen::NoChange);

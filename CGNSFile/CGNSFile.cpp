@@ -1,8 +1,10 @@
-#include <Grid/CGNSFile.hpp>
+#include <CGNSFile/CGNSFile.hpp>
 #include <boost/format.hpp>
 
 #define NAME_LENGTH 200
 #define CHKERRQ(err) if((err)) cgns::cg_error_exit()
+
+const std::string CGNSFile::gridDirectory = GRID_DIRECTORY;
 
 CGNSFile::CGNSFile(const std::string cgnsFileName)
 {

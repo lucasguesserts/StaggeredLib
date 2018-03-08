@@ -4,7 +4,7 @@
 #include <Eigen/Core>
 #include <string>
 #include <vector>
-#include <Grid/CGNSFile.hpp>
+#include <CGNSFile/CGNSFile.hpp>
 
 class GridData
 {
@@ -13,7 +13,6 @@ class GridData
 		GridData(const std::string){};
 		GridData(CGNSFile& cgnsFile);
 
-		static const std::string projectGridDirectory;
 		unsigned dimension;
 		Eigen::Matrix<double,Eigen::Dynamic,3> coordinates;
 		std::vector<ElementDefinition<3>> triangle;
