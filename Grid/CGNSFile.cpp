@@ -283,15 +283,27 @@ unsigned CGNSFile::readNumberOfTimeSteps(void)
 
 Eigen::VectorXd CGNSFile::readAllTimeInstants(void)
 {
+	int arrayIndex = this->getArrayIndex();
+	this->verifyArrayInformation(arrayIndex);
+	return this->readTimeArrayData(arrayIndex);
+}
+
+int CGNSFile::getArrayIndex(void)
+{
 	int error;
-	// get array index
+	error = cgns::cg_goto(this->fileIndex,this->baseIndex,"BaseIterativeData_t",1,"end"); CHKERRQ(error);
 	int numberOfArrays;
 	error = cgns::cg_narrays(&numberOfArrays); CHKERRQ(error);
 	if(numberOfArrays!=1) cgns::cg_error_exit();
 	int arrayIndex = 1;
-	// read and verify array information
+	error = cgns::cg_goto(this->fileIndex,this->baseIndex,"end"); CHKERRQ(error);
+	return arrayIndex;
+}
+
+void CGNSFile::verifyArrayInformation(const int arrayIndex)
+{
+	int error;
 	error = cgns::cg_goto(this->fileIndex,this->baseIndex,"BaseIterativeData_t",1,"end"); CHKERRQ(error);
-	Eigen::VectorXd timeInstants;
 	char arrayName[NAME_LENGTH];
 	int dataDimension;
 	cgns::cgsize_t dataDimensionVector[12];
@@ -299,10 +311,15 @@ Eigen::VectorXd CGNSFile::readAllTimeInstants(void)
 	error = cgns::cg_array_info(arrayIndex,arrayName,&arrayDataType,&dataDimension,dataDimensionVector); CHKERRQ(error);
 	if(arrayDataType!=CGNS_ENUMV(cgns::RealDouble)) cgns::cg_error_exit();
 	constexpr int arraySize = 1; if(dataDimension!=arraySize) cgns::cg_error_exit();
-	unsigned numberOfTimeInstants = dataDimensionVector[0];
-	// read time array data
-	Eigen::VectorXd allTimeInstants;
-	allTimeInstants.resize(numberOfTimeInstants);
+	if(dataDimensionVector[0]!=this->readNumberOfTimeSteps()) cgns::cg_error_exit();
+	return;
+}
+
+Eigen::VectorXd CGNSFile::readTimeArrayData(const int arrayIndex)
+{
+	int error;
+	unsigned numberOfTimeInstants = this->readNumberOfTimeSteps();
+	Eigen::VectorXd allTimeInstants(numberOfTimeInstants);
 	error = cgns::cg_array_read(arrayIndex, &allTimeInstants[0]); CHKERRQ(error);
 	return allTimeInstants;
 }

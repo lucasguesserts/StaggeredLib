@@ -57,6 +57,9 @@ class CGNSFile
 		std::string getSolutionName(const std::string& scalarFieldName, const unsigned timeStep);
 		std::string getSolutionNamesForTimeIterativeZone(const std::string& scalarFieldName, const unsigned numberOfTimeSteps);
 		void writeSimulationType(void);
+		int getArrayIndex(void);
+		void verifyArrayInformation(const int arrayIndex);
+		Eigen::VectorXd readTimeArrayData(const int arrayIndex);
 };
 
 #include <Grid/CGNSFile.tpp>

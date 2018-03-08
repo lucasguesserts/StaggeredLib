@@ -1,11 +1,20 @@
 name: StaggeredLibEnv
 channels:
+  - anaconda
   - conda-forge
   - defaults
 dependencies:
+  - binutils_impl_linux-64=2.28.1=h04c84fa_2
+  - binutils_linux-64=7.2.0=25
+  - gcc_impl_linux-64=7.2.0=hc5ce805_2
+  - gcc_linux-64=7.2.0=25
+  - gxx_impl_linux-64=7.2.0=hd3faf3d_2
+  - gxx_linux-64=7.2.0=25
   - attrs=17.4.0=py_0
   - autobahn=17.10.1=py_0
   - automat=0.6.0=py36_0
+  - ca-certificates=2018.1.18=0
+  - certifi=2018.1.18=py36_0
   - cmake=3.10.0=4
   - constantly=15.1.0=py_0
   - curl=7.55.1=0
@@ -31,6 +40,7 @@ dependencies:
   - libxml2=2.9.7=0
   - lz4-c=1.8.0=0
   - ncurses=5.9=10
+  - openssl=1.0.2n=0
   - protobuf=3.5.1=py36_3
   - pugixml=1.8.1=2
   - readline=7.0=0
@@ -40,8 +50,7 @@ dependencies:
   - zlib=1.2.11=0
   - boost=1.65.1=py36_4
   - bzip2=1.0.6=h9a117a8_4
-  - ca-certificates=2017.08.26=h1d4fec5_0
-  - certifi=2018.1.18=py36_0
+  - eigen=3.3.3=h5721d7b_0
   - icu=58.2=h9c2bf20_1
   - intel-openmp=2018.0.0=hc7b2577_8
   - libboost=1.65.1=habcd387_4
@@ -54,7 +63,6 @@ dependencies:
   - mesa=10.5.4=0
   - mkl=2018.0.1=h19d6760_4
   - numpy=1.14.1=py36h3dfced4_1
-  - openssl=1.0.2n=hb7f436b_0
   - pip=9.0.1=py36_5
   - py-boost=1.65.1=py36hf484d3e_4
   - python=3.6.3=h1284df2_4
