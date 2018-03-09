@@ -293,7 +293,7 @@ TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLine
 	check(linearSystem.matrix==matrix);
 }
 
-TestCase("Compute ScalarStencil in grid", "[ScalarStencilComputer]")
+TestCase("Compute ScalarStencil in grid, vertex by vertex", "[ScalarStencilComputer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -345,6 +345,12 @@ TestCase("Compute ScalarStencil in grid", "[ScalarStencilComputer]")
 		};
 		scalarStencilTest(vertexIndex, correctScalarStencil);
 	}
+	section("Vertex 5")
+	{
+		constexpr unsigned vertexIndex = 5;
+		ScalarStencil correctScalarStencil = { {1,0.4}, {4,0.6} };
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
 	section("Vertex 6")
 	{
 		constexpr unsigned vertexIndex = 6;
@@ -370,4 +376,27 @@ TestCase("Compute ScalarStencil in grid", "[ScalarStencilComputer]")
 		};
 		scalarStencilTest(vertexIndex, correctScalarStencil);
 	}
+}
+
+TestCase("Compute ScalarStencil vector in grid", "[ScalarStencilComputer]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DVerticesWithNeighborElements grid(gridData);
+	std::vector<ScalarStencil> correctScalarStencilVector = {
+		{ {0,1.0} },
+		{ {0,0.5}, {1,0.5} },
+		{ {1,1.0} },
+		{ {0,0.3451400998500395}, {2,0.327429500749802}, {3,0.327429500749802} },
+		{ {0,0.185275538023003}, {1,0.185275538023003}, {2,0.277913307034504}, {4,0.175767808459745}, {5,0.175767808459745} },
+		{ {1,0.4}, {4,0.6} },
+		{ {3,1.0} },
+		{ {2,0.279240779943874}, {3,0.279240779943874}, {5,0.441518440112253} },
+		{ {4,0.5}, {5,0.5} }
+	};
+	std::vector<ScalarStencil> toTestScalarStencil = ScalarStencilComputer::inverseDistance(grid);
+	for(Vertex& vertex: grid.vertices)
+		for(Element* element: grid.verticesNeighborElements[vertex.getIndex()])
+			check(toTestScalarStencil[vertex.getIndex()][element->getIndex()]==Approx(correctScalarStencilVector[vertex.getIndex()][element->getIndex()]));
 }
