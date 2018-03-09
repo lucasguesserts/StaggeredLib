@@ -21,11 +21,11 @@ void ScalarStencilComputer::normalizeScalarStencil(ScalarStencil& scalarStencil)
 
 std::vector<ScalarStencil> ScalarStencilComputer::inverseDistance(const Grid2DVerticesWithNeighborElements& grid)
 {
-	std::vector<ScalarStencil> scalarStencilVector;
-	scalarStencilVector.reserve(grid.vertices.size());
+	std::vector<ScalarStencil> scalarStencilOnVertices;
+	scalarStencilOnVertices.reserve(grid.vertices.size());
 	for(const Vertex& vertex: grid.vertices)
-		scalarStencilVector.emplace_back( ScalarStencilComputer::inverseDistance(vertex,grid.verticesNeighborElements[vertex.getIndex()]));
-	return scalarStencilVector;
+		scalarStencilOnVertices.emplace_back( ScalarStencilComputer::inverseDistance(vertex,grid.verticesNeighborElements[vertex.getIndex()]));
+	return scalarStencilOnVertices;
 }
 
 std::vector<ScalarStencil> ScalarStencilComputer::elements(const Grid2DVerticesWithNeighborElements& grid)
