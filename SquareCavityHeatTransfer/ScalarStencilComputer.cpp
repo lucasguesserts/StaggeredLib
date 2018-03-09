@@ -1,4 +1,5 @@
 #include <SquareCavityHeatTransfer/ScalarStencilComputer.hpp>
+#include <utility>
 
 ScalarStencil ScalarStencilComputer::inverseDistance(const Vertex& vertex,const std::vector<Element*>& vertexNeighborElements)
 {
@@ -39,4 +40,20 @@ std::vector<ScalarStencil> ScalarStencilComputer::elements(const Grid2DVerticesW
 		scalarStencilOnElements.emplace_back(elementScalarStencil);
 	}
 	return scalarStencilOnElements;
+}
+
+VectorStencil ScalarStencilComputer::vectorStencil(StaggeredQuadrangle& staggeredQuadrangle, std::vector<ScalarStencil>& scalarStencilOnVertices, std::vector<ScalarStencil>& scalarStencilOnElements)
+{
+	VectorStencil vectorStencilOnFacet;
+	VectorStencil firstScalarStencil = ScalarStencilComputer::computeVectorStencil(*(staggeredQuadrangle.vertices[0]), staggeredQuadrangle.elements[0]->getCentroid(), scalarStencilOnVertices[staggeredQuadrangle.vertices[0]->getIndex()], scalarStencilOnElements[staggeredQuadrangle.elements[0]->getIndex()]);
+	VectorStencil correctVectorStencil = {{ { 0, {0.75,-0.75,0.0} }, { 1, {-0.75,0.75,0.0} } }};
+	return correctVectorStencil;
+}
+
+VectorStencil ScalarStencilComputer::computeVectorStencil(Eigen::Vector3d firstPoint, Eigen::Vector3d secondPoint, ScalarStencil& firstScalarStencil, ScalarStencil& secondScalarStencil)
+{
+	Eigen::Vector3d vectorPerpendicularToAreaVector = secondPoint - firstPoint;
+	Eigen::Vector3d areaVector = {vectorPerpendicularToAreaVector[1], -vectorPerpendicularToAreaVector[0], vectorPerpendicularToAreaVector[2]}; //rotate
+	ScalarStencil averageScalarStencil = 0.5 * (firstScalarStencil + secondScalarStencil);
+	return averageScalarStencil*areaVector;
 }

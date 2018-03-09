@@ -11,6 +11,8 @@
 #include <SquareCavityHeatTransfer/ScalarStencilComputer.hpp>
 #include <SquareCavityHeatTransfer/VectorStencil.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
+#include <GeometricEntity/StaggeredTriangle.hpp>
+#include <GeometricEntity/StaggeredQuadrangle.hpp>
 
 TestCase("Analytical solution", "[SquareCavityHeatTransfer]")
 {
@@ -421,4 +423,33 @@ TestCase("Compute ScalarStencil for all elements in grid", "[ScalarStencilComput
 		const unsigned elementIndex = element->getIndex();
 		check(toTestScalarStencilOnElements[elementIndex][elementIndex]==Approx(correctScalarStencilOnElements[elementIndex][elementIndex]));
 	}
+}
+
+TestCase("StaggeredQaudrangle compute gradient using VectorStencil","StaggeredQuadrangle")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DVerticesWithNeighborElements grid(gridData);
+	// create staggered elements
+	const unsigned staggeredQuadrangleIndex = 0;
+	StaggeredQuadrangle staggeredQuadrangle(staggeredQuadrangleIndex,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1]);
+	const std::array<unsigned,4> staggeredTrianglesIndices = {{1, 2, 3, 4}};
+	std::array<StaggeredTriangle,4> staggeredTriangles = {{
+		{staggeredTrianglesIndices[0], grid.vertices[1], grid.elements[0], grid.vertices[0]},
+		{staggeredTrianglesIndices[1], grid.vertices[3], grid.elements[0], grid.vertices[1]},
+		{staggeredTrianglesIndices[2], grid.vertices[0], grid.elements[1], grid.vertices[2]},
+		{staggeredTrianglesIndices[3], grid.vertices[2], grid.elements[1], grid.vertices[3]}
+	}};
+	// compute vector stencil
+	std::vector<ScalarStencil> scalarStencilOnVertices = ScalarStencilComputer::inverseDistance(grid);
+	std::vector<ScalarStencil> scalarStencilOnElements = ScalarStencilComputer::elements(grid);
+	std::vector<VectorStencil> correctVectorStencil = {
+		{ { 0, {0.75,-0.75,0.0} }, { 1, {-0.75,0.75,0.0} } },
+		{ { 0, {0.0,0.0,0.0} }, { 1, {0.0,0.0,0.0} } },
+		{ { 0, {0.0,0.0,0.0} }, { 1, {0.0,0.0,0.0} } },
+		{ { 0, {0.0,0.0,0.0} }, { 1, {0.0,0.0,0.0} } }
+	};
+	VectorStencil vectorStencilOnStaggeredQuadrangle = ScalarStencilComputer::vectorStencil(staggeredQuadrangle, scalarStencilOnVertices, scalarStencilOnElements);
+	check(vectorStencilOnStaggeredQuadrangle==correctVectorStencil[0]);
 }

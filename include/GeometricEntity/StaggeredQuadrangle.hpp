@@ -10,16 +10,26 @@
 
 class StaggeredQuadrangle: public Entity
 {
-	std::array<Vertex*,2> vertices;
-	std::array<Element*,2> elements;
-	VectorStencil computeGreenGaussGradient(
-			Eigen::Matrix<ScalarStencil,Eigen::Dynamic,1>& temperatureVertex_0,
-			Eigen::Matrix<ScalarStencil,Eigen::Dynamic,1>& temperatureVertex_1,
-			Eigen::Matrix<ScalarStencil,Eigen::Dynamic,1>& temperatureElement_0,
-			Eigen::Matrix<ScalarStencil,Eigen::Dynamic,1>& temperatureElement_1)
-	{
-		return VectorStencil{ { 0, {0,0,0} } };
-	}
+	public:
+		std::array<Vertex*,2> vertices;
+		std::array<Element*,2> elements;
+		StaggeredQuadrangle(const unsigned index, Vertex& vertex_0, Element* element_0, Vertex& vertex_1, Element* element_1)
+			: Entity(index)
+		{
+			this->vertices[0] = &vertex_0;
+			this->vertices[1] = &vertex_1;
+			this->elements[0] = element_0;
+			this->elements[1] = element_1;
+			return;
+		}
+		VectorStencil computeGreenGaussGradient(
+				ScalarStencil& temperatureVertex_0,
+				ScalarStencil& temperatureVertex_1,
+				ScalarStencil& temperatureElement_0,
+				ScalarStencil& temperatureElement_1)
+		{
+			return VectorStencil{ { 0, {0,0,0} } };
+		}
 };
 
 #endif
