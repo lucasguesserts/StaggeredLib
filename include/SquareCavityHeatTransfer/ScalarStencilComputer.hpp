@@ -12,6 +12,7 @@ class ScalarStencilComputer
 	public:
 		static ScalarStencil inverseDistance(const Vertex& vertex,const std::vector<Element*>& vertexNeighborElements);
 		static std::vector<ScalarStencil> inverseDistance(const Grid2DVerticesWithNeighborElements& grid);
+		static std::vector<ScalarStencil> elements(const Grid2DVerticesWithNeighborElements& grid);
 	private:
 		static void normalizeScalarStencil(ScalarStencil& scalarStencil);
 };

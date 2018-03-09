@@ -27,3 +27,16 @@ std::vector<ScalarStencil> ScalarStencilComputer::inverseDistance(const Grid2DVe
 		scalarStencilVector.emplace_back( ScalarStencilComputer::inverseDistance(vertex,grid.verticesNeighborElements[vertex.getIndex()]));
 	return scalarStencilVector;
 }
+
+std::vector<ScalarStencil> ScalarStencilComputer::elements(const Grid2DVerticesWithNeighborElements& grid)
+{
+	constexpr double weightValue = 1.0;
+	std::vector<ScalarStencil> scalarStencilOnElements;
+	scalarStencilOnElements.reserve(grid.elements.size());
+	for(Element* element: grid.elements)
+	{
+		ScalarStencil elementScalarStencil = { {element->getIndex(), weightValue} };
+		scalarStencilOnElements.emplace_back(elementScalarStencil);
+	}
+	return scalarStencilOnElements;
+}

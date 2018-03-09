@@ -378,7 +378,7 @@ TestCase("Compute ScalarStencil in grid, vertex by vertex", "[ScalarStencilCompu
 	}
 }
 
-TestCase("Compute ScalarStencil vector in grid", "[ScalarStencilComputer]")
+TestCase("Compute ScalarStencil for all vertices in grid", "[ScalarStencilComputer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -399,4 +399,26 @@ TestCase("Compute ScalarStencil vector in grid", "[ScalarStencilComputer]")
 	for(Vertex& vertex: grid.vertices)
 		for(Element* element: grid.verticesNeighborElements[vertex.getIndex()])
 			check(toTestScalarStencil[vertex.getIndex()][element->getIndex()]==Approx(correctScalarStencilVector[vertex.getIndex()][element->getIndex()]));
+}
+
+TestCase("Compute ScalarStencil for all elements in grid", "[ScalarStencilComputer]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DVerticesWithNeighborElements grid(gridData);
+	std::vector<ScalarStencil> correctScalarStencilOnElements = {
+		{ {0,1.0} },
+		{ {1,1.0} },
+		{ {2,1.0} },
+		{ {3,1.0} },
+		{ {4,1.0} },
+		{ {5,1.0} }
+	};
+	std::vector<ScalarStencil> toTestScalarStencil = ScalarStencilComputer::elements(grid);
+	for(Element* element: grid.elements)
+	{
+		const unsigned elementIndex = element->getIndex();
+		check(toTestScalarStencil[elementIndex][elementIndex]==Approx(correctScalarStencilOnElements[elementIndex][elementIndex]));
+	}
 }
