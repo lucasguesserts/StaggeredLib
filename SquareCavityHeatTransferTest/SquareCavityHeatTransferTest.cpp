@@ -3,9 +3,12 @@
 #include <boost/filesystem.hpp>
 
 #include <Utils/Test.hpp>
+#include <CGNSFile/CGNSFile.hpp>
 #include <Grid/GridData.hpp>
+#include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <SquareCavityHeatTransfer/ScalarStencil.hpp>
+#include <SquareCavityHeatTransfer/ScalarStencilComputer.hpp>
 #include <SquareCavityHeatTransfer/VectorStencil.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
 
@@ -288,4 +291,23 @@ TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLine
 	          scalarStencil[1][0], scalarStencil[1][1], scalarStencil[1][2],
 	          scalarStencil[2][0], scalarStencil[2][1], scalarStencil[2][2];
 	check(linearSystem.matrix==matrix);
+}
+
+TestCase("Compute ScalarStencil to a vertex", "[ScalarStencil]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DVerticesWithNeighborElements grid(gridData);
+	ScalarStencil correctScalarStencil = {
+		{0,0.185275538023003},
+		{1,0.185275538023003},
+		{2,0.277913307034504},
+		{4,0.175767808459745},
+		{5,0.175767808459745}
+	};
+	constexpr unsigned vertexIndex = 4;
+	ScalarStencil scalarStencil = ScalarStencilComputer::inverseDistance(grid.vertices[vertexIndex], grid.verticesNeighborElements[vertexIndex]);
+	for(Element* element: grid.verticesNeighborElements[vertexIndex])
+		check(scalarStencil[element->getIndex()]==Approx(correctScalarStencil[element->getIndex()]));
 }

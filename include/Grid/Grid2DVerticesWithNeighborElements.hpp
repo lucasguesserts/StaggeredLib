@@ -11,7 +11,7 @@ class Grid2DVerticesWithNeighborElements: public Grid2D
 	public:
 		Grid2DVerticesWithNeighborElements(const GridData& gridData);
 
-		std::vector<std::vector<const Element*>> verticesNeighborElements;
+		std::vector<std::vector<Element*>> verticesNeighborElements;
 	private:
 		void setVerticesNeighborElements(void);
 };

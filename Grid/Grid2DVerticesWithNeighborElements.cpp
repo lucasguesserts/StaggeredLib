@@ -11,7 +11,7 @@ void Grid2DVerticesWithNeighborElements::setVerticesNeighborElements(void)
 {
 	const unsigned numberOfVertices = this->vertices.size();
 	this->verticesNeighborElements.resize(numberOfVertices);
-	for(const Element* element: this->elements)
+	for(Element* element: this->elements)
 	{
 		for(const Vertex* const vertex: element->vertices)
 		{
