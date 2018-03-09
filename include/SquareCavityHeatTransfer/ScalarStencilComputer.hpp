@@ -10,6 +10,8 @@ class ScalarStencilComputer
 {
 	public:
 		static ScalarStencil inverseDistance(const Vertex& vertex,const std::vector<Element*>& vertexNeighborElements);
+	private:
+		static void normalizeScalarStencil(ScalarStencil& scalarStencil);
 };
 
 #endif

@@ -5,8 +5,16 @@ ScalarStencil ScalarStencilComputer::inverseDistance(const Vertex& vertex,const 
 	ScalarStencil vertexScalarStencil;
 	for(Element* element: vertexNeighborElements)
 		vertexScalarStencil[element->getIndex()] = 1 / (vertex - element->getCentroid()).norm();
-	double inverseDistanceSum = 0.0;
-	for(auto& keyValuePair: vertexScalarStencil)
-		inverseDistanceSum += keyValuePair.second;
-	return (1/inverseDistanceSum) * vertexScalarStencil;
+	ScalarStencilComputer::normalizeScalarStencil(vertexScalarStencil);
+	return vertexScalarStencil;
+}
+
+void ScalarStencilComputer::normalizeScalarStencil(ScalarStencil& scalarStencil)
+{
+	double sum = 0.0;
+	for(auto& keyValuePair: scalarStencil)
+		sum += keyValuePair.second;
+	for(auto& keyValuePair: scalarStencil)
+		keyValuePair.second *= (1/sum);
+	return;
 }
