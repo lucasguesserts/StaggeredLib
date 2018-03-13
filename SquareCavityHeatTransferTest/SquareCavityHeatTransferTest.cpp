@@ -425,7 +425,69 @@ TestCase("Compute ScalarStencil for all elements in grid", "[ScalarStencilComput
 	}
 }
 
-TestCase("StaggeredQaudrangle compute gradient using VectorStencil","StaggeredQuadrangle")
+TestCase("ScalarStencilComputer compute area vector","[ScalarStencilComputer]")
+{
+	Eigen::Vector3d point[] = { {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0} };
+	Eigen::Vector3d correctAreaVector = {1.0, 1.0, 0.0};
+	Eigen::Vector3d areaVector = ScalarStencilComputer::computeAreaVector(point[0],point[1]);
+	check(areaVector==correctAreaVector);
+}
+
+TestCase("ScalarStencilComputer compute average scalar stencil","[ScalarStencilComputer]")
+{
+	ScalarStencil scalarStencil[] = { {{0, 2.2},{4, 5.4}} , {{1, 4.8}, {4, 3.2}} };
+	ScalarStencil correctScalarStencil = {{0, 1.1}, {1, 2.4}, {4, 4.3}};
+	ScalarStencil averageScalarStencil = ScalarStencilComputer::computeAverageScalarStencil(scalarStencil[0],scalarStencil[1]);
+	for(auto keyValue: averageScalarStencil)
+		check(averageScalarStencil[keyValue.first]==Approx(correctScalarStencil[keyValue.first]));
+}
+
+TestCase("ScalarStencilComputer compute vector stencil","[ScalarStencilComputer]")
+{
+	Eigen::Vector3d point[] = { {0.0, 1.0, 0.0}, {-2.0, 0.0, 0.0} };
+	ScalarStencil scalarStencil[] = { {{0, 2.2},{4, 5.4}} , {{1, 4.8}, {4, 3.2}} };
+	VectorStencil vectorStencil = ScalarStencilComputer::computeVectorStencil(point[0], point[1], scalarStencil[0], scalarStencil[1]);
+	Eigen::Vector3d areaVector = ScalarStencilComputer::computeAreaVector(point[0],point[1]);
+	VectorStencil correctVectorStencil = 0.5 * (scalarStencil[0]+scalarStencil[1]) * areaVector;
+	check(vectorStencil==correctVectorStencil);
+}
+
+TestCase("ScalarStencilComputer compute gradient using StaggeredQuadrangle","[ScalarStencilComputer][StaggeredQuadrangle]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DVerticesWithNeighborElements grid(gridData);
+	// create staggered elements
+	const unsigned staggeredQuadrangleIndex = 0;
+	StaggeredQuadrangle staggeredQuadrangle(staggeredQuadrangleIndex,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1]);
+	const std::array<unsigned,4> staggeredTrianglesIndices = {{1, 2, 3, 4}};
+	// compute vector stencil
+	std::vector<ScalarStencil> scalarStencilOnVertices = ScalarStencilComputer::inverseDistance(grid);
+	std::vector<ScalarStencil> scalarStencilOnElements = ScalarStencilComputer::elements(grid);
+	VectorStencil correctVectorStencil = { { 0, {0.75,-0.75,0.0} }, { 1, {-0.75,0.75,0.0} } };
+	section("check scalar stencil")
+	{
+		std::vector<ScalarStencil> correctScalarStencilOnVertices = {
+			{{0, 0.5}, {1, 0.5}},
+			{{0, 1.0}},
+			{{1, 1.0}},
+			{{0, 0.5}, {1, 0.5}}
+		};
+		check(scalarStencilOnVertices==correctScalarStencilOnVertices);
+	}
+	section("build and check vector stencil")
+	{
+		VectorStencil vectorStencilOnStaggeredQuadrangle = ScalarStencilComputer::vectorStencil(staggeredQuadrangle, scalarStencilOnVertices, scalarStencilOnElements);
+		for(auto& keyValue: vectorStencilOnStaggeredQuadrangle)
+		{
+			for(unsigned i=0 ; i<3 ; ++i)
+				check(keyValue.second[i]==Approx(correctVectorStencil[keyValue.first][i]));
+		}
+	}
+}
+
+TestCase("ScalarStencilComputer compute gradient using StaggeredTriangle","[ScalarStencilComputer][StaggeredTriangle]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -450,6 +512,4 @@ TestCase("StaggeredQaudrangle compute gradient using VectorStencil","StaggeredQu
 		{ { 0, {0.0,0.0,0.0} }, { 1, {0.0,0.0,0.0} } },
 		{ { 0, {0.0,0.0,0.0} }, { 1, {0.0,0.0,0.0} } }
 	};
-	VectorStencil vectorStencilOnStaggeredQuadrangle = ScalarStencilComputer::vectorStencil(staggeredQuadrangle, scalarStencilOnVertices, scalarStencilOnElements);
-	check(vectorStencilOnStaggeredQuadrangle==correctVectorStencil[0]);
 }

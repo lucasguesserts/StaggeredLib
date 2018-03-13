@@ -21,13 +21,6 @@ class StaggeredTriangle: public Entity
 			this->vertices[1] = &vertex_1;
 			return;
 		}
-		VectorStencil computeGreenGaussGradient(
-				ScalarStencil& temperatureVertex_0,
-				ScalarStencil& temperatureElement,
-				ScalarStencil& temperatureVertex_1)
-		{
-			return VectorStencil{ { 0, {0.0,0.0,0.0} } };
-		}
 };
 
 #endif

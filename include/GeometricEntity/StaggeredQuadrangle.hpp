@@ -22,13 +22,23 @@ class StaggeredQuadrangle: public Entity
 			this->elements[1] = element_1;
 			return;
 		}
-		VectorStencil computeGreenGaussGradient(
-				ScalarStencil& temperatureVertex_0,
-				ScalarStencil& temperatureVertex_1,
-				ScalarStencil& temperatureElement_0,
-				ScalarStencil& temperatureElement_1)
+		double getVolume(void)
 		{
-			return VectorStencil{ { 0, {0,0,0} } };
+			return this->getAreaVector().norm();
+		}
+	private:
+		Eigen::Vector3d getAreaVector(void)
+		{
+			Eigen::Vector3d firstTriangle = this->computeTriangleAreaVector(*(this->vertices[0]), this->elements[0]->getCentroid(), this->elements[1]->getCentroid());
+			Eigen::Vector3d secondTriangle = this->computeTriangleAreaVector(this->elements[0]->getCentroid(), *(this->vertices[1]), this->elements[1]->getCentroid());
+			return firstTriangle + secondTriangle;
+		}
+		Eigen::Vector3d computeTriangleAreaVector(
+				Eigen::Vector3d firstPoint,
+				Eigen::Vector3d secondPoint,
+				Eigen::Vector3d thirdPoint)
+		{
+			return (1.0/2.0) * (secondPoint - firstPoint).cross(thirdPoint - firstPoint);
 		}
 };
 

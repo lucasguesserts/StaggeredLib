@@ -16,9 +16,12 @@ class ScalarStencilComputer
 		static std::vector<ScalarStencil> inverseDistance(const Grid2DVerticesWithNeighborElements& grid);
 		static std::vector<ScalarStencil> elements(const Grid2DVerticesWithNeighborElements& grid);
 		static VectorStencil vectorStencil(StaggeredQuadrangle& staggeredQuadrangle, std::vector<ScalarStencil>& scalarStencilOnVertices, std::vector<ScalarStencil>& scalarStencilOnElements);
+
+		static VectorStencil computeVectorStencil(Eigen::Vector3d firstPoint, Eigen::Vector3d secondPoint, ScalarStencil& firstScalarStencil, ScalarStencil& secondScalarStencil);
+		static Eigen::Vector3d computeAreaVector(Eigen::Vector3d firstPoint, Eigen::Vector3d secondPoint);
+		static ScalarStencil computeAverageScalarStencil(ScalarStencil& firstScalarStencil, ScalarStencil& secondScalarStencil);
 	private:
 		static void normalizeScalarStencil(ScalarStencil& scalarStencil);
-		static VectorStencil computeVectorStencil(Eigen::Vector3d firstPoint, Eigen::Vector3d secondPoint, ScalarStencil& firstScalarStencil, ScalarStencil& secondScalarStencil);
 };
 
 #endif
