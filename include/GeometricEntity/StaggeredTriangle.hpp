@@ -21,6 +21,22 @@ class StaggeredTriangle: public Entity
 			this->vertices[1] = &vertex_1;
 			return;
 		}
+		double getVolume(void)
+		{
+			return this->getAreaVector().norm();
+		}
+	private:
+		Eigen::Vector3d getAreaVector(void)
+		{
+			return this->computeTriangleAreaVector(*(this->vertices[0]), this->element->getCentroid(), *(this->vertices[1]));
+		}
+		Eigen::Vector3d computeTriangleAreaVector(
+				Eigen::Vector3d firstPoint,
+				Eigen::Vector3d secondPoint,
+				Eigen::Vector3d thirdPoint)
+		{
+			return (1.0/2.0) * (secondPoint - firstPoint).cross(thirdPoint - firstPoint);
+		}
 };
 
 #endif

@@ -52,6 +52,15 @@ VectorStencil ScalarStencilComputer::vectorStencil(StaggeredQuadrangle& staggere
 	return (1/staggeredQuadrangle.getVolume()) * (vectorStencilOnQuadrangleFaces[0] + vectorStencilOnQuadrangleFaces[1] + vectorStencilOnQuadrangleFaces[2] + vectorStencilOnQuadrangleFaces[3]);
 }
 
+VectorStencil ScalarStencilComputer::vectorStencil(StaggeredTriangle& staggeredTriangle, std::vector<ScalarStencil>& scalarStencilOnVertices, std::vector<ScalarStencil>& scalarStencilOnElements)
+{
+	std::array<VectorStencil,3> vectorStencilOnTriangleFaces;
+	vectorStencilOnTriangleFaces[0] = ScalarStencilComputer::computeVectorStencil(*(staggeredTriangle.vertices[0]), staggeredTriangle.element->getCentroid(), scalarStencilOnVertices[staggeredTriangle.vertices[0]->getIndex()], scalarStencilOnElements[staggeredTriangle.element->getIndex()]);
+	vectorStencilOnTriangleFaces[1] = ScalarStencilComputer::computeVectorStencil(staggeredTriangle.element->getCentroid(), *(staggeredTriangle.vertices[1]), scalarStencilOnElements[staggeredTriangle.element->getIndex()], scalarStencilOnVertices[staggeredTriangle.vertices[1]->getIndex()]);
+	vectorStencilOnTriangleFaces[2] = ScalarStencilComputer::computeVectorStencil(*(staggeredTriangle.vertices[1]), *(staggeredTriangle.vertices[0]), scalarStencilOnVertices[staggeredTriangle.vertices[1]->getIndex()], scalarStencilOnVertices[staggeredTriangle.vertices[0]->getIndex()]);
+	return (1/staggeredTriangle.getVolume()) * (vectorStencilOnTriangleFaces[0] + vectorStencilOnTriangleFaces[1] + vectorStencilOnTriangleFaces[2]);
+}
+
 VectorStencil ScalarStencilComputer::computeVectorStencil(Eigen::Vector3d firstPoint, Eigen::Vector3d secondPoint, ScalarStencil& firstScalarStencil, ScalarStencil& secondScalarStencil)
 {
 	Eigen::Vector3d areaVector = ScalarStencilComputer::computeAreaVector(firstPoint,secondPoint);
