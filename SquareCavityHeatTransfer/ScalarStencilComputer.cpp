@@ -1,3 +1,4 @@
+#include <Eigen/Geometry>
 #include <SquareCavityHeatTransfer/ScalarStencilComputer.hpp>
 #include <algorithm>
 

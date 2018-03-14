@@ -1,6 +1,8 @@
 #ifndef SCALAR_STENCIL_COMPUTER_HPP
 #define SCALAR_STENCIL_COMPUTER_HPP
 
+#include <Eigen/Core>
+
 #include <vector>
 #include <SquareCavityHeatTransfer/ScalarStencil.hpp>
 #include <SquareCavityHeatTransfer/VectorStencil.hpp>
