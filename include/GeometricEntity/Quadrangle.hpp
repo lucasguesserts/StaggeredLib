@@ -2,15 +2,14 @@
 #define QUADRANGLE_HPP
 
 #include <Eigen/Core>
-#include <GeometricEntity/Element2D.hpp>
+#include <GeometricEntity/Element.hpp>
 
-class Quadrangle: public Element2D
+class Quadrangle: public Element
 {
 	public:
-		virtual Eigen::Vector3d getAreaVector(void);
-		virtual double getVolume(void);
-		virtual Eigen::VectorXd getShapeFunctionValues(const Eigen::Vector3d localCoordinates) const;
-		virtual Eigen::MatrixXd getShapeFunctionDerivatives(const Eigen::Vector3d localCoordinates) const;
+		virtual Eigen::Vector3d getCentroid(void) override;
+		virtual Eigen::Vector3d getAreaVector(void) override;
+		virtual double getVolume(void) override;
 };
 
 #endif

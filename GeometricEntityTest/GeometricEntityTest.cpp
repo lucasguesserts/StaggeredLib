@@ -6,8 +6,6 @@
 #include <GeometricEntity/Entity.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
-#include <GeometricEntity/Element2D.hpp>
-#include <GeometricEntity/Line.hpp>
 #include <GeometricEntity/Triangle.hpp>
 #include <GeometricEntity/Quadrangle.hpp>
 
@@ -54,81 +52,29 @@ TestCase("Vertex constructor", "[Vertex]")
 	}
 }
 
-TestCase("Element2D compute triangle area vector", "[Element2D]")
+TestCase("Element compute triangle area vector", "[Element]")
 {
 	std::vector<Vertex> vertices;
 	vertices.push_back(Vertex(-5,  4,  7, 0));
 	vertices.push_back(Vertex( 9, -2,  4, 1));
 	vertices.push_back(Vertex( 3,  5, -6, 2));
 	const Eigen::Vector3d areaVector(40.5, 79, 31);
-	Triangle triangle;
-	for(Vertex& vertex: vertices)
-		triangle.addVertex(vertex);
-	check(triangle.getAreaVector()==areaVector);
+	check(Element::computeTriangleAreaVector(vertices[0],vertices[1],vertices[2])==areaVector);
 }
 
-TestCase("Line", "[Element][Element2D][Line]")
-{
-	const unsigned numberOfVertices = 2;
-	std::vector<Vertex> vertices;
-		vertices.push_back(Vertex( 2.0, -5.0,  3.0, 0));
-	 	vertices.push_back(Vertex( 4.0, -1.0,  6.0, 1));
-	const Eigen::Vector3d localCoordinates(0.4, 0.0, 0.0);
-	Line line;
-	for(Vertex& vertex: vertices)
-		line.addVertex(vertex);
-	section("Basic requirements")
-	{
-		const unsigned dimension = 1;
-		require(line.getNumberOfVertices()==numberOfVertices);
-		require(line.dimension==dimension);
-	}
-	section("Centroid")
-	{
-		const Eigen::Vector3d centroid(3, -3, 4.5);
-		check(line.getCentroid()==centroid);
-	}
-	section("Volume")
-	{
-		const double volume = 5.385164807134504; // the length
-		check(line.getVolume()==Approx(volume));
-	}
-	section("Shape function values")
-	{
-		Eigen::Vector2d shapeFunctionValues(0.6, 0.4);
-		Eigen::Vector2d lineShapeFunctionValues = line.getShapeFunctionValues(localCoordinates);
-		for(unsigned i=0 ; i<2 ; ++i)
-			check(lineShapeFunctionValues(i)==Approx(shapeFunctionValues(i)));
-	}
-	section("Shape function derivatives")
-	{
-		const unsigned numberOfRows = 2;
-		const unsigned numberOfColumns = 3;
-		Eigen::MatrixXd shapeFunctionDerivatives(numberOfRows, numberOfColumns);
-			shapeFunctionDerivatives << -1.0, 0.0, 0.0,
-		                                 1.0, 0.0, 0.0;
-		Eigen::MatrixXd lineShapeFunctionDerivatives = line.getShapeFunctionDerivatives(localCoordinates);
-		for(unsigned i=0 ; i<numberOfRows ; ++i)
-			for(unsigned j=0 ; j<numberOfColumns ; ++j)
-				check(lineShapeFunctionDerivatives(i,j)==Approx(shapeFunctionDerivatives(i,j)));
-	}
-}
-
-TestCase("Triangle", "[Element][Element2D][Triangle]")
+TestCase("Triangle", "[Element][Triangle]")
 {
 	const unsigned numberOfVertices = 3;
 	std::vector<Vertex> vertices;
 		vertices.push_back(Vertex(2.0, -5.0, 3.0, 0));
 		vertices.push_back(Vertex(3.0, 7.0, -2.0, 1));
 		vertices.push_back(Vertex(-4.0, -1.0, 6.0, 2));
-	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Triangle triangle;
 	for(Vertex& vertex: vertices)
 		triangle.addVertex(vertex);
 	section("Basic requirements")
 	{
-		require(triangle.getNumberOfVertices()==3);
-		require(triangle.dimension==2);
+		require(triangle.vertices.size()==3);
 	}
 	section("Centroid")
 	{
@@ -145,22 +91,9 @@ TestCase("Triangle", "[Element][Element2D][Triangle]")
 		const double volume = 49.09429702; // the area
 		check(triangle.getVolume()==Approx(volume));
 	}
-	section("Shape function values")
-	{
-		Eigen::VectorXd shapeFunctionValues(3); shapeFunctionValues << 0.5, 0.2, 0.3;
-		check(triangle.getShapeFunctionValues(localCoordinates)==shapeFunctionValues);
-	}
-	section("Shape function derivatives")
-	{
-		Eigen::MatrixXd shapeFunctionDerivatives(3,3);
-			shapeFunctionDerivatives << -1.0, -1.0, 0.0,
-										 1.0,  0.0, 0.0,
-										 0.0,  1.0, 0.0;
-		check(triangle.getShapeFunctionDerivatives(localCoordinates)==shapeFunctionDerivatives);
-	}
 }
 
-TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
+TestCase("Quadrangle", "[Element][Quadrangle]")
 {
 	const unsigned numberOfVertices = 4;
 	std::vector<Vertex> vertices;
@@ -168,15 +101,12 @@ TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 		vertices.push_back(Vertex( 4.0, -1.0,  6.0, 1));
 		vertices.push_back(Vertex( 4.0,  3.0,  3.4, 2));
 		vertices.push_back(Vertex( 3.0,  7.0, -2.0, 3));
-	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Quadrangle quadrangle;
 	for(Vertex& vertex: vertices)
 		quadrangle.addVertex(vertex);
 	section("Basic requirements")
 	{
-		const unsigned dimension = 2;
-		require(quadrangle.getNumberOfVertices()==numberOfVertices);
-		require(quadrangle.dimension==dimension);
+		require(quadrangle.vertices.size()==numberOfVertices);
 	}
 	section("Centroid")
 	{
@@ -194,26 +124,5 @@ TestCase("Quadrangle", "[Element][Element2D][Quadrangle]")
 	{
 		const double volume = 36.5212267044797; // the area
 		check(quadrangle.getVolume()==Approx(volume));
-	}
-	section("Shape function values")
-	{
-		Eigen::Vector4d shapeFunctionValues(0.56, 0.14, 0.06, 0.24);
-		Eigen::Vector4d quadrangleShapeFunctionValues = quadrangle.getShapeFunctionValues(localCoordinates);
-		for(unsigned i=0 ; i<4 ; ++i)
-			check(quadrangleShapeFunctionValues(i)==Approx(shapeFunctionValues(i)));
-	}
-	section("Shape function derivatives")
-	{
-		const unsigned numberOfRows = 4;
-		const unsigned numberOfColumns = 3;
-		Eigen::MatrixXd shapeFunctionDerivatives(numberOfRows, numberOfColumns);
-			shapeFunctionDerivatives << -0.7, -0.8, 0.0,
-		                                 0.7, -0.2, 0.0,
-		                                 0.3,  0.2, 0.0,
-		                                -0.3,  0.8, 0.0;
-		Eigen::MatrixXd quadrangleShapeFunctionDerivatives = quadrangle.getShapeFunctionDerivatives(localCoordinates);
-		for(unsigned i=0 ; i<numberOfRows ; ++i)
-			for(unsigned j=0 ; j<numberOfColumns ; ++j)
-				check(quadrangleShapeFunctionDerivatives(i,j)==Approx(shapeFunctionDerivatives(i,j)));
 	}
 }

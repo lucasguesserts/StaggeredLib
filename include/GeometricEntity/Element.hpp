@@ -12,11 +12,10 @@ class Element: public Entity
 		std::vector<const Vertex*> vertices;
 
 		void addVertex(const Vertex& vertex);
-		unsigned getNumberOfVertices(void);
-		Eigen::Vector3d getCentroid(void);
+		virtual Eigen::Vector3d getCentroid(void) = 0;
+		virtual Eigen::Vector3d getAreaVector(void) = 0;
 		virtual double getVolume(void) = 0;
-		virtual Eigen::VectorXd getShapeFunctionValues(const Eigen::Vector3d localCoordinates) const = 0;
-		virtual Eigen::MatrixXd getShapeFunctionDerivatives(const Eigen::Vector3d localCoordinates) const = 0;
+		static Eigen::Vector3d computeTriangleAreaVector(const Eigen::Vector3d& first, const Eigen::Vector3d& second, const Eigen::Vector3d& third);
 };
 
 #endif
