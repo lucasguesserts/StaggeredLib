@@ -1,4 +1,4 @@
-#include <SquareCavityHeatTransfer/ScalarStencil.hpp>
+#include <Stencil/ScalarStencil.hpp>
 
 ScalarStencil operator+(const ScalarStencil& lhs, const ScalarStencil& rhs)
 {

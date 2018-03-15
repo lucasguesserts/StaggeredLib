@@ -2,7 +2,7 @@
 #define EIGEN_LINEAR_SYSTEM_HPP
 
 #include <Eigen/Core>
-#include <SquareCavityHeatTransfer/ScalarStencil.hpp>
+#include <Stencil/ScalarStencil.hpp>
 
 class EigenLinearSystem
 {

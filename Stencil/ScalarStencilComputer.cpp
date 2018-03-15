@@ -1,5 +1,5 @@
 #include <Eigen/Geometry>
-#include <SquareCavityHeatTransfer/ScalarStencilComputer.hpp>
+#include <Stencil/ScalarStencilComputer.hpp>
 #include <algorithm>
 
 ScalarStencil ScalarStencilComputer::inverseDistance(const Vertex& vertex,const std::vector<Element*>& vertexNeighborElements)

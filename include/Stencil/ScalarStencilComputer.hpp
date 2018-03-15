@@ -4,8 +4,8 @@
 #include <Eigen/Core>
 
 #include <vector>
-#include <SquareCavityHeatTransfer/ScalarStencil.hpp>
-#include <SquareCavityHeatTransfer/VectorStencil.hpp>
+#include <Stencil/ScalarStencil.hpp>
+#include <Stencil/VectorStencil.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/StaggeredQuadrangle.hpp>

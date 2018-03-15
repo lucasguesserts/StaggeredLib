@@ -1,6 +1,6 @@
 #include <map>
 #include <Eigen/Core>
-#include <SquareCavityHeatTransfer/ScalarStencil.hpp>
+#include <Stencil/ScalarStencil.hpp>
 
 using VectorStencil = std::map<unsigned,Eigen::Vector3d>;
 

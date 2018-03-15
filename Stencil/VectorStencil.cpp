@@ -1,4 +1,4 @@
-#include <SquareCavityHeatTransfer/VectorStencil.hpp>
+#include <Stencil/VectorStencil.hpp>
 #include <vector>
 
 VectorStencil operator*(const ScalarStencil& scalarStencil, const Eigen::Vector3d& vector)
