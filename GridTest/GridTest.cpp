@@ -10,6 +10,7 @@
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/StaggeredQuadrangle.hpp>
+#include <GeometricEntity/StaggeredTriangle.hpp>
 
 #include <Grid/GridData.hpp>
 #include <Grid/Grid.hpp>

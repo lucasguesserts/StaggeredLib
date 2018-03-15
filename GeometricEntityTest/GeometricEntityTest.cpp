@@ -8,6 +8,7 @@
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/Triangle.hpp>
 #include <GeometricEntity/Quadrangle.hpp>
+#include <GeometricEntity/StaggeredTriangle.hpp>
 
 TestCase("Entity", "[Entity]")
 {
@@ -124,5 +125,46 @@ TestCase("Quadrangle", "[Element][Quadrangle]")
 	{
 		const double volume = 36.5212267044797; // the area
 		check(quadrangle.getVolume()==Approx(volume));
+	}
+}
+
+TestCase("staggered triangle", "[StaggeredTriangle]")
+{
+	constexpr unsigned index = 5;
+	std::vector<Vertex> vertices = {
+		{1.0, 1.0, 0.0, 5},
+		{6.0, 3.0, 0.0, 14},
+		{4.0, 5.0, 0.0, 19}
+	};
+	Triangle triangle;
+		triangle.addVertex(vertices[0]);
+		triangle.addVertex(vertices[1]);
+		triangle.addVertex(vertices[2]);
+	StaggeredTriangle staggeredTriangle(index, vertices[1], &triangle, vertices[0]);
+	section("vertices")
+	{
+		check(staggeredTriangle.vertices[0]==&vertices[1]);
+		check(staggeredTriangle.vertices[1]==&vertices[0]);
+	}
+	section("element")
+	{
+		check(staggeredTriangle.element==&triangle);
+	}
+	section("centroid")
+	{
+		const Eigen::Vector3d centroid = {3.5, 2.0, 0.0};
+		for(unsigned i=0 ; i<3 ; ++i)
+			check(staggeredTriangle.getCentroid()[i]==Approx(centroid[i]));
+	}
+	section("area vector")
+	{
+		const Eigen::Vector3d areaVector = {0.0, 0.0, 7.0/3.0};
+		for(unsigned i=0 ; i<3 ; ++i)
+			check(staggeredTriangle.getAreaVector()[i]==Approx(areaVector[i]));
+	}
+	section("volume")
+	{
+		constexpr double volume = 7.0/3.0;
+		check(staggeredTriangle.getVolume()==Approx(volume));
 	}
 }
