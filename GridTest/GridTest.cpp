@@ -17,6 +17,7 @@
 #include <Grid/Grid2D.hpp>
 #include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 #include <Grid/Grid2DWithStaggeredElements.hpp>
+#include <Grid/Grid2DInverseDistanceStencil.hpp>
 
 TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 {
@@ -324,5 +325,90 @@ TestCase("grid 2D with staggered elements", "[Grid2DWithStaggeredElements]")
 			check(grid.staggeredTriangles[index].element==staggeredTriangles[index].element);
 			check(grid.staggeredTriangles[index].vertices[1]==staggeredTriangles[index].vertices[1]);
 		}
+	}
+}
+
+TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDistanceStencil]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DInverseDistanceStencil grid(gridData);
+	auto scalarStencilTest = [&grid](const unsigned vertexIndex, ScalarStencil& correctScalarStencil) -> void
+		{
+			ScalarStencil scalarStencilToTest = grid.computeScalarStencil(grid.vertices[vertexIndex]);
+			for(Element* element: grid.verticesNeighborElements[vertexIndex])
+				check(scalarStencilToTest[element->getIndex()]==Approx(correctScalarStencil[element->getIndex()]));
+		};
+	section("Vertex 0")
+	{
+		constexpr unsigned vertexIndex = 0;
+		ScalarStencil correctScalarStencil = { {0,1.0} };
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
+	section("Vertex 1")
+	{
+		constexpr unsigned vertexIndex = 1;
+		ScalarStencil correctScalarStencil = { {0,0.5}, {1,0.5} };
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
+	section("Vertex 2")
+	{
+		constexpr unsigned vertexIndex = 2;
+		ScalarStencil correctScalarStencil = { {1,1.0} };
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
+	section("Vertex 3")
+	{
+		constexpr unsigned vertexIndex = 3;
+		ScalarStencil correctScalarStencil = {
+			{0,0.3451400998500395},
+			{2,0.327429500749802},
+			{3,0.327429500749802}
+		};
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
+	section("Vertex 4")
+	{
+		constexpr unsigned vertexIndex = 4;
+		ScalarStencil correctScalarStencil = {
+			{0,0.185275538023003},
+			{1,0.185275538023003},
+			{2,0.277913307034504},
+			{4,0.175767808459745},
+			{5,0.175767808459745}
+		};
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
+	section("Vertex 5")
+	{
+		constexpr unsigned vertexIndex = 5;
+		ScalarStencil correctScalarStencil = { {1,0.4}, {4,0.6} };
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
+	section("Vertex 6")
+	{
+		constexpr unsigned vertexIndex = 6;
+		ScalarStencil correctScalarStencil = { {3,1.0} };
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
+	section("Vertex 7")
+	{
+		constexpr unsigned vertexIndex = 7;
+		ScalarStencil correctScalarStencil = {
+			{2,0.279240779943874},
+			{3,0.279240779943874},
+			{5,0.441518440112253}
+		};
+		scalarStencilTest(vertexIndex, correctScalarStencil);
+	}
+	section("Vertex 8")
+	{
+		constexpr unsigned vertexIndex = 8;
+		ScalarStencil correctScalarStencil = {
+			{4,0.5},
+			{5,0.5}
+		};
+		scalarStencilTest(vertexIndex, correctScalarStencil);
 	}
 }
