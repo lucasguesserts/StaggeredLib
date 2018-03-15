@@ -15,9 +15,6 @@ class Grid2DWithStaggeredElements: public Grid2D
 
 		std::vector<StaggeredQuadrangle> staggeredQuadrangles;
 		std::vector<StaggeredTriangle> staggeredTriangles;
-
-
-
 };
 
 #endif

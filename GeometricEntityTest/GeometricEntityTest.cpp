@@ -9,6 +9,7 @@
 #include <GeometricEntity/Triangle.hpp>
 #include <GeometricEntity/Quadrangle.hpp>
 #include <GeometricEntity/StaggeredTriangle.hpp>
+#include <GeometricEntity/StaggeredQuadrangle.hpp>
 
 TestCase("Entity", "[Entity]")
 {
@@ -141,6 +142,10 @@ TestCase("staggered triangle", "[StaggeredTriangle]")
 		triangle.addVertex(vertices[1]);
 		triangle.addVertex(vertices[2]);
 	StaggeredTriangle staggeredTriangle(index, vertices[1], &triangle, vertices[0]);
+	section("index")
+	{
+		check(staggeredTriangle.getIndex()==index);
+	}
 	section("vertices")
 	{
 		check(staggeredTriangle.vertices[0]==&vertices[1]);
@@ -166,5 +171,54 @@ TestCase("staggered triangle", "[StaggeredTriangle]")
 	{
 		constexpr double volume = 7.0/3.0;
 		check(staggeredTriangle.getVolume()==Approx(volume));
+	}
+}
+
+TestCase("staggered quadrangle", "[StaggeredQuadrangle]")
+{
+	constexpr unsigned index = 5;
+	std::vector<Vertex> vertices = {
+		{1.0, 1.0, 0.0, 0},
+		{6.0, 2.0, 0.0, 1},
+		{4.0, 5.0, 0.0, 2},
+		{2.0, 6.0, 0.0, 3},
+		{-2.0, 4.0, 0.0, 4}
+	};
+	Quadrangle quadrangle;
+		quadrangle.addVertex(vertices[0]);
+		quadrangle.addVertex(vertices[1]);
+		quadrangle.addVertex(vertices[2]);
+		quadrangle.addVertex(vertices[3]);
+	Triangle triangle;
+		triangle.addVertex(vertices[0]);
+		triangle.addVertex(vertices[3]);
+		triangle.addVertex(vertices[4]);
+	StaggeredQuadrangle staggeredQuadrangle(index, vertices[0], &quadrangle, vertices[3], &triangle);
+	section("vertices")
+	{
+		check(staggeredQuadrangle.vertices[0]==&vertices[0]);
+		check(staggeredQuadrangle.vertices[1]==&vertices[3]);
+	}
+	section("elements")
+	{
+		check(staggeredQuadrangle.elements[0]==&quadrangle);
+		check(staggeredQuadrangle.elements[1]==&triangle);
+	}
+	section("centroid")
+	{
+		const Eigen::Vector3d centroid = {1.5, 3.5, 0.0};
+		for(unsigned i=0 ; i<3 ; ++i)
+			check(staggeredQuadrangle.getCentroid()[i]==Approx(centroid[i]));
+	}
+	section("area vector")
+	{
+		const Eigen::Vector3d areaVector = {0.0, 0.0, 7.375};
+		for(unsigned i=0 ; i<3 ; ++i)
+			check(staggeredQuadrangle.getAreaVector()[i]==Approx(areaVector[i]));
+	}
+	section("volume")
+	{
+		constexpr double volume = 7.375;
+		check(staggeredQuadrangle.getVolume()==Approx(volume));
 	}
 }
