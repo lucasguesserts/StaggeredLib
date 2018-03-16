@@ -15,6 +15,8 @@ class StaggeredTriangle: public Element
 		virtual Eigen::Vector3d getCentroid(void) override;
 		virtual Eigen::Vector3d getAreaVector(void) override;
 		virtual double getVolume(void) override;
+	private:
+		Eigen::Vector3d getAreaVector3D(void);
 };
 
 #endif
