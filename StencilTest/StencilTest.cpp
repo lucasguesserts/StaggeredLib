@@ -1,7 +1,6 @@
 #include <Utils/Test.hpp>
 
 #include <Stencil/ScalarStencil.hpp>
-#include <Stencil/ScalarStencilComputer.hpp>
 #include <Stencil/VectorStencil.hpp>
 
 TestCase("Scalar stencil", "[ScalarStencil]")
