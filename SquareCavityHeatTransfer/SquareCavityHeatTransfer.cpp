@@ -58,6 +58,15 @@ Eigen::VectorXd SquareCavityHeatTransfer::computeAnalyticalSolution(const Eigen:
 	return solution;
 }
 
+void SquareCavityHeatTransfer::addDiffusiveTerm(void)
+{
+	for(auto& staggeredQuadrangle: this->grid2D.staggeredQuadrangles)
+		addDiffusiveTerm(staggeredQuadrangle);
+	for(auto& staggeredTriangle: this->grid2D.staggeredTriangles)
+		addDiffusiveTerm(staggeredTriangle);
+	return;
+}
+
 void SquareCavityHeatTransfer::addDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle)
 {
 	const unsigned frontElementIndex = staggeredQuadrangle.elements[0]->getIndex();
