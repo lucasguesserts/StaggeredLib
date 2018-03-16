@@ -12,12 +12,42 @@
 #include <GeometricEntity/StaggeredQuadrangle.hpp>
 #include <GeometricEntity/StaggeredTriangle.hpp>
 
+#include <Grid/StaggeredElementDefinition.hpp>
 #include <Grid/GridData.hpp>
 #include <Grid/Grid.hpp>
 #include <Grid/Grid2D.hpp>
 #include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 #include <Grid/Grid2DWithStaggeredElements.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
+
+TestCase("Staggered element definition", "[StaggeredElementDefinition]")
+{
+	constexpr unsigned firstVertexIndex = 5;
+	constexpr unsigned secondVertexIndex = 18;
+	constexpr unsigned elementIndex = 91;
+	StaggeredElementDefinition staggeredElementDefinition(firstVertexIndex,secondVertexIndex,elementIndex);
+	section("constructor")
+	{
+		check(staggeredElementDefinition.vertices[0]==firstVertexIndex);
+		check(staggeredElementDefinition.vertices[1]==secondVertexIndex);
+		check(staggeredElementDefinition.elements[0]==elementIndex);
+		check(staggeredElementDefinition.elements[1]==0);
+		check(staggeredElementDefinition.type==StaggeredElementDefinition::Type::Triangle);
+	}
+	section("add element")
+	{
+		constexpr unsigned secondElementIndex = 47;
+		staggeredElementDefinition.addElement(secondElementIndex);
+		check(staggeredElementDefinition.elements[1]==secondElementIndex);
+		check(staggeredElementDefinition.type==StaggeredElementDefinition::Type::Quadrangle);
+	}
+	section("operator==")
+	{
+		check(staggeredElementDefinition==StaggeredElementDefinition(firstVertexIndex,secondVertexIndex,elementIndex));
+		check(staggeredElementDefinition==StaggeredElementDefinition(firstVertexIndex,secondVertexIndex,elementIndex+1));
+		checkFalse(staggeredElementDefinition==StaggeredElementDefinition(firstVertexIndex+1,secondVertexIndex,elementIndex));
+	}
+}
 
 TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 {
