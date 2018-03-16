@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include <Grid/StaggeredElementDefinition.hpp>
 #include <Grid/GridData.hpp>
 #include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 #include <GeometricEntity/StaggeredQuadrangle.hpp>
@@ -15,6 +16,11 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 
 		std::vector<StaggeredQuadrangle> staggeredQuadrangles;
 		std::vector<StaggeredTriangle> staggeredTriangles;
+
+	private:
+		std::vector<StaggeredElementDefinition> staggeredElementDefinition;
+		void allocateStaggeredElementDefinition(const GridData& gridData);
+		void shrinkStaggeredElementDefinition(void);
 };
 
 #endif
