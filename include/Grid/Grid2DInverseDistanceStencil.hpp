@@ -14,10 +14,13 @@ class Grid2DInverseDistanceStencil: public Grid2DWithStaggeredElements
 		Grid2DInverseDistanceStencil(GridData& gridData);
 		ScalarStencil computeScalarStencil(Vertex& vertex);
 		std::vector<ScalarStencil> computeScalarStencilOnVertices(void);
-		VectorStencil computeVectorStencil(StaggeredQuadrangle& staggeredQuadrangle, const ScalarStencil& scalarStencilOnVertices, const std::vector<ScalarStencil>& scalarStencilOnElements);
+		VectorStencil computeVectorStencilOnQuadrangle(StaggeredQuadrangle& staggeredQuadrangle, std::vector<ScalarStencil>& scalarStencilOnVertices);
+
 		static ScalarStencil computeScalarStencilOnElement(Element* element);
-	private:
 		static void normalizeScalarStencil(ScalarStencil& scalarStencil);
+		static VectorStencil computeVectorStencil(const Eigen::Vector3d& firstPoint, const Eigen::Vector3d& secondPoint, const ScalarStencil& firstScalarStencil, const ScalarStencil& secondScalarStencil);
+		static Eigen::Vector3d computeAreaVector(const Eigen::Vector3d& firstPoint, const Eigen::Vector3d& secondPoint);
+		static ScalarStencil computeAverageScalarStencil(const ScalarStencil& firstScalarStencil, const ScalarStencil& secondScalarStencil);
 };
 
 #endif
