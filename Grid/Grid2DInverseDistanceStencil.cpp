@@ -22,3 +22,12 @@ void Grid2DInverseDistanceStencil::normalizeScalarStencil(ScalarStencil& scalarS
 		keyValuePair.second *= (1/sum);
 	return;
 }
+
+std::vector<ScalarStencil> Grid2DInverseDistanceStencil::computeScalarStencilOnVertices(void)
+{
+	std::vector<ScalarStencil> scalarStencilOnVertices;
+	scalarStencilOnVertices.reserve(this->vertices.size());
+	for(Vertex& vertex: this->vertices)
+		scalarStencilOnVertices.emplace_back(this->computeScalarStencil(vertex));
+	return scalarStencilOnVertices;
+}

@@ -412,3 +412,26 @@ TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDista
 		scalarStencilTest(vertexIndex, correctScalarStencil);
 	}
 }
+
+TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistanceStencil]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DInverseDistanceStencil grid(gridData);
+	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
+		{ {0,1.0} },
+		{ {0,0.5}, {1,0.5} },
+		{ {1,1.0} },
+		{ {0,0.3451400998500395}, {2,0.327429500749802}, {3,0.327429500749802} },
+		{ {0,0.185275538023003}, {1,0.185275538023003}, {2,0.277913307034504}, {4,0.175767808459745}, {5,0.175767808459745} },
+		{ {1,0.4}, {4,0.6} },
+		{ {3,1.0} },
+		{ {2,0.279240779943874}, {3,0.279240779943874}, {5,0.441518440112253} },
+		{ {4,0.5}, {5,0.5} }
+	};
+	std::vector<ScalarStencil> toTestScalarStencilOnVertices = grid.computeScalarStencilOnVertices();
+	for(Vertex& vertex: grid.vertices)
+		for(Element* element: grid.verticesNeighborElements[vertex.getIndex()])
+			check(toTestScalarStencilOnVertices[vertex.getIndex()][element->getIndex()]==Approx(correctScalarStencilOnVertices[vertex.getIndex()][element->getIndex()]));
+}
