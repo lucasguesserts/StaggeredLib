@@ -26,4 +26,5 @@ class SquareCavityHeatTransfer
 		void initializeLinearSystem(void);
 		void initializeTemperatureVectors(void);
 		void initializeScalarStencilOnVertices(void);
+		ScalarStencil computeDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle); //areaVector * k * timeInterval * gradientScalarStencil
 };
