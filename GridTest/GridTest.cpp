@@ -494,3 +494,35 @@ TestCase("ScalarStencilComputer compute gradient using StaggeredQuadrangle","[Sc
 			check(keyValue.second[vectorEntry]==Approx(correctVectorStencil[keyValue.first][vectorEntry]));
 	}
 }
+
+TestCase("ScalarStencilComputer compute gradient using StaggeredTriangle","[ScalarStencilComputer][StaggeredTriangle]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DInverseDistanceStencil grid(gridData);
+	// create staggered elements
+	constexpr unsigned numberOfTriangles = 4;
+	const std::array<unsigned,numberOfTriangles> staggeredTrianglesIndices = {{1, 2, 3, 4}};
+	std::array<StaggeredTriangle,numberOfTriangles> staggeredTriangles = {{
+		{staggeredTrianglesIndices[0], grid.vertices[1], grid.elements[0], grid.vertices[0]},
+		{staggeredTrianglesIndices[1], grid.vertices[3], grid.elements[0], grid.vertices[1]},
+		{staggeredTrianglesIndices[2], grid.vertices[0], grid.elements[1], grid.vertices[2]},
+		{staggeredTrianglesIndices[3], grid.vertices[2], grid.elements[1], grid.vertices[3]}
+	}};
+	// compute vector stencil
+	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVertices();
+	std::vector<VectorStencil> correctVectorStencil = {
+		{ { 0, {0.25,0.25,0.0} }, { 1, {-0.25,-0.25,0.0} } },
+		{ { 0, {-0.25,-0.25,0.0} }, { 1, {0.25,0.25,0.0} } },
+		{ { 0, {-0.25,-0.25,0.0} }, { 1, {0.25,0.25,0.0} } },
+		{ { 0, {0.25,0.25,0.0} }, { 1, {-0.25,-0.25,0.0} } }
+	};
+	for(unsigned triangleIndex=0 ; triangleIndex<numberOfTriangles ; ++triangleIndex)
+	{
+		VectorStencil vectorStencilOnStaggeredTriangle = grid.computeVectorStencilOnTriangle(staggeredTriangles[triangleIndex], scalarStencilOnVertices);
+		for(auto& keyValue: vectorStencilOnStaggeredTriangle)
+			for(unsigned vectorEntry=0 ; vectorEntry<3 ; ++vectorEntry)
+				check(keyValue.second[vectorEntry]==Approx(correctVectorStencil[triangleIndex][keyValue.first][vectorEntry]));
+	}
+}

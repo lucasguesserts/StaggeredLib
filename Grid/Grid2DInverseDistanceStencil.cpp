@@ -48,6 +48,15 @@ VectorStencil Grid2DInverseDistanceStencil::computeVectorStencilOnQuadrangle(Sta
 	return (1/staggeredQuadrangle.getVolume()) * (vectorStencilOnQuadrangleFaces[0] + vectorStencilOnQuadrangleFaces[1] + vectorStencilOnQuadrangleFaces[2] + vectorStencilOnQuadrangleFaces[3]);
 }
 
+VectorStencil Grid2DInverseDistanceStencil::computeVectorStencilOnTriangle(StaggeredTriangle& staggeredTriangle, std::vector<ScalarStencil>& scalarStencilOnVertices)
+{
+	std::array<VectorStencil,3> vectorStencilOnTriangleFaces;
+	vectorStencilOnTriangleFaces[0] = Grid2DInverseDistanceStencil::computeVectorStencil(*(staggeredTriangle.vertices[0]), staggeredTriangle.element->getCentroid(), scalarStencilOnVertices[staggeredTriangle.vertices[0]->getIndex()], Grid2DInverseDistanceStencil::computeScalarStencilOnElement(staggeredTriangle.element));
+	vectorStencilOnTriangleFaces[1] = Grid2DInverseDistanceStencil::computeVectorStencil(staggeredTriangle.element->getCentroid(), *(staggeredTriangle.vertices[1]), Grid2DInverseDistanceStencil::computeScalarStencilOnElement(staggeredTriangle.element), scalarStencilOnVertices[staggeredTriangle.vertices[1]->getIndex()]);
+	vectorStencilOnTriangleFaces[2] = Grid2DInverseDistanceStencil::computeVectorStencil(*(staggeredTriangle.vertices[1]), *(staggeredTriangle.vertices[0]), scalarStencilOnVertices[staggeredTriangle.vertices[1]->getIndex()], scalarStencilOnVertices[staggeredTriangle.vertices[0]->getIndex()]);
+	return (1/staggeredTriangle.getVolume()) * (vectorStencilOnTriangleFaces[0] + vectorStencilOnTriangleFaces[1] + vectorStencilOnTriangleFaces[2]);
+}
+
 VectorStencil Grid2DInverseDistanceStencil::computeVectorStencil(const Eigen::Vector3d& firstPoint, const Eigen::Vector3d& secondPoint, const ScalarStencil& firstScalarStencil, const ScalarStencil& secondScalarStencil)
 {
 	Eigen::Vector3d areaVector = Grid2DInverseDistanceStencil::computeAreaVector(firstPoint,secondPoint);

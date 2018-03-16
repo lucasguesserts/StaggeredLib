@@ -5,6 +5,8 @@
 
 #include <Grid/GridData.hpp>
 #include <Grid/Grid2DWithStaggeredElements.hpp>
+#include <GeometricEntity/StaggeredQuadrangle.hpp>
+#include <GeometricEntity/StaggeredTriangle.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
 
@@ -15,6 +17,7 @@ class Grid2DInverseDistanceStencil: public Grid2DWithStaggeredElements
 		ScalarStencil computeScalarStencil(Vertex& vertex);
 		std::vector<ScalarStencil> computeScalarStencilOnVertices(void);
 		VectorStencil computeVectorStencilOnQuadrangle(StaggeredQuadrangle& staggeredQuadrangle, std::vector<ScalarStencil>& scalarStencilOnVertices);
+		VectorStencil computeVectorStencilOnTriangle(StaggeredTriangle& staggeredTriangle, std::vector<ScalarStencil>& scalarStencilOnVertices);
 
 		static ScalarStencil computeScalarStencilOnElement(Element* element);
 		static void normalizeScalarStencil(ScalarStencil& scalarStencil);
