@@ -6,8 +6,9 @@
 #include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
+#include <GeometricEntity/StaggeredQuadrangle.hpp>
 #include <Grid/GridData.hpp>
-#include <Grid/Grid2DVerticesWithNeighborElements.hpp>
+#include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
 
@@ -112,4 +113,14 @@ TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLine
 	          scalarStencil[1][0], scalarStencil[1][1], scalarStencil[1][2],
 	          scalarStencil[2][0], scalarStencil[2][1], scalarStencil[2][2];
 	check(linearSystem.matrix==matrix);
+}
+
+TestCase("Add diffusive term for one staggered quadrangle", "[SquareCavityHeatTransfer]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DInverseDistanceStencil grid(gridData);
+	const unsigned staggeredQuadrangleIndex = 0;
+	grid.staggeredQuadrangles.emplace_back(StaggeredQuadrangle(staggeredQuadrangleIndex,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1])); // TODO: remove when grid with staggered elements is complete.
 }

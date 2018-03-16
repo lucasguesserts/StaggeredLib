@@ -7,6 +7,7 @@ SquareCavityHeatTransfer::SquareCavityHeatTransfer(const GridData& gridData)
 {
 	this->initializeLinearSystem();
 	this->initializeTemperatureVectors();
+	this->initializeScalarStencilOnVertices();
 	return;
 }
 
@@ -24,6 +25,11 @@ void SquareCavityHeatTransfer::initializeTemperatureVectors(void)
 	this->oldTemperature = Eigen::VectorXd::Zero(numberOfElements);
 	this->temperature = Eigen::VectorXd::Zero(numberOfElements);
 	return;
+}
+
+void SquareCavityHeatTransfer::initializeScalarStencilOnVertices(void)
+{
+	this->scalarStencilOnVertices = this->grid2D.computeScalarStencilOnVertices();
 }
 
 void SquareCavityHeatTransfer::addAccumulationTerm(void)
@@ -50,4 +56,14 @@ Eigen::VectorXd SquareCavityHeatTransfer::computeAnalyticalSolution(const Eigen:
 		solution[positionIndex] = std::sin(M_PI*x) * std::sinh(M_PI*y) / std::sinh(M_PI);
 	}
 	return solution;
+}
+
+void SquareCavityHeatTransfer::addDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle)
+{
+	Eigen::Vector3d areaVector = staggeredQuadrangle.getAreaVector();
+	VectorStencil gradient = this->grid2D.computeVectorStencilOnQuadrangle(staggeredQuadrangle,this->scalarStencilOnVertices);
+	ScalarStencil scalarStencil = areaVector * k * timeInterval * timeImplicitCoefficient * gradient;
+	this->linearSystem.addScalarStencil(staggeredQuadrangle.elements[0]->getIndex(), (-1)*scalarStencil);
+	this->linearSystem.addScalarStencil(staggeredQuadrangle.elements[1]->getIndex(), scalarStencil);
+	return;
 }

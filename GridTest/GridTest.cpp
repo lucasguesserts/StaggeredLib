@@ -483,7 +483,6 @@ TestCase("Grid2DInverseDistanceStencil compute gradient using StaggeredQuadrangl
 	// create staggered elements
 	const unsigned staggeredQuadrangleIndex = 0;
 	StaggeredQuadrangle staggeredQuadrangle(staggeredQuadrangleIndex,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1]);
-	const std::array<unsigned,4> staggeredTrianglesIndices = {{1, 2, 3, 4}};
 	// compute vector stencil
 	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVertices();
 	VectorStencil correctVectorStencil = { { 0, {0.75,-0.75,0.0} }, { 1, {-0.75,0.75,0.0} } };
