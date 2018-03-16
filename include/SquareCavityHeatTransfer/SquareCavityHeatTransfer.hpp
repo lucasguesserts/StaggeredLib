@@ -11,6 +11,7 @@ class SquareCavityHeatTransfer
 		SquareCavityHeatTransfer(const GridData& gridData);
 		void addAccumulationTerm(void);
 		void addDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle);
+		void addDiffusiveTerm(StaggeredTriangle& staggeredTriangle);
 
 		static Eigen::VectorXd computeAnalyticalSolution(const Eigen::Matrix<double,Eigen::Dynamic,3> coordinates);
 
@@ -27,4 +28,5 @@ class SquareCavityHeatTransfer
 		void initializeTemperatureVectors(void);
 		void initializeScalarStencilOnVertices(void);
 		ScalarStencil computeDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle); //areaVector * k * timeInterval * gradientScalarStencil
+		ScalarStencil computeDiffusiveTerm(StaggeredTriangle& staggeredTriangle); //areaVector * k * timeInterval * gradientScalarStencil
 };
