@@ -212,7 +212,7 @@ TestCase("staggered quadrangle", "[StaggeredQuadrangle]")
 	}
 	section("area vector")
 	{
-		const Eigen::Vector3d areaVector = {0.0, 0.0, 7.375};
+		const Eigen::Vector3d areaVector = {5.0, -1.0, 0.0};
 		for(unsigned i=0 ; i<3 ; ++i)
 			check(staggeredQuadrangle.getAreaVector()[i]==Approx(areaVector[i]));
 	}

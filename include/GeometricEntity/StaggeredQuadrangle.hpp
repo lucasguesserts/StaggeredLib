@@ -15,6 +15,8 @@ class StaggeredQuadrangle: public Element
 		virtual Eigen::Vector3d getCentroid(void) override;
 		virtual Eigen::Vector3d getAreaVector(void) override; // Front: element 0. Back: element 1.
 		virtual double getVolume(void) override;
+	private:
+		Eigen::Vector3d getAreaVector3D(void);
 };
 
 #endif
