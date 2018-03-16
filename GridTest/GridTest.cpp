@@ -435,3 +435,14 @@ TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistan
 		for(Element* element: grid.verticesNeighborElements[vertex.getIndex()])
 			check(toTestScalarStencilOnVertices[vertex.getIndex()][element->getIndex()]==Approx(correctScalarStencilOnVertices[vertex.getIndex()][element->getIndex()]));
 }
+
+TestCase("Compute scalar stencil for a element", "[Grid2DInverseDistanceStencil]")
+{
+	constexpr unsigned index = 14;
+	constexpr double elementWeight = 1.0;
+	Quadrangle element;
+	element.setIndex(index);
+	ScalarStencil computedScalarStencil = Grid2DInverseDistanceStencil::computeScalarStencilOnElement(&element);
+	ScalarStencil scalarStencil = { {index,elementWeight} };
+	check(computedScalarStencil==scalarStencil);
+}

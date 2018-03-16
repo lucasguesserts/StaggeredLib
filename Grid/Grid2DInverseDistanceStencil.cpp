@@ -1,4 +1,5 @@
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
+#include <array>
 
 Grid2DInverseDistanceStencil::Grid2DInverseDistanceStencil(GridData& gridData)
 	: Grid2DWithStaggeredElements(gridData)
@@ -30,4 +31,9 @@ std::vector<ScalarStencil> Grid2DInverseDistanceStencil::computeScalarStencilOnV
 	for(Vertex& vertex: this->vertices)
 		scalarStencilOnVertices.emplace_back(this->computeScalarStencil(vertex));
 	return scalarStencilOnVertices;
+}
+
+ScalarStencil Grid2DInverseDistanceStencil::computeScalarStencilOnElement(Element* element)
+{
+	return { {element->getIndex(),1.0}};
 }
