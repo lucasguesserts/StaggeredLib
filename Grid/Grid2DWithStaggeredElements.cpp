@@ -12,7 +12,7 @@ void Grid2DWithStaggeredElements::allocateStaggeredElementDefinition(const GridD
 {
 	const unsigned numberOfTriangles = gridData.triangle.size();
 	const unsigned numberOfQuadrangles = gridData.quadrangle.size();
-	const unsigned maxNumberOfStaggeredElements = numberOfTriangles + numberOfQuadrangles;
+	const unsigned maxNumberOfStaggeredElements = 3*numberOfQuadrangles + 2*numberOfTriangles + 1;
 	this->staggeredElementDefinition.reserve(maxNumberOfStaggeredElements);
 	return;
 }
