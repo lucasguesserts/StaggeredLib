@@ -18,5 +18,9 @@ void StaggeredElementDefinition::addElement(const unsigned elementIndex)
 
 bool operator==(const StaggeredElementDefinition& lhs, const StaggeredElementDefinition& rhs)
 {
-	return (lhs.vertices[0]==rhs.vertices[0]) && (lhs.vertices[1]==rhs.vertices[1]);
+	return
+		( (lhs.vertices[0]==rhs.vertices[0]) && (lhs.vertices[1]==rhs.vertices[1]) )
+		||
+		( (lhs.vertices[0]==rhs.vertices[1]) && (lhs.vertices[1]==rhs.vertices[0]) )
+		;
 }

@@ -45,7 +45,9 @@ TestCase("Staggered element definition", "[StaggeredElementDefinition]")
 	{
 		check(staggeredElementDefinition==StaggeredElementDefinition(firstVertexIndex,secondVertexIndex,elementIndex));
 		check(staggeredElementDefinition==StaggeredElementDefinition(firstVertexIndex,secondVertexIndex,elementIndex+1));
+		check(staggeredElementDefinition==StaggeredElementDefinition(secondVertexIndex,firstVertexIndex,elementIndex+1));
 		checkFalse(staggeredElementDefinition==StaggeredElementDefinition(firstVertexIndex+1,secondVertexIndex,elementIndex));
+		checkFalse(staggeredElementDefinition==StaggeredElementDefinition(firstVertexIndex,secondVertexIndex+5,elementIndex));
 	}
 }
 

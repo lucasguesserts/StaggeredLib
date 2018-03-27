@@ -2,6 +2,7 @@
 output
 build*
 tests*
+.vscode*
 
 *.exe
 *.asv
