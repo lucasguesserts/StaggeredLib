@@ -22,3 +22,15 @@ void Grid2DWithStaggeredElements::shrinkStaggeredElementDefinition(void)
 	this->staggeredElementDefinition.shrink_to_fit();
 	return;
 }
+
+std::tuple<bool,unsigned> Grid2DWithStaggeredElements::findStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition)
+{
+	bool elementExists;
+	auto iterator = std::find(this->staggeredElementDefinition.cbegin(), this->staggeredElementDefinition.cend(), staggeredElementDefinition);
+	if(iterator==this->staggeredElementDefinition.cend())
+		elementExists = false;
+	else
+		elementExists = true;
+	unsigned position = std::distance(this->staggeredElementDefinition.cbegin(),iterator);
+	return std::make_tuple(elementExists,position);
+}

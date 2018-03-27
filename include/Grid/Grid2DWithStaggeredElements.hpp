@@ -16,9 +16,12 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 
 		std::vector<StaggeredQuadrangle> staggeredQuadrangles;
 		std::vector<StaggeredTriangle> staggeredTriangles;
+		std::vector<StaggeredElementDefinition> staggeredElementDefinition;
+
+		std::tuple<bool,unsigned> findStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition);
 
 	private:
-		std::vector<StaggeredElementDefinition> staggeredElementDefinition;
+		
 		void allocateStaggeredElementDefinition(const GridData& gridData);
 		void shrinkStaggeredElementDefinition(void);
 };
