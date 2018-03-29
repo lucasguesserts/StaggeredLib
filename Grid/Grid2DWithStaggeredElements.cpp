@@ -4,6 +4,7 @@ Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridDat
 	: Grid2DVerticesWithNeighborElements(gridData)
 {
 	this->allocateStaggeredElementDefinition(gridData);
+	this->createStaggeredElementDefinitionVector(gridData);
 	this->shrinkStaggeredElementDefinition();
 	return;
 }
@@ -20,6 +21,15 @@ void Grid2DWithStaggeredElements::allocateStaggeredElementDefinition(const GridD
 void Grid2DWithStaggeredElements::shrinkStaggeredElementDefinition(void)
 {
 	this->staggeredElementDefinition.shrink_to_fit();
+	return;
+}
+
+void Grid2DWithStaggeredElements::createStaggeredElementDefinitionVector(const GridData& gridData)
+{
+	for(auto& elementDefnition: gridData.quadrangle)
+		this->addStaggeredElementDefinitionFromElementDefinition(elementDefnition);
+	for(auto& elementDefnition: gridData.triangle)
+		this->addStaggeredElementDefinitionFromElementDefinition(elementDefnition);
 	return;
 }
 

@@ -562,6 +562,7 @@ TestCase("Grid2D with staggered elements - find staggered element definition", "
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
+	grid.staggeredElementDefinition.clear();
 	section("Find StaggeredElementDefinition")
 	{
 		StaggeredElementDefinition staggExists(1, 5, 4);
@@ -594,6 +595,7 @@ TestCase("Grid2D with staggered elements - add staggered element definition", "[
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
+	grid.staggeredElementDefinition.clear();
 	std::vector<StaggeredElementDefinition> staggeredElementDefinitionVector = {
 		{1, 5, 4},
 		{5, 1 ,9},
@@ -616,6 +618,7 @@ TestCase("Grid2D with staggered elements - add staggered element definition from
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
+	grid.staggeredElementDefinition.clear();
 	section("quadrangle")
 	{
 		ElementDefinition<4> quadrangleDefinition;
@@ -639,4 +642,18 @@ TestCase("Grid2D with staggered elements - add staggered element definition from
 		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(2, 4, 6)) );
 		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(4, 8, 6)) );
 	}
+}
+
+TestCase("Grid2D with staggered elements - constructor", "[Grid2DWithStaggeredElements]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements grid(gridData);
+	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(0,1,0)) );
+	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(3,1,0)) );
+	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(0,2,1)) );
+	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(2,3,1)) );
+	StaggeredElementDefinition quadrangle(0,3,1); quadrangle.addElement(0);
+		check( contains(grid.staggeredElementDefinition,quadrangle) );
 }
