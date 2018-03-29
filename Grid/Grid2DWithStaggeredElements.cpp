@@ -23,6 +23,16 @@ void Grid2DWithStaggeredElements::shrinkStaggeredElementDefinition(void)
 	return;
 }
 
+void Grid2DWithStaggeredElements::addStaggeredElementDefinition(StaggeredElementDefinition& staggeredElementDefinition)
+{
+	std::tuple<bool,unsigned> elementDefinitionLocation = this->findStaggeredElementDefinition(staggeredElementDefinition);
+	if( std::get<bool>(elementDefinitionLocation) )
+		this->staggeredElementDefinition[std::get<unsigned>(elementDefinitionLocation)].addElement(staggeredElementDefinition.elements[0]);
+	else
+		this->staggeredElementDefinition.push_back(staggeredElementDefinition);
+	return;
+}
+
 std::tuple<bool,unsigned> Grid2DWithStaggeredElements::findStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition)
 {
 	bool elementExists;

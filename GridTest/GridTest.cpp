@@ -587,3 +587,25 @@ TestCase("Grid2D with staggered elements - find staggered element definition", "
 		}
 	}
 }
+
+TestCase("Grid2D with staggered elements - add staggered element definition", "[Grid2DWithStaggeredElements]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements grid(gridData);
+	std::vector<StaggeredElementDefinition> staggeredElementDefinitionVector = {
+		{1, 5, 4},
+		{5, 1 ,9},
+		{3, 7, 9}
+	};
+	
+	grid.staggeredElementDefinition.push_back(staggeredElementDefinitionVector[0]);
+	grid.addStaggeredElementDefinition(staggeredElementDefinitionVector[1]);
+	grid.addStaggeredElementDefinition(staggeredElementDefinitionVector[2]);
+	check(grid.staggeredElementDefinition.size()==2);
+	check(grid.staggeredElementDefinition[0]==StaggeredElementDefinition(1, 5, 0));
+	check(grid.staggeredElementDefinition[0].elements[0]==4);
+	check(grid.staggeredElementDefinition[0].elements[1]==9);
+	check(grid.staggeredElementDefinition[1]==StaggeredElementDefinition(3, 7, 9));
+}
