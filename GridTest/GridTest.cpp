@@ -556,7 +556,7 @@ TestCase("Grid2DInverseDistanceStencil compute gradient using StaggeredTriangle"
 	}
 }
 
-TestCase("Grid2DWithStaggeredElements", "[Grid2DWithStaggeredElements]")
+TestCase("Grid2D with staggered elements - find staggered element definition", "[Grid2DWithStaggeredElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -565,11 +565,18 @@ TestCase("Grid2DWithStaggeredElements", "[Grid2DWithStaggeredElements]")
 	section("Find StaggeredElementDefinition")
 	{
 		StaggeredElementDefinition staggExists(1, 5, 4);
+		StaggeredElementDefinition staggExists_exchanged(5, 1, 4);
 		StaggeredElementDefinition staggDoNotExists(3, 7, 9);
 		grid.staggeredElementDefinition.push_back(staggExists);
 		section("staggered element that exists")
 		{
 			auto staggeredElementLocation = grid.findStaggeredElementDefinition(staggExists);
+			check(std::get<bool>(staggeredElementLocation)==true);
+			check(std::get<unsigned>(staggeredElementLocation)==0);
+		}
+		section("staggered element that but vertices indices exchanged")
+		{
+			auto staggeredElementLocation = grid.findStaggeredElementDefinition(staggExists_exchanged);
 			check(std::get<bool>(staggeredElementLocation)==true);
 			check(std::get<unsigned>(staggeredElementLocation)==0);
 		}
