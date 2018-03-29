@@ -644,7 +644,7 @@ TestCase("Grid2D with staggered elements - add staggered element definition from
 	}
 }
 
-TestCase("Grid2D with staggered elements - constructor", "[Grid2DWithStaggeredElements]")
+TestCase("Grid2D with staggered elements - staggered element definition constructor", "[Grid2DWithStaggeredElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -656,4 +656,58 @@ TestCase("Grid2D with staggered elements - constructor", "[Grid2DWithStaggeredEl
 	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(2,3,1)) );
 	StaggeredElementDefinition quadrangle(0,3,1); quadrangle.addElement(0);
 		check( contains(grid.staggeredElementDefinition,quadrangle) );
+}
+
+TestCase("Grid2D with staggered elements - staggered element constructor", "[Grid2DWithStaggeredElements]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements grid(gridData);
+	section("quadrangle")
+	{
+		constexpr unsigned index = 14;
+		Vertex& vertex_0 = grid.vertices[0];
+		Vertex& vertex_1 = grid.vertices[3];
+		Element* element_0 = grid.elements[0];
+		Element* element_1 = grid.elements[1];
+		StaggeredQuadrangle quadrangle(index,vertex_0,element_0,vertex_1,element_1);
+		check( contains(grid.staggeredQuadrangles,quadrangle) );
+	}
+	section("triangle 1")
+	{
+		constexpr unsigned index = 25;
+		Vertex& vertex_0 = grid.vertices[1];
+		Element* element = grid.elements[0];
+		Vertex& vertex_1 = grid.vertices[0];
+		StaggeredTriangle triangle(index,vertex_0,element,vertex_1);
+		check( contains(grid.staggeredTriangles,triangle) );
+	}
+	section("triangle 2")
+	{
+		constexpr unsigned index = 25;
+		Vertex& vertex_0 = grid.vertices[3];
+		Element* element = grid.elements[0];
+		Vertex& vertex_1 = grid.vertices[1];
+		StaggeredTriangle triangle(index,vertex_0,element,vertex_1);
+		check( contains(grid.staggeredTriangles,triangle) );
+	}
+	section("triangle 3")
+	{
+		constexpr unsigned index = 25;
+		Vertex& vertex_0 = grid.vertices[0];
+		Element* element = grid.elements[1];
+		Vertex& vertex_1 = grid.vertices[2];
+		StaggeredTriangle triangle(index,vertex_0,element,vertex_1);
+		check( contains(grid.staggeredTriangles,triangle) );
+	}
+	section("triangle 4")
+	{
+		constexpr unsigned index = 25;
+		Vertex& vertex_0 = grid.vertices[2];
+		Element* element = grid.elements[1];
+		Vertex& vertex_1 = grid.vertices[3];
+		StaggeredTriangle triangle(index,vertex_0,element,vertex_1);
+		check( contains(grid.staggeredTriangles,triangle) );
+	}
 }

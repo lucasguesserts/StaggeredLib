@@ -1,4 +1,5 @@
 #include <Grid/Grid2DWithStaggeredElements.hpp>
+#include <exception>
 
 Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridData)
 	: Grid2DVerticesWithNeighborElements(gridData)
@@ -6,6 +7,7 @@ Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridDat
 	this->allocateStaggeredElementDefinition(gridData);
 	this->createStaggeredElementDefinitionVector(gridData);
 	this->shrinkStaggeredElementDefinition();
+	this->createStaggeredElements();
 	return;
 }
 
@@ -26,11 +28,28 @@ void Grid2DWithStaggeredElements::shrinkStaggeredElementDefinition(void)
 
 void Grid2DWithStaggeredElements::createStaggeredElementDefinitionVector(const GridData& gridData)
 {
-	for(auto& elementDefnition: gridData.quadrangle)
-		this->addStaggeredElementDefinitionFromElementDefinition(elementDefnition);
-	for(auto& elementDefnition: gridData.triangle)
-		this->addStaggeredElementDefinitionFromElementDefinition(elementDefnition);
+	for(auto& elementDefinition: gridData.quadrangle)
+		this->addStaggeredElementDefinitionFromElementDefinition(elementDefinition);
+	for(auto& elementDefinition: gridData.triangle)
+		this->addStaggeredElementDefinitionFromElementDefinition(elementDefinition);
 	return;
+}
+
+void Grid2DWithStaggeredElements::createStaggeredElements(void)
+{
+	unsigned staggeredElementIndex = 0;
+	for(auto& staggeredElementDefinition: this->staggeredElementDefinition)
+	{
+		Vertex& vertex_0 = this->vertices[staggeredElementDefinition.vertices[0]];
+		Vertex& vertex_1 = this->vertices[staggeredElementDefinition.vertices[1]];
+		Element* element_0 = this->elements[staggeredElementDefinition.elements[0]];
+		Element* element_1 = this->elements[staggeredElementDefinition.elements[1]];
+		if(staggeredElementDefinition.type==StaggeredElementDefinition::Type::Quadrangle)
+			this->staggeredQuadrangles.emplace_back(StaggeredQuadrangle(staggeredElementIndex,vertex_0,element_0,vertex_1,element_1));
+		else // if(staggeredElementDefinition.type==StaggeredElementDefinition::Type::Triangle)
+			this->staggeredTriangles.emplace_back(StaggeredTriangle(staggeredElementIndex,vertex_0,element_0,vertex_1));
+		staggeredElementIndex++;
+	}
 }
 
 void Grid2DWithStaggeredElements::addStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition)

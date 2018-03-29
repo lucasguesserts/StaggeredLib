@@ -19,6 +19,7 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		std::vector<StaggeredElementDefinition> staggeredElementDefinition;
 
 		void createStaggeredElementDefinitionVector(const GridData& gridData);
+		void createStaggeredElements(void);
 		template <unsigned NumberOfVertices>
 			void addStaggeredElementDefinitionFromElementDefinition(const ElementDefinition<NumberOfVertices>& elementDefinition);
 		void addStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition);
