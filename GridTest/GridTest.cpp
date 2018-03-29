@@ -609,3 +609,34 @@ TestCase("Grid2D with staggered elements - add staggered element definition", "[
 	check(grid.staggeredElementDefinition[0].elements[1]==9);
 	check(grid.staggeredElementDefinition[1]==StaggeredElementDefinition(3, 7, 9));
 }
+
+TestCase("Grid2D with staggered elements - add staggered element definition from element definition", "[Grid2DWithStaggeredElements]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements grid(gridData);
+	section("quadrangle")
+	{
+		ElementDefinition<4> quadrangleDefinition;
+		quadrangleDefinition.index = 6;
+		quadrangleDefinition.connectivity << 8, 2, 4, 0;
+		grid.addStaggeredElementDefinitionFromElementDefinition(quadrangleDefinition);
+		check(grid.staggeredElementDefinition.size()==4);
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(8, 2, 6)) );
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(2, 4, 6)) );
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(4, 0, 6)) );
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(0, 8, 6)) );
+	}
+	section("triangle")
+	{
+		ElementDefinition<3> triangleDefinition;
+		triangleDefinition.index = 6;
+		triangleDefinition.connectivity << 8, 2, 4;
+		grid.addStaggeredElementDefinitionFromElementDefinition(triangleDefinition);
+		check(grid.staggeredElementDefinition.size()==3);
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(8, 2, 6)) );
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(2, 4, 6)) );
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(4, 8, 6)) );
+	}
+}
