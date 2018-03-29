@@ -18,7 +18,7 @@ set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 	set (CMAKE_INSTALL_PREFIX "$ENV{HOME}/Libraries/${PROJECT_NAME}-${VERSION}" CACHE PATH "Installation path" FORCE)
 endif ()
-include_directories ("${CMAKE_SOURCE_DIR}/include")
+include_directories ("${CMAKE_SOURCE_DIR}")
 include_directories ("${CMAKE_SOURCE_DIR}/Eigen")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/findsCMake/")
