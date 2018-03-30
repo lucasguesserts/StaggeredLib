@@ -2,6 +2,7 @@
 #define STAGGERED_QUADRANGLE_HPP
 
 #include <array>
+#include <iostream>
 #include <Eigen/Core>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/Vertex.hpp>
@@ -18,5 +19,8 @@ class StaggeredQuadrangle: public Element
 	private:
 		Eigen::Vector3d getAreaVector3D(void);
 };
+
+bool operator==(const StaggeredQuadrangle& lhs, const StaggeredQuadrangle& rhs);
+std::ostream& operator<< (std::ostream& os, const StaggeredQuadrangle& StaggeredQuadrangle);
 
 #endif

@@ -138,16 +138,27 @@ TestCase("staggered quadrangle", "[StaggeredQuadrangle]")
 		{2.0, 6.0, 0.0, 3},
 		{-2.0, 4.0, 0.0, 4}
 	};
+	constexpr unsigned quadrangleIndex = 7;
 	Quadrangle quadrangle;
+		quadrangle.setIndex(quadrangleIndex);
 		quadrangle.addVertex(vertices[0]);
 		quadrangle.addVertex(vertices[1]);
 		quadrangle.addVertex(vertices[2]);
 		quadrangle.addVertex(vertices[3]);
+	constexpr unsigned triangleIndex = 81;
 	Triangle triangle;
+		triangle.setIndex(triangleIndex);
 		triangle.addVertex(vertices[0]);
 		triangle.addVertex(vertices[3]);
 		triangle.addVertex(vertices[4]);
 	StaggeredQuadrangle staggeredQuadrangle(index, vertices[0], &quadrangle, vertices[3], &triangle);
+	section("operator==")
+	{
+		StaggeredQuadrangle staggeredQuadrangleToCompare(index, vertices[0], &quadrangle, vertices[3], &triangle);
+		check(staggeredQuadrangle==staggeredQuadrangleToCompare);
+		staggeredQuadrangleToCompare.setIndex(index+10);
+		checkFalse(staggeredQuadrangle==staggeredQuadrangleToCompare);
+	}
 	section("vertices")
 	{
 		check(staggeredQuadrangle.vertices[0]==&vertices[0]);
