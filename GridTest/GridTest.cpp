@@ -299,67 +299,6 @@ TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWith
 	}
 }
 
-TestCase("grid 2D with staggered elements", "[Grid2DWithStaggeredElements]")
-{
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
-	Grid2DWithStaggeredElements grid(gridData); // TODO: Algorith to create this grid using a GridData structure.
-	section("grid vertices")
-	{
-		constexpr unsigned numberOfVertices = 4;
-		std::vector<Vertex> vertices;
-		vertices.push_back(Vertex(0.0, 0.0, 0.0, 0));
-		vertices.push_back(Vertex(2.0, 0.0, 0.0, 1));
-		vertices.push_back(Vertex(0.0, 2.0, 0.0, 2));
-		vertices.push_back(Vertex(2.0, 2.0, 0.0, 3));
-		for(Vertex& vertex: grid.vertices)
-			require(vertex==vertices[vertex.getIndex()]);
-	}
-	section("grid triangles")
-	{
-		constexpr unsigned numberOfTriangles = 2;
-		// 0
-		require(grid.elements[0]->vertices[0]==&(grid.vertices[0]));
-		require(grid.elements[0]->vertices[1]==&(grid.vertices[1]));
-		require(grid.elements[0]->vertices[2]==&(grid.vertices[3]));
-		// 1
-		require(grid.elements[1]->vertices[0]==&(grid.vertices[0]));
-		require(grid.elements[1]->vertices[1]==&(grid.vertices[3]));
-		require(grid.elements[1]->vertices[2]==&(grid.vertices[2]));
-	}
-	section("staggered quadrangles")
-	{
-		constexpr unsigned index = 0;
-		StaggeredQuadrangle staggeredQuadrangle(index,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1]);
-		grid.staggeredQuadrangles.push_back(StaggeredQuadrangle(index,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1])); //TODO: remove this line and, if necessary, update the test
-		section("vertices")
-		{
-			check(grid.staggeredQuadrangles[0].vertices[0]==&grid.vertices[0]);
-			check(grid.staggeredQuadrangles[0].vertices[1]==&grid.vertices[3]);
-			check(grid.staggeredQuadrangles[0].elements[0]==grid.elements[0]);
-			check(grid.staggeredQuadrangles[0].elements[1]==grid.elements[1]);
-		}
-	}
-	section("staggered triangles")
-	{
-		std::vector<StaggeredTriangle> staggeredTriangles = {
-			{1, grid.vertices[1], grid.elements[0], grid.vertices[0]},
-			{2, grid.vertices[3], grid.elements[0], grid.vertices[1]},
-			{3, grid.vertices[0], grid.elements[1], grid.vertices[2]},
-			{4, grid.vertices[2], grid.elements[1], grid.vertices[3]}
-		};
-		for(StaggeredTriangle& staggeredTriangle: staggeredTriangles)
-			grid.staggeredTriangles.push_back(staggeredTriangle); //TODO: remove this line and, if necessary, update the test
-		for(unsigned index=0 ; index<4 ; ++index)
-		{
-			check(grid.staggeredTriangles[index].vertices[0]==staggeredTriangles[index].vertices[0]);
-			check(grid.staggeredTriangles[index].element==staggeredTriangles[index].element);
-			check(grid.staggeredTriangles[index].vertices[1]==staggeredTriangles[index].vertices[1]);
-		}
-	}
-}
-
 TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDistanceStencil]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
@@ -658,56 +597,60 @@ TestCase("Grid2D with staggered elements - staggered element definition construc
 		check( contains(grid.staggeredElementDefinition,quadrangle) );
 }
 
-TestCase("Grid2D with staggered elements - staggered element constructor", "[Grid2DWithStaggeredElements]")
+TestCase("Grid2D with staggered elements - staggered element construction", "[Grid2DWithStaggeredElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
-	section("quadrangle")
+	section("grid vertices")
 	{
-		constexpr unsigned index = 14;
-		Vertex& vertex_0 = grid.vertices[0];
-		Vertex& vertex_1 = grid.vertices[3];
-		Element* element_0 = grid.elements[0];
-		Element* element_1 = grid.elements[1];
-		StaggeredQuadrangle quadrangle(index,vertex_0,element_0,vertex_1,element_1);
-		check( contains(grid.staggeredQuadrangles,quadrangle) );
+		constexpr unsigned numberOfVertices = 4;
+		std::vector<Vertex> vertices;
+		vertices.push_back(Vertex(0.0, 0.0, 0.0, 0));
+		vertices.push_back(Vertex(2.0, 0.0, 0.0, 1));
+		vertices.push_back(Vertex(0.0, 2.0, 0.0, 2));
+		vertices.push_back(Vertex(2.0, 2.0, 0.0, 3));
+		for(Vertex& vertex: grid.vertices)
+			require(vertex==vertices[vertex.getIndex()]);
 	}
-	section("triangle 1")
+	section("grid triangles")
 	{
-		constexpr unsigned index = 25;
-		Vertex& vertex_0 = grid.vertices[1];
-		Element* element = grid.elements[0];
-		Vertex& vertex_1 = grid.vertices[0];
-		StaggeredTriangle triangle(index,vertex_0,element,vertex_1);
-		check( contains(grid.staggeredTriangles,triangle) );
+		constexpr unsigned numberOfTriangles = 2;
+		// 0
+		require(grid.elements[0]->vertices[0]==&(grid.vertices[0]));
+		require(grid.elements[0]->vertices[1]==&(grid.vertices[1]));
+		require(grid.elements[0]->vertices[2]==&(grid.vertices[3]));
+		// 1
+		require(grid.elements[1]->vertices[0]==&(grid.vertices[0]));
+		require(grid.elements[1]->vertices[1]==&(grid.vertices[3]));
+		require(grid.elements[1]->vertices[2]==&(grid.vertices[2]));
 	}
-	section("triangle 2")
+	section("staggered quadrangles")
 	{
-		constexpr unsigned index = 25;
-		Vertex& vertex_0 = grid.vertices[3];
-		Element* element = grid.elements[0];
-		Vertex& vertex_1 = grid.vertices[1];
-		StaggeredTriangle triangle(index,vertex_0,element,vertex_1);
-		check( contains(grid.staggeredTriangles,triangle) );
+		constexpr unsigned index = 0;
+		StaggeredQuadrangle staggeredQuadrangle(index,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1]);
+		section("vertices")
+		{
+			check(grid.staggeredQuadrangles[0].vertices[0]==&grid.vertices[0]);
+			check(grid.staggeredQuadrangles[0].vertices[1]==&grid.vertices[3]);
+			check(grid.staggeredQuadrangles[0].elements[0]==grid.elements[0]);
+			check(grid.staggeredQuadrangles[0].elements[1]==grid.elements[1]);
+		}
 	}
-	section("triangle 3")
+	section("staggered triangles")
 	{
-		constexpr unsigned index = 25;
-		Vertex& vertex_0 = grid.vertices[0];
-		Element* element = grid.elements[1];
-		Vertex& vertex_1 = grid.vertices[2];
-		StaggeredTriangle triangle(index,vertex_0,element,vertex_1);
-		check( contains(grid.staggeredTriangles,triangle) );
-	}
-	section("triangle 4")
-	{
-		constexpr unsigned index = 25;
-		Vertex& vertex_0 = grid.vertices[2];
-		Element* element = grid.elements[1];
-		Vertex& vertex_1 = grid.vertices[3];
-		StaggeredTriangle triangle(index,vertex_0,element,vertex_1);
-		check( contains(grid.staggeredTriangles,triangle) );
+		std::vector<StaggeredTriangle> staggeredTriangles = {
+			{1, grid.vertices[1], grid.elements[0], grid.vertices[0]},
+			{2, grid.vertices[3], grid.elements[0], grid.vertices[1]},
+			{3, grid.vertices[0], grid.elements[1], grid.vertices[2]},
+			{4, grid.vertices[2], grid.elements[1], grid.vertices[3]}
+		};
+		for(unsigned index=0 ; index<4 ; ++index)
+		{
+			check(grid.staggeredTriangles[index].vertices[0]==staggeredTriangles[index].vertices[0]);
+			check(grid.staggeredTriangles[index].element==staggeredTriangles[index].element);
+			check(grid.staggeredTriangles[index].vertices[1]==staggeredTriangles[index].vertices[1]);
+		}
 	}
 }

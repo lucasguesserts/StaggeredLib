@@ -43,9 +43,11 @@ void Grid2DWithStaggeredElements::createStaggeredElements(void)
 		Vertex& vertex_0 = this->vertices[staggeredElementDefinition.vertices[0]];
 		Vertex& vertex_1 = this->vertices[staggeredElementDefinition.vertices[1]];
 		Element* element_0 = this->elements[staggeredElementDefinition.elements[0]];
-		Element* element_1 = this->elements[staggeredElementDefinition.elements[1]];
 		if(staggeredElementDefinition.type==StaggeredElementDefinition::Type::Quadrangle)
+		{
+			Element* element_1 = this->elements[staggeredElementDefinition.elements[1]];
 			this->staggeredQuadrangles.emplace_back(StaggeredQuadrangle(staggeredElementIndex,vertex_0,element_0,vertex_1,element_1));
+		}
 		else // if(staggeredElementDefinition.type==StaggeredElementDefinition::Type::Triangle)
 			this->staggeredTriangles.emplace_back(StaggeredTriangle(staggeredElementIndex,vertex_0,element_0,vertex_1));
 		staggeredElementIndex++;
