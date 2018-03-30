@@ -30,7 +30,6 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		void organizeStaggeredElements(void);
 
 	private:
-		
 		void allocateStaggeredElementDefinition(const GridData& gridData);
 		void shrinkStaggeredElementDefinition(void);
 };

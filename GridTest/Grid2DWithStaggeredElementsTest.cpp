@@ -20,22 +20,13 @@ TestCase("Grid2D with staggered elements - find staggered element definition", "
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
-	grid.staggeredElementDefinition.clear();
 	section("Find StaggeredElementDefinition")
 	{
-		StaggeredElementDefinition staggExists(1, 5, 4);
-		StaggeredElementDefinition staggExists_exchanged(5, 1, 4);
+		StaggeredElementDefinition staggExists(0, 1, 0);
 		StaggeredElementDefinition staggDoNotExists(3, 7, 9);
-		grid.staggeredElementDefinition.push_back(staggExists);
 		section("staggered element that exists")
 		{
 			auto staggeredElementLocation = grid.findStaggeredElementDefinition(staggExists);
-			check(std::get<bool>(staggeredElementLocation)==true);
-			check(std::get<unsigned>(staggeredElementLocation)==0);
-		}
-		section("staggered element that but vertices indices exchanged")
-		{
-			auto staggeredElementLocation = grid.findStaggeredElementDefinition(staggExists_exchanged);
 			check(std::get<bool>(staggeredElementLocation)==true);
 			check(std::get<unsigned>(staggeredElementLocation)==0);
 		}
@@ -49,21 +40,17 @@ TestCase("Grid2D with staggered elements - find staggered element definition", "
 
 TestCase("Grid2D with staggered elements - add staggered element definition", "[Grid2DWithStaggeredElements]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData gridData;
 	Grid2DWithStaggeredElements grid(gridData);
-	grid.staggeredElementDefinition.clear();
 	std::vector<StaggeredElementDefinition> staggeredElementDefinitionVector = {
 		{1, 5, 4},
-		{5, 1 ,9},
+		{5, 1 ,9}, // Same as above
 		{3, 7, 9}
 	};
-
 	grid.staggeredElementDefinition.push_back(staggeredElementDefinitionVector[0]);
 	grid.addStaggeredElementDefinition(staggeredElementDefinitionVector[1]);
 	grid.addStaggeredElementDefinition(staggeredElementDefinitionVector[2]);
-	check(grid.staggeredElementDefinition.size()==2);
+	check(grid.staggeredElementDefinition.size()==2); // One quadrangle and one triangle
 	check(grid.staggeredElementDefinition[0]==StaggeredElementDefinition(1, 5, 0));
 	check(grid.staggeredElementDefinition[0].elements[0]==4);
 	check(grid.staggeredElementDefinition[0].elements[1]==9);
@@ -72,11 +59,8 @@ TestCase("Grid2D with staggered elements - add staggered element definition", "[
 
 TestCase("Grid2D with staggered elements - add staggered element definition from element definition", "[Grid2DWithStaggeredElements]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData gridData;
 	Grid2DWithStaggeredElements grid(gridData);
-	grid.staggeredElementDefinition.clear();
 	section("quadrangle")
 	{
 		ElementDefinition<4> quadrangleDefinition;
