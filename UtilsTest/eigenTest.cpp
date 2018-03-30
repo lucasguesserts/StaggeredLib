@@ -1,6 +1,7 @@
 #include <Utils/Test.hpp>
 #include <Eigen/Core>
 #include <Eigen/LU>
+#include <Utils/EigenTest.hpp>
 
 TestCase("eigen vector", "[eigen]")
 {
@@ -41,4 +42,17 @@ TestCase("Eigen equality operator", "[eigen]")
 	Eigen::Vector2d vector(0.0, 1.0);
 	Eigen::Vector2d copyVector(vector);
 	check(vector==copyVector);
+}
+
+TestCase("Vector3d operator==", "[eigen]")
+{
+    std::array<Eigen::Vector3d,3> vectors = {{
+        {0.0, 1.9999999, 0.0},
+        {0.0, 2.0000000, 0.0},
+        {0.0, 0.0000000, 0.0}
+    }};
+    Eigen::Vector3d vec0(0,0,1);
+    Eigen::Vector3d vec1(0,0,2);
+    check(vectors[0]==vectors[1]);
+    checkFalse(vectors[0]==vectors[2]);
 }

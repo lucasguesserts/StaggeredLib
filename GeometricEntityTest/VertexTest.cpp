@@ -1,11 +1,11 @@
 #include <Utils/Test.hpp>
-#include <vector>
+#include <array>
 
 #include <GeometricEntity/Vertex.hpp>
 
 TestCase("Vertex constructor", "[Vertex]")
 {
-	const std::vector<double> values = {3.2, -5.7, 9.4};
+	const std::array<double,3> values = {3.2, -5.7, 9.4};
 	const unsigned index = 4;
 	Vertex vertex(values[0], values[1], values[2], index);
 	section("Index")
