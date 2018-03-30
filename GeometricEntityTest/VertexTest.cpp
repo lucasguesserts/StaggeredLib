@@ -29,3 +29,14 @@ TestCase("Vertex constructor", "[Vertex]")
 		check(sum[i]==Approx(sumAnswer[i]));
 	}
 }
+
+TestCase("Vertex operator==")
+{
+	std::array<Vertex,3> vertices = {{
+		{2.3, 5.7, 1.9999999, 0},
+		{2.3, 5.7, 2.0000000, 0},
+		{2.3, 5.7, -1.000000, 0},
+	}};
+	check(vertices[0]==vertices[1]);
+	checkFalse(vertices[0]==vertices[2]);
+}
