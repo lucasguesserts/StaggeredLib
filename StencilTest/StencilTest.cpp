@@ -1,4 +1,4 @@
-#include <Utils/Test.hpp>
+#include <Utils/TestMain.hpp>
 
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>

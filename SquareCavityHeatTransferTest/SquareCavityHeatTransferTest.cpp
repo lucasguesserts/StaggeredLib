@@ -2,7 +2,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include <Utils/Test.hpp>
+#include <Utils/TestMain.hpp>
 #include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>

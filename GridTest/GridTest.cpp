@@ -1,4 +1,4 @@
-#include <Utils/Test.hpp>
+#include <Utils/TestMain.hpp>
 #include <Utils/contains.hpp>
 #include <array>
 #include <vector>
