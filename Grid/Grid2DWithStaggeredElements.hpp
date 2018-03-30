@@ -27,6 +27,7 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 
 		static void organizeQuadrangle(StaggeredQuadrangle& staggeredQuadrangle);
 		static void organizeTriangle(StaggeredTriangle& staggeredTriangle);
+		void organizeStaggeredElements(void);
 
 	private:
 		

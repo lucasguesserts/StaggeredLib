@@ -9,6 +9,7 @@ Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridDat
 	this->createStaggeredElementDefinitionVector(gridData);
 	this->shrinkStaggeredElementDefinition();
 	this->createStaggeredElements();
+	this->organizeStaggeredElements();
 	return;
 }
 
@@ -77,7 +78,6 @@ std::tuple<bool,unsigned> Grid2DWithStaggeredElements::findStaggeredElementDefin
 	return std::make_tuple(elementExists,position);
 }
 
-
 void Grid2DWithStaggeredElements::organizeQuadrangle(StaggeredQuadrangle& staggeredQuadrangle)
 {
 	if( staggeredQuadrangle.getAreaVector().dot(staggeredQuadrangle.elements[0]->getCentroid() - staggeredQuadrangle.elements[1]->getCentroid()) < 0 )
@@ -88,5 +88,14 @@ void Grid2DWithStaggeredElements::organizeTriangle(StaggeredTriangle& staggeredT
 {
 	if( staggeredTriangle.getAreaVector().dot(staggeredTriangle.element->getCentroid() - *(staggeredTriangle.vertices[0])) < 0 )
 		std::swap(staggeredTriangle.vertices[0],staggeredTriangle.vertices[1]);
+	return;
+}
+
+void Grid2DWithStaggeredElements::organizeStaggeredElements(void)
+{
+	for(auto& staggeredQuadrangle: this->staggeredQuadrangles)
+		Grid2DWithStaggeredElements::organizeQuadrangle(staggeredQuadrangle);
+	for(auto& staggeredTriangle: this->staggeredTriangles)
+		Grid2DWithStaggeredElements::organizeTriangle(staggeredTriangle);
 	return;
 }
