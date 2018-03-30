@@ -25,6 +25,9 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		void addStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition);
 		std::tuple<bool,unsigned> findStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition);
 
+		static void organizeQuadrangle(StaggeredQuadrangle& staggeredQuadrangle);
+		static void organizeTriangle(StaggeredTriangle& staggeredTriangle);
+
 	private:
 		
 		void allocateStaggeredElementDefinition(const GridData& gridData);

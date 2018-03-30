@@ -1,5 +1,6 @@
 #include <Grid/Grid2DWithStaggeredElements.hpp>
 #include <exception>
+#include <algorithm>
 
 Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridData)
 	: Grid2DVerticesWithNeighborElements(gridData)
@@ -74,4 +75,18 @@ std::tuple<bool,unsigned> Grid2DWithStaggeredElements::findStaggeredElementDefin
 		elementExists = true;
 	unsigned position = std::distance(this->staggeredElementDefinition.cbegin(),iterator);
 	return std::make_tuple(elementExists,position);
+}
+
+
+void Grid2DWithStaggeredElements::organizeQuadrangle(StaggeredQuadrangle& staggeredQuadrangle)
+{
+	if( staggeredQuadrangle.getAreaVector().dot(staggeredQuadrangle.elements[0]->getCentroid() - staggeredQuadrangle.elements[1]->getCentroid()) < 0 )
+		std::swap(staggeredQuadrangle.elements[0],staggeredQuadrangle.elements[1]);
+	return;
+}
+void Grid2DWithStaggeredElements::organizeTriangle(StaggeredTriangle& staggeredTriangle)
+{
+	if( staggeredTriangle.getAreaVector().dot(staggeredTriangle.element->getCentroid() - *(staggeredTriangle.vertices[0])) < 0 )
+		std::swap(staggeredTriangle.vertices[0],staggeredTriangle.vertices[1]);
+	return;
 }
