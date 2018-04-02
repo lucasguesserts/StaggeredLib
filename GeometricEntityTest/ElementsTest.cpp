@@ -83,7 +83,40 @@ TestCase("Quadrangle", "[Element][Quadrangle]")
 	}
 }
 
-TestCase("staggered triangle", "[StaggeredTriangle]")
+TestCase("StaggeredTriangle operator==", "[StaggeredTriangle]")
+{
+    std::array<Vertex,3> vertices = {{
+			{2.3, 5.8, 4.1, 6},
+			{4.5, 1.6, 2.2, 47},
+			{5.8, 3.4, 1.7, 65}
+	}};
+	std::array<Triangle,2> elements;
+		elements[0].setIndex(0); elements[0].addVertex(vertices[0]); elements[0].addVertex(vertices[1]); elements[0].addVertex(vertices[2]);
+		elements[1].setIndex(5); elements[1].addVertex(vertices[1]); elements[1].addVertex(vertices[2]); elements[1].addVertex(vertices[3]);
+	std::array<StaggeredTriangle,7> staggeredTriangles = {{
+		{0, vertices[0], &elements[0], vertices[1]}, // reference
+		{0, vertices[0], &elements[0], vertices[1]},
+		{1, vertices[0], &elements[0], vertices[1]},
+		{0, vertices[2], &elements[0], vertices[1]},
+		{0, vertices[0], &elements[2], vertices[1]},
+		{0, vertices[0], &elements[0], vertices[3]},
+		{4, vertices[2], &elements[1], vertices[3]}
+	}};
+    section("true test")
+    {
+        check(staggeredTriangles[0]==staggeredTriangles[1]);
+    }
+    section("false tests")
+    {
+		checkFalse(staggeredTriangles[0]==staggeredTriangles[2]);
+		checkFalse(staggeredTriangles[0]==staggeredTriangles[3]);
+		checkFalse(staggeredTriangles[0]==staggeredTriangles[4]);
+		checkFalse(staggeredTriangles[0]==staggeredTriangles[5]);
+		checkFalse(staggeredTriangles[0]==staggeredTriangles[6]);
+    }
+}
+
+TestCase("staggered triangle member functions", "[StaggeredTriangle]")
 {
 	constexpr unsigned index = 5;
 	std::vector<Vertex> vertices = {

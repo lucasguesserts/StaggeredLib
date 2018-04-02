@@ -2,6 +2,7 @@
 #define STAGGERED_TRIANGLE_HPP
 
 #include <array>
+#include <iostream>
 #include <Eigen/Core>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/Vertex.hpp>
@@ -18,5 +19,8 @@ class StaggeredTriangle: public Element
 	private:
 		Eigen::Vector3d getAreaVector3D(void);
 };
+
+bool operator==(const StaggeredTriangle& lhs, const StaggeredTriangle& rhs);
+std::ostream& operator<<(std::ostream& os, const StaggeredTriangle& staggeredTriangle);
 
 #endif

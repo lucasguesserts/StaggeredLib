@@ -61,6 +61,3 @@ std::ostream& operator<< (std::ostream& os, const StaggeredQuadrangle& staggered
 	   << "}";
 	return os;
 }
-
-
-std::ostream& operator<< (std::ostream& os, const StaggeredQuadrangle& StaggeredQuadrangle);
