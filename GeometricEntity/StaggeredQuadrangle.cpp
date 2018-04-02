@@ -36,14 +36,11 @@ Eigen::Vector3d StaggeredQuadrangle::getAreaVector3D(void)
 
 bool operator==(const StaggeredQuadrangle& lhs, const StaggeredQuadrangle& rhs)
 {
-	unsigned li = lhs.getIndex();
-	unsigned ri = rhs.getIndex();
-	return li==ri;
-	// return lhs.getIndex()==rhs.getIndex() &&
-	//        *lhs.vertices[0]==*rhs.vertices[0] &&
-	//        *lhs.vertices[1]==*rhs.vertices[1] &&
-	//        lhs.elements[0]==rhs.elements[0] &&
-	//        lhs.elements[1]==rhs.elements[1];
+	return lhs.getIndex()==rhs.getIndex() &&
+	       *lhs.vertices[0]==*rhs.vertices[0] &&
+	       *lhs.vertices[1]==*rhs.vertices[1] &&
+	       lhs.elements[0]==rhs.elements[0] &&
+	       lhs.elements[1]==rhs.elements[1];
 }
 
 std::ostream& operator<< (std::ostream& os, const StaggeredQuadrangle& staggeredQuadrangle)

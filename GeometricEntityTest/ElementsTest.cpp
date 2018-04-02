@@ -160,6 +160,41 @@ TestCase("staggered triangle member functions", "[StaggeredTriangle]")
 		check(staggeredTriangle.getVolume()==Approx(volume));
 	}
 }
+TestCase("StaggeredQuadrangle operator==", "[StaggeredQuadrangle]")
+{
+    std::array<Vertex,3> vertices = {{
+			{2.3, 5.8, 4.1, 6},
+			{4.5, 1.6, 2.2, 47},
+			{5.8, 3.4, 1.7, 65}
+	}};
+	std::array<Triangle,3> elements;
+		elements[0].setIndex(0); elements[0].addVertex(vertices[0]); elements[0].addVertex(vertices[1]); elements[0].addVertex(vertices[2]);
+		elements[1].setIndex(5); elements[1].addVertex(vertices[1]); elements[1].addVertex(vertices[2]); elements[1].addVertex(vertices[3]);
+		elements[2].setIndex(7); elements[2].addVertex(vertices[2]); elements[2].addVertex(vertices[1]); elements[2].addVertex(vertices[0]);
+	std::array<StaggeredQuadrangle,8> staggeredQuadrangles = {{
+		{0, vertices[0], &elements[0], vertices[1], &elements[1]}, // reference
+		{0, vertices[0], &elements[0], vertices[1], &elements[1]},
+		{1, vertices[0], &elements[0], vertices[1], &elements[1]},
+		{0, vertices[2], &elements[0], vertices[1], &elements[1]},
+		{0, vertices[0], &elements[2], vertices[1], &elements[1]},
+		{0, vertices[0], &elements[0], vertices[3], &elements[1]},
+		{0, vertices[0], &elements[0], vertices[1], &elements[2]},
+		{4, vertices[2], &elements[1], vertices[3], &elements[2]}
+	}};
+    section("true test")
+    {
+        check(staggeredQuadrangles[0]==staggeredQuadrangles[1]);
+    }
+    section("false tests")
+    {
+		checkFalse(staggeredQuadrangles[0]==staggeredQuadrangles[2]);
+		checkFalse(staggeredQuadrangles[0]==staggeredQuadrangles[3]);
+		checkFalse(staggeredQuadrangles[0]==staggeredQuadrangles[4]);
+		checkFalse(staggeredQuadrangles[0]==staggeredQuadrangles[5]);
+		checkFalse(staggeredQuadrangles[0]==staggeredQuadrangles[6]);
+		checkFalse(staggeredQuadrangles[0]==staggeredQuadrangles[7]);
+    }
+}
 
 TestCase("staggered quadrangle", "[StaggeredQuadrangle]")
 {
@@ -185,13 +220,6 @@ TestCase("staggered quadrangle", "[StaggeredQuadrangle]")
 		triangle.addVertex(vertices[3]);
 		triangle.addVertex(vertices[4]);
 	StaggeredQuadrangle staggeredQuadrangle(index, vertices[0], &quadrangle, vertices[3], &triangle);
-	section("operator==")
-	{
-		StaggeredQuadrangle staggeredQuadrangleToCompare(index, vertices[0], &quadrangle, vertices[3], &triangle);
-		check(staggeredQuadrangle==staggeredQuadrangleToCompare);
-		staggeredQuadrangleToCompare.setIndex(index+10);
-		checkFalse(staggeredQuadrangle==staggeredQuadrangleToCompare);
-	}
 	section("vertices")
 	{
 		check(staggeredQuadrangle.vertices[0]==&vertices[0]);
