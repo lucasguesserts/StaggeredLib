@@ -19,3 +19,9 @@ double Quadrangle::getVolume(void)
 {
 	return this->getAreaVector().norm();
 }
+
+std::ostream& operator<<(std::ostream& os, const Quadrangle& quadrangle)
+{
+	os << "Quadrangle" << static_cast<const Element&>(quadrangle);
+	return os;
+}

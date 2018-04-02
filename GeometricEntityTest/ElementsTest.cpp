@@ -64,13 +64,12 @@ TestCase("Triangle operator==", "[Triangle]")
 		triangles[3].setIndex(0); triangles[3].addVertex(vertices[3]); triangles[3].addVertex(vertices[1]); triangles[3].addVertex(vertices[2]);
 		triangles[4].setIndex(0); triangles[4].addVertex(vertices[0]); triangles[4].addVertex(vertices[3]); triangles[4].addVertex(vertices[2]);
 		triangles[5].setIndex(0); triangles[5].addVertex(vertices[0]); triangles[5].addVertex(vertices[1]); triangles[5].addVertex(vertices[3]);
-		section("true test")
-		{
-			check(triangles[0]==triangles[1]);
-		}
-		section("false tests")
-		{
-		checkFalse(triangles[0]==triangles[1]);
+	section("true test")
+	{
+		check(triangles[0]==triangles[1]);
+	}
+	section("false tests")
+	{
 		checkFalse(triangles[0]==triangles[2]);
 		checkFalse(triangles[0]==triangles[3]);
 		checkFalse(triangles[0]==triangles[4]);
@@ -109,6 +108,37 @@ TestCase("Quadrangle", "[Element][Quadrangle]")
 	{
 		const double volume = 36.5212267044797; // the area
 		check(quadrangle.getVolume()==Approx(volume));
+	}
+}
+
+TestCase("Quadrangle operator==", "[Quadrangle]")
+{
+    std::array<Vertex,5> vertices = {{
+			{2.3, 5.8, 4.1, 6},
+			{2.8, 4.9, 5.1, 32},
+			{4.5, 1.6, 2.2, 47},
+			{5.8, 3.4, 1.7, 65},
+			{7.3, 9.4, 8.8, 26}
+	}};
+	std::array<Quadrangle,7> quadrangles;
+		quadrangles[0].setIndex(0); quadrangles[0].addVertex(vertices[0]); quadrangles[0].addVertex(vertices[1]); quadrangles[0].addVertex(vertices[2]), quadrangles[0].addVertex(vertices[3]); //reference
+		quadrangles[1].setIndex(0); quadrangles[1].addVertex(vertices[0]); quadrangles[1].addVertex(vertices[1]); quadrangles[1].addVertex(vertices[2]), quadrangles[1].addVertex(vertices[3]);
+		quadrangles[2].setIndex(4); quadrangles[2].addVertex(vertices[0]); quadrangles[2].addVertex(vertices[1]); quadrangles[2].addVertex(vertices[2]), quadrangles[2].addVertex(vertices[3]);
+		quadrangles[3].setIndex(0); quadrangles[3].addVertex(vertices[4]); quadrangles[3].addVertex(vertices[1]); quadrangles[3].addVertex(vertices[2]), quadrangles[3].addVertex(vertices[3]);
+		quadrangles[4].setIndex(0); quadrangles[4].addVertex(vertices[0]); quadrangles[4].addVertex(vertices[4]); quadrangles[4].addVertex(vertices[2]), quadrangles[4].addVertex(vertices[3]);
+		quadrangles[5].setIndex(0); quadrangles[5].addVertex(vertices[0]); quadrangles[5].addVertex(vertices[1]); quadrangles[5].addVertex(vertices[4]), quadrangles[5].addVertex(vertices[3]);
+		quadrangles[5].setIndex(0); quadrangles[5].addVertex(vertices[0]); quadrangles[5].addVertex(vertices[1]); quadrangles[5].addVertex(vertices[2]), quadrangles[6].addVertex(vertices[4]);
+	section("true test")
+	{
+		check(quadrangles[0]==quadrangles[1]);
+	}
+	section("false tests")
+	{
+		checkFalse(quadrangles[0]==quadrangles[2]);
+		checkFalse(quadrangles[0]==quadrangles[3]);
+		checkFalse(quadrangles[0]==quadrangles[4]);
+		checkFalse(quadrangles[0]==quadrangles[5]);
+		checkFalse(quadrangles[0]==quadrangles[6]);
 	}
 }
 
