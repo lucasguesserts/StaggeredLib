@@ -49,6 +49,35 @@ TestCase("Triangle", "[Element][Triangle]")
 	}
 }
 
+TestCase("Triangle operator==", "[Triangle]")
+{
+    std::array<Vertex,4> vertices = {{
+			{2.3, 5.8, 4.1, 6},
+			{2.8, 4.9, 5.1, 32},
+			{4.5, 1.6, 2.2, 47},
+			{5.8, 3.4, 1.7, 65}
+	}};
+	std::array<Triangle,6> triangles;
+		triangles[0].setIndex(0); triangles[0].addVertex(vertices[0]); triangles[0].addVertex(vertices[1]); triangles[0].addVertex(vertices[2]); //reference
+		triangles[1].setIndex(0); triangles[1].addVertex(vertices[0]); triangles[1].addVertex(vertices[1]); triangles[1].addVertex(vertices[2]);
+		triangles[2].setIndex(4); triangles[2].addVertex(vertices[0]); triangles[2].addVertex(vertices[1]); triangles[2].addVertex(vertices[2]);
+		triangles[3].setIndex(0); triangles[3].addVertex(vertices[3]); triangles[3].addVertex(vertices[1]); triangles[3].addVertex(vertices[2]);
+		triangles[4].setIndex(0); triangles[4].addVertex(vertices[0]); triangles[4].addVertex(vertices[3]); triangles[4].addVertex(vertices[2]);
+		triangles[5].setIndex(0); triangles[5].addVertex(vertices[0]); triangles[5].addVertex(vertices[1]); triangles[5].addVertex(vertices[3]);
+		section("true test")
+		{
+			check(triangles[0]==triangles[1]);
+		}
+		section("false tests")
+		{
+		checkFalse(triangles[0]==triangles[1]);
+		checkFalse(triangles[0]==triangles[2]);
+		checkFalse(triangles[0]==triangles[3]);
+		checkFalse(triangles[0]==triangles[4]);
+		checkFalse(triangles[0]==triangles[5]);
+	}
+}
+
 TestCase("Quadrangle", "[Element][Quadrangle]")
 {
 	const unsigned numberOfVertices = 4;
