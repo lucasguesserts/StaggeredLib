@@ -1,6 +1,30 @@
 #include <Utils/Test.hpp>
+#include <array>
 
 #include <Stencil/ScalarStencil.hpp>
+
+TestCase("ScalarStencil operator==", "[ScalarStencil]")
+{
+	std::array<ScalarStencil,6> scalarStencils= {{
+		{{0,3.4}, {5,9.7}, {2,1.1}}, //reference
+		{{0,3.4}, {5,9.7}, {2,1.1}},
+		{{1,3.4}, {5,9.7}, {2,1.1}},
+		{{0,9.9}, {5,9.7}, {2,1.1}},
+		{{0,3.4}, {5,9.7}},
+		{{0,3.4}, {5,9.7}, {2,1.1}, {6,4.5}}
+	}};
+    section("true test")
+    {
+        check(scalarStencils[0]==scalarStencils[1]);
+    }
+    section("false tests")
+    {
+        checkFalse(scalarStencils[0]==scalarStencils[2]);
+        checkFalse(scalarStencils[0]==scalarStencils[3]);
+        checkFalse(scalarStencils[0]==scalarStencils[4]);
+        checkFalse(scalarStencils[0]==scalarStencils[5]);
+    }
+}
 
 TestCase("Scalar stencil", "[ScalarStencil]")
 {

@@ -27,3 +27,25 @@ double operator*(const ScalarStencil& scalarStencil, const Eigen::VectorXd& scal
 	}
 	return interpolatedValue;
 }
+
+bool operator==(const ScalarStencil& lhs, const ScalarStencil& rhs)
+{
+	bool vality = true;
+	if(lhs.size()==rhs.size())
+	{
+		for(auto& keyValuePair: lhs)
+		{
+			auto rhsValueIterator = rhs.find(keyValuePair.first);
+			if(rhsValueIterator!=rhs.cend())
+				vality = vality && keyValuePair.second==Approx((*rhsValueIterator).second);
+			else
+			{
+				vality = false;
+				break;
+			}
+		}
+	}
+	else
+		vality = false;
+	return vality;
+}
