@@ -34,7 +34,8 @@ TestCase("Matrix solver", "[eigen]")
 	Eigen::VectorXd solution;
 		solution.resize(size);
 		solution << 4, 8;
-	check(solution==matrix.fullPivLu().solve(independent));
+	Eigen::VectorXd calculatedSolution = matrix.fullPivLu().solve(independent);
+	check(solution==calculatedSolution);
 }
 
 TestCase("Eigen equality operator", "[eigen]")
@@ -55,4 +56,26 @@ TestCase("Vector3d operator==", "[eigen]")
     Eigen::Vector3d vec1(0,0,2);
     check(vectors[0]==vectors[1]);
     checkFalse(vectors[0]==vectors[2]);
+}
+
+TestCase("VectorXd operator==", "[eigen]")
+{
+	std::array<Eigen::VectorXd,6> vectors;
+	vectors[0].resize(3); vectors[0] << 2.4, 1.0, 8.6;
+	vectors[1].resize(3); vectors[1] << 2.4, 1.0, 8.6;
+	vectors[2].resize(3); vectors[2] << 2.4, 1.0, 8.6000001;
+	vectors[3].resize(3); vectors[3] << 2.4, 1.0, -3;
+	vectors[4].resize(4); vectors[4] << 2.4, 1.0, 8.6, 9.4;
+	vectors[5].resize(2); vectors[5] << 2.4, 1.0;
+	section("true tests")
+	{
+		check(vectors[0]==vectors[1]);
+		check(vectors[0]==vectors[2]);
+	}
+	section("false test")
+	{
+		checkFalse(vectors[0]==vectors[3]);
+		checkFalse(vectors[0]==vectors[4]);
+		checkFalse(vectors[0]==vectors[5]);
+	}
 }

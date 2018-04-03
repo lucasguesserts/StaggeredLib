@@ -23,11 +23,33 @@ namespace Catch {
 	   };
 }
 
-bool operator==(const Eigen::Vector3d& lhs, const Eigen::Vector3d& rhs)
-{
-	return lhs.coeff(0)==Approx(rhs.coeff(0)) &&
-	       lhs.coeff(1)==Approx(rhs.coeff(1)) &&
-	       lhs.coeff(2)==Approx(rhs.coeff(2));
+bool operator==(const Eigen::Vector3d& lhs, const Eigen::Vector3d& rhs);
+
+namespace Catch {
+	template<>
+		struct StringMaker<Eigen::VectorXd> {
+		static std::string convert( Eigen::VectorXd const& vector ) {
+			constexpr int tempBufSize = 18 + 1;
+			char tempBuf[tempBufSize];
+			int bufSize = 1 + tempBufSize*vector.size();
+			char* buf = new char[bufSize];
+			unsigned entry;
+			std::strcpy(buf,"[");
+			for(entry=0 ; entry<(vector.size()-1) ; entry++)
+			{
+				std::sprintf(tempBuf,"%10.10le,", vector.coeff(entry));
+				std::strcat(buf,tempBuf);
+			}
+			entry = (vector.size()-1);
+				std::sprintf(tempBuf,"%10.10le]", vector.coeff(entry));
+				std::strcat(buf,tempBuf);
+			std::string message(buf);
+			delete[] buf;
+			return message;
+			}
+		};
 }
+
+bool operator==(const Eigen::VectorXd& lhs, const Eigen::VectorXd& rhs);
 
 #endif
