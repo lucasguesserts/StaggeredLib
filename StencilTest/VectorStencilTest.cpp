@@ -1,6 +1,32 @@
 #include <Utils/Test.hpp>
+#include <array>
 
 #include <Stencil/VectorStencil.hpp>
+
+TestCase("VectorStencil operator==", "[VectorStencil]")
+{
+	std::array<VectorStencil,7> VectorStencils = {{
+		{ {0,{2.7, 5.9, 1.3}}, {7,{4.2,8.7,9.6}} },
+		{ {0,{2.7, 5.9, 1.3}}, {7,{4.2,8.7,9.6}} },
+		{ {0,{2.7, 5.9, 1.3}}, {7,{4.2,8.7,9.600001}} },
+		{ {9,{2.7, 5.9, 1.3}}, {7,{4.2,8.7,9.6}} },
+		{ {0,{0.1, 5.9, 1.3}}, {7,{4.2,8.7,9.6}} },
+		{ {0,{2.7, 5.9, 1.3}}, {7,{4.2,8.7,9.6}}, {4,{2.2,8.4,2.9}} },
+		{ {0,{2.7, 5.9, 1.3}} }
+	}};
+	section("true tests")
+	{
+		check(VectorStencils[0]==VectorStencils[1]);
+		check(VectorStencils[0]==VectorStencils[2]);
+	}
+	section("false tests")
+	{
+		checkFalse(VectorStencils[0]==VectorStencils[3]);
+		checkFalse(VectorStencils[0]==VectorStencils[4]);
+		checkFalse(VectorStencils[0]==VectorStencils[5]);
+		checkFalse(VectorStencils[0]==VectorStencils[6]);
+	}
+}
 
 TestCase("Vector stencil", "[VectorStencil]")
 {

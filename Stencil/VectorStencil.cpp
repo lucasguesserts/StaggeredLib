@@ -1,5 +1,7 @@
 #include <Stencil/VectorStencil.hpp>
 #include <vector>
+#include <Utils/catch.hpp>
+#include <Utils/EigenTest.hpp>
 
 VectorStencil operator*(const ScalarStencil& scalarStencil, const Eigen::Vector3d& vector)
 {
@@ -48,4 +50,27 @@ Eigen::Vector3d operator*(const VectorStencil& vectorStencil, const Eigen::Vecto
 		reconstructedValue += scalarField[index] * weightVector;
 	}
 	return reconstructedValue;
+}
+
+
+bool operator==(const VectorStencil& lhs, const VectorStencil& rhs)
+{
+	bool vality = true;
+	if(lhs.size()==rhs.size())
+	{
+		for(auto& keyValuePair: lhs)
+		{
+			auto rhsValueIterator = rhs.find(keyValuePair.first);
+			if(rhsValueIterator!=rhs.cend())
+				vality = vality && keyValuePair.second==(*rhsValueIterator).second;
+			else
+			{
+				vality = false;
+				break;
+			}
+		}
+	}
+	else
+		vality = false;
+	return vality;
 }
