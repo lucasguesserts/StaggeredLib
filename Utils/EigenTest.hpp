@@ -47,25 +47,14 @@ bool operator==(const Eigen::VectorXd& lhs, const Eigen::VectorXd& rhs);
 bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs);
 
 std::string eigenMatrixRowToString(const std::string& initialChars, const Eigen::MatrixXd& matrix, const unsigned row, const std::string& finalChars);
+std::string eigenMatrixToString(const Eigen::MatrixXd& matrix);
 namespace Catch {
 	template<>
 	struct StringMaker<Eigen::MatrixXd>
 	{
 		static std::string convert( Eigen::MatrixXd const& matrix )
 		{
-			// Format:
-			// [2.4000000000e+00, 1.0000000000e+00,
-			//  8.6000000000e+00, 5.7000000000e+00,
-			//  4.1000000000e+00, 9.0000000000e-01]
-			std::string stringToPrint;
-			unsigned row;
-			row = 0;
-				stringToPrint += eigenMatrixRowToString("[", matrix, row, ",\n");
-			for(row=1 ; row<(matrix.rows()-1) ; ++row)
-				stringToPrint += eigenMatrixRowToString(" ", matrix, row, ",\n");
-			row = matrix.rows()-1;
-				stringToPrint += eigenMatrixRowToString(" ", matrix, row, "]");
-			return stringToPrint;
+			return eigenMatrixToString(matrix);
 		}
 	};
 }

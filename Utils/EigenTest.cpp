@@ -62,3 +62,20 @@ std::string eigenMatrixRowToString(const std::string& initialChars, const Eigen:
 		str += doubleToString(matrix.coeff(row,column)) + finalChars;
 	return str;
 }
+
+std::string eigenMatrixToString(const Eigen::MatrixXd& matrix)
+{
+	// Format:
+	// [2.4000000000e+00, 1.0000000000e+00,
+	//  8.6000000000e+00, 5.7000000000e+00,
+	//  4.1000000000e+00, 9.0000000000e-01]
+	std::string str;
+	unsigned row;
+	row = 0;
+		str += eigenMatrixRowToString("[", matrix, row, ",\n");
+	for(row=1 ; row<(matrix.rows()-1) ; ++row)
+		str += eigenMatrixRowToString(" ", matrix, row, ",\n");
+	row = matrix.rows()-1;
+		str += eigenMatrixRowToString(" ", matrix, row, "]");
+	return str;
+}
