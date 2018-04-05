@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <utility>
 #include <iostream>
+#include <boost/format.hpp>
 
 #include <Utils/Test.hpp>
 
@@ -53,45 +54,33 @@ namespace Catch {
 
 bool operator==(const Eigen::VectorXd& lhs, const Eigen::VectorXd& rhs);
 
+
 bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs);
+
+std::string rowToString(const std::string& initialChars, const Eigen::MatrixXd& matrix, const unsigned row, const std::string& finalChars);
 namespace Catch {
 	template<>
-		struct StringMaker<Eigen::MatrixXd> {
-		static std::string convert( Eigen::MatrixXd const& matrix ) {
-			constexpr int tempBufSize = 18 + 2;
-			char tempBuf[tempBufSize];
-			int bufSize = tempBufSize*matrix.size() + matrix.rows();
-			char* buf = new char[bufSize];
-			unsigned entry;
-			std::strcpy(buf,"[");
-			unsigned row, column;
-			for(row=0 ; row<(matrix.rows()-1) ; ++row)
-			{
-				for(column=0 ; column<(matrix.cols()-1) ; ++column)
-				{
-					std::sprintf(tempBuf,"%10.10le, ", matrix.coeff(row,column));
-					std::strcat(buf,tempBuf);
-				}
-				column = matrix.cols()-1;
-					std::sprintf(tempBuf,"%10.10le,\n ", matrix.coeff(row,column));
-					std::strcat(buf,tempBuf);
-			}
+	struct StringMaker<Eigen::MatrixXd>
+	{
+		static std::string convert( Eigen::MatrixXd const& matrix )
+		{
+			// Format:
+			// [2.4000000000e+00, 1.0000000000e+00,
+			//  8.6000000000e+00, 5.7000000000e+00,
+			//  4.1000000000e+00, 9.0000000000e-01]
+			constexpr int numberStringSize = 18 + 2;
+			int stringSize = numberStringSize*matrix.size() + matrix.rows();
+			std::string stringToPrint;
+			unsigned row;
+			row = 0;
+				stringToPrint += rowToString("[", matrix, row, ",\n");
+			for(row=1 ; row<(matrix.rows()-1) ; ++row)
+				stringToPrint += rowToString(" ", matrix, row, ",\n");
 			row = matrix.rows()-1;
-			{
-				for(column=0 ; column<(matrix.cols()-1) ; ++column)
-				{
-					std::sprintf(tempBuf,"%10.10le, ", matrix.coeff(row,column));
-					std::strcat(buf,tempBuf);
-				}
-				column = matrix.cols()-1;
-					std::sprintf(tempBuf,"%10.10le]", matrix.coeff(row,column));
-					std::strcat(buf,tempBuf);
-			}
-			std::string message(buf);
-			delete[] buf;
-			return message;
-			}
-		};
+				stringToPrint += rowToString(" ", matrix, row, "]");
+			return stringToPrint;
+		}
+	};
 }
 
 #endif

@@ -29,3 +29,17 @@ bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs)
 		vality = false;
 	return vality;
 }
+
+std::string rowToString(const std::string& initialChars, const Eigen::MatrixXd& matrix, const unsigned row, const std::string& finalChars)
+{
+	// numberString: "+1.1234567890e+123, " -> 18+2 char
+	// row format: " 2.1234567890e+385, 8.9437813657e-028,\n" -> initialChars = " ", finalChars = ",\n"
+	unsigned column;
+	std::string str;
+	str += initialChars;
+	for(column=0 ; column<(matrix.cols()-1) ; ++column)
+		str += (boost::format("%10.10le, ") % matrix.coeff(row,column)).str();
+	column = matrix.cols()-1;
+		str += (boost::format("%10.10le%s") % matrix.coeff(row,column) % finalChars).str();
+	return str;
+}
