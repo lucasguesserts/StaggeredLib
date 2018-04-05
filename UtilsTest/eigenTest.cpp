@@ -79,3 +79,32 @@ TestCase("VectorXd operator==", "[eigen]")
 		checkFalse(vectors[0]==vectors[5]);
 	}
 }
+
+TestCase("MatrixXd operator==", "eigen]")
+{
+	std::array<Eigen::MatrixXd,6> matrices;
+	matrices[0].resize(2,2); matrices[0] << 2.4, 1.0,
+	                                        8.6, 5.7;
+	matrices[1].resize(2,2); matrices[1] << 2.4, 1.0,
+	                                        8.6, 5.7;
+	matrices[2].resize(2,2); matrices[2] << 2.4, 1.0,
+	                                        8.6, 5.70001;
+	matrices[3].resize(2,2); matrices[3] << 2.4, 1.0,
+	                                        8.6, -3.0;
+	matrices[4].resize(3,2); matrices[4] << 2.4, 1.0,
+	                                        8.6, 5.7,
+	                                        4.1, 0.9;
+	matrices[5].resize(2,3); matrices[5] << 2.4, 1.0, 4.1,
+	                                        8.6, 5.7, 0.9;
+	section("true tests")
+	{
+		check(matrices[0]==matrices[1]);
+		check(matrices[0]==matrices[2]);
+	}
+	section("false test")
+	{
+		checkFalse(matrices[0]==matrices[3]);
+		checkFalse(matrices[0]==matrices[4]);
+		checkFalse(matrices[0]==matrices[5]);
+	}
+}

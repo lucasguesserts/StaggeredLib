@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdio>
 #include <utility>
+#include <iostream>
 
 #include <Utils/Test.hpp>
 
@@ -51,5 +52,46 @@ namespace Catch {
 }
 
 bool operator==(const Eigen::VectorXd& lhs, const Eigen::VectorXd& rhs);
+
+bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs);
+namespace Catch {
+	template<>
+		struct StringMaker<Eigen::MatrixXd> {
+		static std::string convert( Eigen::MatrixXd const& matrix ) {
+			constexpr int tempBufSize = 18 + 2;
+			char tempBuf[tempBufSize];
+			int bufSize = tempBufSize*matrix.size() + matrix.rows();
+			char* buf = new char[bufSize];
+			unsigned entry;
+			std::strcpy(buf,"[");
+			unsigned row, column;
+			for(row=0 ; row<(matrix.rows()-1) ; ++row)
+			{
+				for(column=0 ; column<(matrix.cols()-1) ; ++column)
+				{
+					std::sprintf(tempBuf,"%10.10le, ", matrix.coeff(row,column));
+					std::strcat(buf,tempBuf);
+				}
+				column = matrix.cols()-1;
+					std::sprintf(tempBuf,"%10.10le,\n ", matrix.coeff(row,column));
+					std::strcat(buf,tempBuf);
+			}
+			row = matrix.rows()-1;
+			{
+				for(column=0 ; column<(matrix.cols()-1) ; ++column)
+				{
+					std::sprintf(tempBuf,"%10.10le, ", matrix.coeff(row,column));
+					std::strcat(buf,tempBuf);
+				}
+				column = matrix.cols()-1;
+					std::sprintf(tempBuf,"%10.10le]", matrix.coeff(row,column));
+					std::strcat(buf,tempBuf);
+			}
+			std::string message(buf);
+			delete[] buf;
+			return message;
+			}
+		};
+}
 
 #endif

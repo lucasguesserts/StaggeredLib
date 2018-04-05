@@ -17,3 +17,15 @@ bool operator==(const Eigen::VectorXd& lhs, const Eigen::VectorXd& rhs)
 		vality = false;
 	return vality;
 }
+
+bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs)
+{
+	bool vality = true;
+	if((lhs.rows()==rhs.rows()) && (lhs.cols()==rhs.cols()))
+		for(unsigned row=0 ; row<lhs.rows() ; ++row)
+			for(unsigned column=0 ; column<lhs.cols() ; ++column)
+				vality = vality && lhs.coeff(row,column)==Approx(rhs.coeff(row,column));
+	else
+		vality = false;
+	return vality;
+}
