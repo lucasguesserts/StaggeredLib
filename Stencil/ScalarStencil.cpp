@@ -1,4 +1,5 @@
 #include <Stencil/ScalarStencil.hpp>
+#include <Utils/String.hpp>
 
 ScalarStencil operator+(const ScalarStencil& lhs, const ScalarStencil& rhs)
 {
@@ -48,4 +49,21 @@ bool operator==(const ScalarStencil& lhs, const ScalarStencil& rhs)
 	else
 		vality = false;
 	return vality;
+}
+
+std::string scalarStencilToString(const ScalarStencil& scalarStencil)
+{
+	// Format: {{1, +5.9e-2},{7, -8.3e+5}}
+	std::string str;
+	str += "{";
+	for(auto& keyValuePair: scalarStencil)
+    {
+		str += "{";
+		str += std::to_string(keyValuePair.first);
+		str += ",";
+		str += doubleToString(keyValuePair.second);
+		str += "},";
+	}
+	str += "}";
+	return str;
 }

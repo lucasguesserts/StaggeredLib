@@ -2,15 +2,11 @@
 #define EIGEN_TEST_HPP
 
 #include <Eigen/Core>
-#include <string>
+#include <Utils/String.hpp>
 #include <cstdio>
 #include <utility>
-#include <iostream>
-#include <boost/format.hpp>
 
 #include <Utils/Test.hpp>
-
-std::string doubleToString(const double value);
 
 namespace Catch {
 	template<>

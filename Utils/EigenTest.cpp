@@ -30,12 +30,6 @@ bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs)
 	return vality;
 }
 
-std::string doubleToString(const double value)
-{
-	// numberString: "+1.1234567890e+123, " -> 18+2 char
-	return (boost::format("%+10.10le") % value).str();
-}
-
 std::string eigenVectorToString(const Eigen::VectorXd& vector)
 {
 	// vector format: "[+2.1234567890e+385, -8.9437813657e-028]"
