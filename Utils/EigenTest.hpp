@@ -27,29 +27,16 @@ namespace Catch {
 
 bool operator==(const Eigen::Vector3d& lhs, const Eigen::Vector3d& rhs);
 
-namespace Catch {
+std::string eigenVectorToString(const Eigen::VectorXd& vector);
+namespace Catch
+{
 	template<>
-		struct StringMaker<Eigen::VectorXd> {
-		static std::string convert( Eigen::VectorXd const& vector ) {
-			constexpr int tempBufSize = 18 + 1;
-			char tempBuf[tempBufSize];
-			int bufSize = 1 + tempBufSize*vector.size();
-			char* buf = new char[bufSize];
-			unsigned entry;
-			std::strcpy(buf,"[");
-			for(entry=0 ; entry<(vector.size()-1) ; entry++)
-			{
-				std::sprintf(tempBuf,"%10.10le,", vector.coeff(entry));
-				std::strcat(buf,tempBuf);
-			}
-			entry = (vector.size()-1);
-				std::sprintf(tempBuf,"%10.10le]", vector.coeff(entry));
-				std::strcat(buf,tempBuf);
-			std::string message(buf);
-			delete[] buf;
-			return message;
-			}
-		};
+	struct StringMaker<Eigen::VectorXd> {
+		static std::string convert( Eigen::VectorXd const& vector )
+		{
+			return eigenVectorToString(vector);
+		}
+	};
 }
 
 bool operator==(const Eigen::VectorXd& lhs, const Eigen::VectorXd& rhs);
@@ -57,7 +44,7 @@ bool operator==(const Eigen::VectorXd& lhs, const Eigen::VectorXd& rhs);
 
 bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs);
 
-std::string rowToString(const std::string& initialChars, const Eigen::MatrixXd& matrix, const unsigned row, const std::string& finalChars);
+std::string eigenMatrixRowToString(const std::string& initialChars, const Eigen::MatrixXd& matrix, const unsigned row, const std::string& finalChars);
 namespace Catch {
 	template<>
 	struct StringMaker<Eigen::MatrixXd>
@@ -73,11 +60,11 @@ namespace Catch {
 			std::string stringToPrint;
 			unsigned row;
 			row = 0;
-				stringToPrint += rowToString("[", matrix, row, ",\n");
+				stringToPrint += eigenMatrixRowToString("[", matrix, row, ",\n");
 			for(row=1 ; row<(matrix.rows()-1) ; ++row)
-				stringToPrint += rowToString(" ", matrix, row, ",\n");
+				stringToPrint += eigenMatrixRowToString(" ", matrix, row, ",\n");
 			row = matrix.rows()-1;
-				stringToPrint += rowToString(" ", matrix, row, "]");
+				stringToPrint += eigenMatrixRowToString(" ", matrix, row, "]");
 			return stringToPrint;
 		}
 	};
