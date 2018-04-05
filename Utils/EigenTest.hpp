@@ -8,19 +8,17 @@
 
 #include <Utils/Test.hpp>
 
-namespace Catch {
+std::string eigenVector3dToString(const Eigen::Vector3d& vector);
+namespace Catch
+{
 	template<>
-		struct StringMaker<Eigen::Vector3d> {
-		static std::string convert( Eigen::Vector3d const& vector ) {
-			char buf[100];
-			std::sprintf(buf,
-				"[%10.10le,%10.10le,%10.10le]",
-				vector.coeff(0),
-				vector.coeff(1),
-				vector.coeff(2) );
-			return std::string(std::move(buf));
-			}
-	   };
+	struct StringMaker<Eigen::Vector3d>
+	{
+		static std::string convert( Eigen::Vector3d const& vector )
+		{
+			return eigenVector3dToString(vector);
+		}
+	};
 }
 
 bool operator==(const Eigen::Vector3d& lhs, const Eigen::Vector3d& rhs);

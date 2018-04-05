@@ -30,6 +30,18 @@ bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs)
 	return vality;
 }
 
+
+std::string eigenVector3dToString(const Eigen::Vector3d& vector)
+{
+	// vector format: "[+2.1234567890e+385, -8.9437813657e-028, +5.3716842318e+008]"
+	std::string str;
+	str += "[";
+	str += doubleToString(vector.coeff(0)) + ",";
+	str += doubleToString(vector.coeff(1)) + ",";
+	str += doubleToString(vector.coeff(2)) + "]";
+	return str;
+}
+
 std::string eigenVectorToString(const Eigen::VectorXd& vector)
 {
 	// vector format: "[+2.1234567890e+385, -8.9437813657e-028]"
@@ -37,7 +49,7 @@ std::string eigenVectorToString(const Eigen::VectorXd& vector)
 	std::string str;
 	str += "[";
 	for(entry=0 ; entry<(vector.size()-1) ; ++entry)
-		str += doubleToString(vector.coeff(entry)) + ", ";
+		str += doubleToString(vector.coeff(entry)) + ",";
 	entry = vector.size()-1;
 		str += doubleToString(vector.coeff(entry)) + "]";
 	return str;

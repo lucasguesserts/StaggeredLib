@@ -9,6 +9,20 @@ TestCase("double to string")
 	check(doubleToString(-9.82e+100)==std::string("-9.8200000000e+100"));
 }
 
+TestCase("Eigen::Vector3d to string")
+{
+	Eigen::Vector3d vector(3.5e-2, -4.7e+52, 8.9e-100);
+	check(eigenVector3dToString(vector)==std::string("[+3.5000000000e-02,-4.7000000000e+52,+8.9000000000e-100]"));
+}
+
+TestCase("Eigen::VectorXd to string")
+{
+	Eigen::VectorXd vector;
+	vector.resize(2);
+	vector << 3.5e-2, -4.7e+52;
+	check(eigenVectorToString(vector)==std::string("[+3.5000000000e-02,-4.7000000000e+52]"));
+}
+
 TestCase("eigen vector", "[eigen]")
 {
 	const unsigned size = 2;
