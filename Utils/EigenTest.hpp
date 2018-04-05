@@ -10,6 +10,8 @@
 
 #include <Utils/Test.hpp>
 
+std::string doubleToString(const double value);
+
 namespace Catch {
 	template<>
 		struct StringMaker<Eigen::Vector3d> {
@@ -55,8 +57,6 @@ namespace Catch {
 			// [2.4000000000e+00, 1.0000000000e+00,
 			//  8.6000000000e+00, 5.7000000000e+00,
 			//  4.1000000000e+00, 9.0000000000e-01]
-			constexpr int numberStringSize = 18 + 2;
-			int stringSize = numberStringSize*matrix.size() + matrix.rows();
 			std::string stringToPrint;
 			unsigned row;
 			row = 0;

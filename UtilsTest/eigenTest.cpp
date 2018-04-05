@@ -3,6 +3,12 @@
 #include <Eigen/LU>
 #include <Utils/EigenTest.hpp>
 
+TestCase("double to string")
+{
+	check(doubleToString(2.4e-5)==std::string("+2.4000000000e-05"));
+	check(doubleToString(-9.82e+100)==std::string("-9.8200000000e+100"));
+}
+
 TestCase("eigen vector", "[eigen]")
 {
 	const unsigned size = 2;

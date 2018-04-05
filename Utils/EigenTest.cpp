@@ -30,17 +30,22 @@ bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs)
 	return vality;
 }
 
-std::string eigenVectorToString(const Eigen::VectorXd& vector)
+std::string doubleToString(const double value)
 {
 	// numberString: "+1.1234567890e+123, " -> 18+2 char
+	return (boost::format("%+10.10le") % value).str();
+}
+
+std::string eigenVectorToString(const Eigen::VectorXd& vector)
+{
 	// vector format: "[+2.1234567890e+385, -8.9437813657e-028]"
 	unsigned entry;
 	std::string str;
 	str += "[";
 	for(entry=0 ; entry<(vector.size()-1) ; ++entry)
-		str += (boost::format("%+10.10le, ") % vector.coeff(entry)).str();
+		str += doubleToString(vector.coeff(entry)) + ", ";
 	entry = vector.size()-1;
-		str += (boost::format("%+10.10le]") % vector.coeff(entry)).str();
+		str += doubleToString(vector.coeff(entry)) + "]";
 	return str;
 }
 
@@ -52,8 +57,8 @@ std::string eigenMatrixRowToString(const std::string& initialChars, const Eigen:
 	std::string str;
 	str += initialChars;
 	for(column=0 ; column<(matrix.cols()-1) ; ++column)
-		str += (boost::format("%+10.10le, ") % matrix.coeff(row,column)).str();
+		str += doubleToString(matrix.coeff(row,column)) + ", ";
 	column = matrix.cols()-1;
-		str += (boost::format("%+10.10le%s") % matrix.coeff(row,column) % finalChars).str();
+		str += doubleToString(matrix.coeff(row,column)) + finalChars;
 	return str;
 }
