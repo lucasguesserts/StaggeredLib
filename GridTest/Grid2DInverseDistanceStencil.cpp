@@ -4,10 +4,15 @@
 
 #include <CGNSFile/CGNSFile.hpp>
 
+#include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/StaggeredQuadrangle.hpp>
 #include <GeometricEntity/StaggeredTriangle.hpp>
+
+#include <Stencil/Test.hpp>
+#include <Stencil/ScalarStencil.hpp>
+#include <Stencil/VectorStencil.hpp>
 
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 
@@ -20,8 +25,7 @@ TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDista
 	auto scalarStencilTest = [&grid](const unsigned vertexIndex, ScalarStencil& correctScalarStencil) -> void
 		{
 			ScalarStencil scalarStencilToTest = grid.computeScalarStencil(grid.vertices[vertexIndex]);
-			for(Element* element: grid.verticesNeighborElements[vertexIndex])
-				check(scalarStencilToTest[element->getIndex()]==Approx(correctScalarStencil[element->getIndex()]));
+			check(scalarStencilToTest==correctScalarStencil);
 		};
 	section("Vertex 0")
 	{
@@ -114,9 +118,7 @@ TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistan
 		{ {4,0.5}, {5,0.5} }
 	};
 	std::vector<ScalarStencil> toTestScalarStencilOnVertices = grid.computeScalarStencilOnVertices();
-	for(Vertex& vertex: grid.vertices)
-		for(Element* element: grid.verticesNeighborElements[vertex.getIndex()])
-			check(toTestScalarStencilOnVertices[vertex.getIndex()][element->getIndex()]==Approx(correctScalarStencilOnVertices[vertex.getIndex()][element->getIndex()]));
+	check(toTestScalarStencilOnVertices==correctScalarStencilOnVertices);
 }
 
 TestCase("Compute scalar stencil for one element", "[Grid2DInverseDistanceStencil]")
@@ -144,8 +146,7 @@ TestCase("Grid2DInverseDistanceStencil compute average scalar stencil","[Grid2DI
 	ScalarStencil scalarStencil[] = { {{0, 2.2},{4, 5.4}} , {{1, 4.8}, {4, 3.2}} };
 	ScalarStencil correctScalarStencil = {{0, 1.1}, {1, 2.4}, {4, 4.3}};
 	ScalarStencil averageScalarStencil = Grid2DInverseDistanceStencil::computeAverageScalarStencil(scalarStencil[0],scalarStencil[1]);
-	for(auto keyValue: averageScalarStencil)
-		check(averageScalarStencil[keyValue.first]==Approx(correctScalarStencil[keyValue.first]));
+	check(averageScalarStencil==correctScalarStencil);
 }
 
 TestCase("Grid2DInverseDistanceStencil compute vector stencil","[Grid2DInverseDistanceStencil]")
@@ -167,9 +168,7 @@ TestCase("Grid2DInverseDistanceStencil compute gradient using StaggeredQuadrangl
 	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVertices();
 	VectorStencil correctVectorStencil = { { 0, {0.75,-0.75,0.0} }, { 1, {-0.75,0.75,0.0} } };
 	VectorStencil vectorStencilOnStaggeredQuadrangle = grid.computeVectorStencilOnQuadrangle(grid.staggeredQuadrangles[0], scalarStencilOnVertices);
-	for(auto& keyValue: vectorStencilOnStaggeredQuadrangle)
-		for(unsigned vectorEntry=0 ; vectorEntry<3 ; ++vectorEntry)
-			check(keyValue.second[vectorEntry]==Approx(correctVectorStencil[keyValue.first][vectorEntry]));
+	check(vectorStencilOnStaggeredQuadrangle==correctVectorStencil);
 }
 
 TestCase("Grid2DInverseDistanceStencil compute gradient using StaggeredTriangle","[Grid2DInverseDistanceStencil][StaggeredTriangle]")
@@ -189,8 +188,6 @@ TestCase("Grid2DInverseDistanceStencil compute gradient using StaggeredTriangle"
 	for(unsigned triangleIndex=0 ; triangleIndex<numberOfTriangles ; ++triangleIndex)
 	{
 		VectorStencil vectorStencilOnStaggeredTriangle = grid.computeVectorStencilOnTriangle(grid.staggeredTriangles[triangleIndex], scalarStencilOnVertices);
-		for(auto& keyValue: vectorStencilOnStaggeredTriangle)
-			for(unsigned vectorEntry=0 ; vectorEntry<3 ; ++vectorEntry)
-				check(keyValue.second[vectorEntry]==Approx(correctVectorStencil[triangleIndex][keyValue.first][vectorEntry]));
+		check(vectorStencilOnStaggeredTriangle==correctVectorStencil[triangleIndex]);
 	}
 }

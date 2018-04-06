@@ -1,5 +1,6 @@
 #include <Utils/Test.hpp>
 #include <array>
+#include <vector>
 #include <string>
 
 #include <CGNSFile/ElementDefinition.hpp>
@@ -28,38 +29,36 @@ TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 	section("quadrangle connectivity")
 	{
 		constexpr unsigned numberOfQuadrangles = 2;
-		std::array<ElementDefinition<4>,numberOfQuadrangles> quadrangleDefinition;
+		std::vector<ElementDefinition<4>> quadrangleDefinitions(numberOfQuadrangles);
 		// Two answer quadrangles
-		quadrangleDefinition[0].index = 12;
-		quadrangleDefinition[0].connectivity << 0, 1, 3, 2;
-		quadrangleDefinition[1].index = 17;
-		quadrangleDefinition[1].connectivity << 3, 5, 6, 4;
+		quadrangleDefinitions[0].index = 12;
+		quadrangleDefinitions[0].connectivity << 0, 1, 3, 2;
+		quadrangleDefinitions[1].index = 17;
+		quadrangleDefinitions[1].connectivity << 3, 5, 6, 4;
 		// Two quadrangles in GridData to test
 		gridData.quadrangle.resize(numberOfQuadrangles);
 		gridData.quadrangle[0].index = 12;
 		gridData.quadrangle[0].connectivity << 0, 1, 3, 2;
 		gridData.quadrangle[1].index = 17;
 		gridData.quadrangle[1].connectivity << 3, 5, 6, 4;
-		for(unsigned quadrangleCount=0 ; quadrangleCount<numberOfQuadrangles ; ++quadrangleCount)
-			check(gridData.quadrangle[quadrangleCount]==quadrangleDefinition[quadrangleCount]);
+		check(gridData.quadrangle==quadrangleDefinitions);
 	}
 	section("triangle connectivity")
 	{
 		constexpr unsigned numberOfTriangles = 2;
-		std::array<ElementDefinition<3>,numberOfTriangles> triangleDefinition;
+		std::vector<ElementDefinition<3>> triangleDefinitions(numberOfTriangles);
 		// Two answer triangles
-		triangleDefinition[0].index = 48;
-		triangleDefinition[0].connectivity << 5, 7, 1;
-		triangleDefinition[1].index = 94;
-		triangleDefinition[1].connectivity << 8, 1, 6;
+		triangleDefinitions[0].index = 48;
+		triangleDefinitions[0].connectivity << 5, 7, 1;
+		triangleDefinitions[1].index = 94;
+		triangleDefinitions[1].connectivity << 8, 1, 6;
 		// Two triangles in GridData to test
 		gridData.triangle.resize(numberOfTriangles);
 		gridData.triangle[0].index = 48;
 		gridData.triangle[0].connectivity << 5, 7, 1;
 		gridData.triangle[1].index = 94;
 		gridData.triangle[1].connectivity << 8, 1, 6;
-		for(unsigned triangleCount=0 ; triangleCount<numberOfTriangles ; ++triangleCount)
-			check(gridData.triangle[triangleCount]==triangleDefinition[triangleCount]);
+		check(gridData.triangle==triangleDefinitions);
 	}
 }
 
@@ -93,28 +92,26 @@ TestCase("grid reader from CGNS", "[GridData][CGNS]")
 	{
 		constexpr unsigned numberOfQuadrangles = 2;
 		constexpr unsigned verticesPerQuadrangle = 4;
-		std::array<ElementDefinition<4>,numberOfQuadrangles> quadrangleDefinition;
-		quadrangleDefinition[0].index = 0;
-		quadrangleDefinition[0].connectivity << 0, 1, 4, 3;
-		quadrangleDefinition[1].index = 1;
-		quadrangleDefinition[1].connectivity << 1, 2, 5, 4;
-		for(unsigned count=0 ; count<numberOfQuadrangles ; ++count)
-			check(gridData.quadrangle[count]==quadrangleDefinition[count]);
+		std::vector<ElementDefinition<4>> quadrangleDefinitions(numberOfQuadrangles);
+		quadrangleDefinitions[0].index = 0;
+		quadrangleDefinitions[0].connectivity << 0, 1, 4, 3;
+		quadrangleDefinitions[1].index = 1;
+		quadrangleDefinitions[1].connectivity << 1, 2, 5, 4;
+		check(gridData.quadrangle==quadrangleDefinitions);
 	}
 	section("triangle connectivity")
 	{
 		constexpr unsigned numberOfTriangles = 4;
 		constexpr unsigned verticesPerTriangle = 3;
-		std::array<ElementDefinition<3>,numberOfTriangles> triangleDefinition;
-		triangleDefinition[0].index = 2;
-		triangleDefinition[0].connectivity << 3, 4, 7;
-		triangleDefinition[1].index = 3;
-		triangleDefinition[1].connectivity << 3, 7, 6;
-		triangleDefinition[2].index = 4;
-		triangleDefinition[2].connectivity << 4, 5, 8;
-		triangleDefinition[3].index = 5;
-		triangleDefinition[3].connectivity << 4, 8, 7;
-		for(unsigned count=0 ; count<numberOfTriangles ; ++count)
-			check(gridData.triangle[count]==triangleDefinition[count]);
+		std::vector<ElementDefinition<3>> triangleDefinitions(numberOfTriangles);
+		triangleDefinitions[0].index = 2;
+		triangleDefinitions[0].connectivity << 3, 4, 7;
+		triangleDefinitions[1].index = 3;
+		triangleDefinitions[1].connectivity << 3, 7, 6;
+		triangleDefinitions[2].index = 4;
+		triangleDefinitions[2].connectivity << 4, 5, 8;
+		triangleDefinitions[3].index = 5;
+		triangleDefinitions[3].connectivity << 4, 8, 7;
+		check(gridData.triangle==triangleDefinitions);
 	}
 }

@@ -20,8 +20,8 @@ TestCase("Grid structure", "[Grid]")
 	check(grid.dimension==dimension);
 	for(unsigned vertexIndex=0 ; vertexIndex<numberOfVertices ; ++vertexIndex)
 	{
-		for(unsigned i=0 ; i<3 ; ++i)
-			check(grid.vertices[vertexIndex](i)==gridData.coordinates(vertexIndex,i));
 		check(grid.vertices[vertexIndex].getIndex()==vertexIndex);
+		for(unsigned entry=0 ; entry<3 ; ++entry)
+			check(grid.vertices[vertexIndex](entry)==gridData.coordinates(vertexIndex,entry));
 	}
 }

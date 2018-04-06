@@ -6,6 +6,7 @@
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/CGNSFile.hpp>
 
+#include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/StaggeredQuadrangle.hpp>
@@ -64,8 +65,8 @@ TestCase("Grid2D with staggered elements - add staggered element definition from
 	section("quadrangle")
 	{
 		ElementDefinition<4> quadrangleDefinition;
-		quadrangleDefinition.index = 6;
-		quadrangleDefinition.connectivity << 8, 2, 4, 0;
+			quadrangleDefinition.index = 6;
+			quadrangleDefinition.connectivity << 8, 2, 4, 0;
 		grid.addStaggeredElementDefinitionFromElementDefinition(quadrangleDefinition);
 		check(grid.staggeredElementDefinition.size()==4);
 		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(8, 2, 6)) );
@@ -76,8 +77,8 @@ TestCase("Grid2D with staggered elements - add staggered element definition from
 	section("triangle")
 	{
 		ElementDefinition<3> triangleDefinition;
-		triangleDefinition.index = 6;
-		triangleDefinition.connectivity << 8, 2, 4;
+			triangleDefinition.index = 6;
+			triangleDefinition.connectivity << 8, 2, 4;
 		grid.addStaggeredElementDefinitionFromElementDefinition(triangleDefinition);
 		check(grid.staggeredElementDefinition.size()==3);
 		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(8, 2, 6)) );
@@ -92,12 +93,19 @@ TestCase("Grid2D with staggered elements - staggered element definition construc
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
-	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(0,1,0)) );
-	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(3,1,0)) );
-	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(0,2,1)) );
-	check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(2,3,1)) );
-	StaggeredElementDefinition quadrangle(0,3,1); quadrangle.addElement(0);
+	section("staggered triangles")
+	{
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(0,1,0)) );
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(3,1,0)) );
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(0,2,1)) );
+		check( contains(grid.staggeredElementDefinition,StaggeredElementDefinition(2,3,1)) );
+	}
+	section("staggered quadrangles")
+	{
+		StaggeredElementDefinition quadrangle(0,3,1);
+		quadrangle.addElement(0);
 		check( contains(grid.staggeredElementDefinition,quadrangle) );
+	}
 }
 
 TestCase("Grid2D with staggered elements - correct staggered element entities order", "[Grid2DWithStaggeredElements]")
@@ -108,20 +116,17 @@ TestCase("Grid2D with staggered elements - correct staggered element entities or
 	Grid2D grid(gridData);
 	section("staggered quadrangle")
 	{
+		StaggeredQuadrangle staggeredQuadrangleOrganized(0, grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1]);
 		StaggeredQuadrangle staggeredQuadrangle(0, grid.vertices[0],grid.elements[1],grid.vertices[3],grid.elements[0]);
 		Grid2DWithStaggeredElements::organizeQuadrangle(staggeredQuadrangle);
-		check(staggeredQuadrangle.vertices[0]==&grid.vertices[0]);
-		check(staggeredQuadrangle.vertices[1]==&grid.vertices[3]);
-		check(staggeredQuadrangle.elements[0]==grid.elements[0]);
-		check(staggeredQuadrangle.elements[1]==grid.elements[1]);
+		check(staggeredQuadrangle==staggeredQuadrangleOrganized);
 	}
 	section("staggered triangle")
 	{
+		StaggeredTriangle staggeredTriangleOrganized(0, grid.vertices[1],grid.elements[0],grid.vertices[0]);
 		StaggeredTriangle staggeredTriangle(0, grid.vertices[0],grid.elements[0],grid.vertices[1]);
 		Grid2DWithStaggeredElements::organizeTriangle(staggeredTriangle);
-		check(staggeredTriangle.vertices[0]==&grid.vertices[1]);
-		check(staggeredTriangle.element==grid.elements[0]);
-		check(staggeredTriangle.vertices[1]==&grid.vertices[0]);
+		check(staggeredTriangle==staggeredTriangleOrganized);
 	}
 }
 
@@ -156,29 +161,18 @@ TestCase("Grid2D with staggered elements - staggered element construction", "[Gr
 	}
 	section("staggered quadrangles")
 	{
-		constexpr unsigned index = 0;
-		StaggeredQuadrangle staggeredQuadrangle(index,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1]);
-		section("vertices")
-		{
-			check(grid.staggeredQuadrangles[0].vertices[0]==&grid.vertices[3]);
-			check(grid.staggeredQuadrangles[0].elements[0]==grid.elements[1]);
-			check(grid.staggeredQuadrangles[0].vertices[1]==&grid.vertices[0]);
-			check(grid.staggeredQuadrangles[0].elements[1]==grid.elements[0]);
-		}
+		constexpr unsigned index = 2;
+		StaggeredQuadrangle staggeredQuadrangle(index,grid.vertices[3],grid.elements[1],grid.vertices[0],grid.elements[0]);
+		check(grid.staggeredQuadrangles[0]==staggeredQuadrangle);
 	}
 	section("staggered triangles")
 	{
 		std::vector<StaggeredTriangle> staggeredTriangles = {
-			{1, grid.vertices[1], grid.elements[0], grid.vertices[0]},
-			{2, grid.vertices[3], grid.elements[0], grid.vertices[1]},
+			{0, grid.vertices[1], grid.elements[0], grid.vertices[0]},
+			{1, grid.vertices[3], grid.elements[0], grid.vertices[1]},
 			{3, grid.vertices[2], grid.elements[1], grid.vertices[3]},
 			{4, grid.vertices[0], grid.elements[1], grid.vertices[2]}
 		};
-		for(unsigned index=0 ; index<4 ; ++index)
-		{
-			check(grid.staggeredTriangles[index].vertices[0]==staggeredTriangles[index].vertices[0]);
-			check(grid.staggeredTriangles[index].element==staggeredTriangles[index].element);
-			check(grid.staggeredTriangles[index].vertices[1]==staggeredTriangles[index].vertices[1]);
-		}
+		check(grid.staggeredTriangles==staggeredTriangles);
 	}
 }

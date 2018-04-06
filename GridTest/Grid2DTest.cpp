@@ -28,8 +28,7 @@ TestCase("Grid 2D build", "[Grid][Grid2D]")
 		vertices.push_back(Vertex(0.0, 3.0, 0.0, 6));
 		vertices.push_back(Vertex(1.5, 3.0, 0.0, 7));
 		vertices.push_back(Vertex(3.0, 3.0, 0.0, 8));
-		for(unsigned i=0 ; i<grid2D.vertices.size() ; ++i)
-			check(grid2D.vertices[i]==vertices[i]);
+		check(grid2D.vertices==vertices);
 	}
 	section("Elements index")
 	{
