@@ -1,4 +1,5 @@
 #include <Utils/Test.hpp>
+#include <Stencil/Test.hpp>
 #include <array>
 
 #include <Stencil/VectorStencil.hpp>
@@ -37,8 +38,8 @@ TestCase("Vector stencil", "[VectorStencil]")
 		ScalarStencil scalarStencil = { {index[0],value[0]}, {index[1],value[1]} };
 		const Eigen::Vector3d vector(-6.3, 1.2, 4.5);
 		VectorStencil result = scalarStencil*vector;
-		check(result[index[0]]==(value[0]*vector));
-		check(result[index[1]]==(value[1]*vector));
+		check(result[index[0]]==static_cast<Eigen::Vector3d>(value[0]*vector));
+		check(result[index[1]]==static_cast<Eigen::Vector3d>(value[1]*vector));
 	}
 	section("VectorStencil + VectorStencil")
 	{
@@ -48,7 +49,7 @@ TestCase("Vector stencil", "[VectorStencil]")
 		VectorStencil second = {{index[1],vector[2]}, {index[2],vector[3]}};
 		VectorStencil result = first + second;
 		check(result[index[0]]==vector[0]);
-		check(result[index[1]]==(vector[1]+vector[2]));
+		check(result[index[1]]==static_cast<Eigen::Vector3d>(vector[1]+vector[2]));
 		check(result[index[2]]==vector[3]);
 	}
 	section("Eigen::Vector3d * VectorStencil")
@@ -68,7 +69,7 @@ TestCase("Vector stencil", "[VectorStencil]")
 		const Eigen::Vector3d vector = {-1.6, 8.3, 2.0};
 		const VectorStencil vectorStencil = {{index,vector}};
 		VectorStencil result = scalar * vectorStencil;
-		check(result[index]==(scalar*vector));
+		check(result[index]==static_cast<Eigen::Vector3d>(scalar*vector));
 	}
 }
 

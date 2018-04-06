@@ -1,4 +1,5 @@
 #include <Utils/Test.hpp>
+#include <Stencil/Test.hpp>
 #include <array>
 
 #include <Stencil/ScalarStencil.hpp>

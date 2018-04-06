@@ -1,5 +1,4 @@
 #include <Stencil/ScalarStencil.hpp>
-#include <Utils/String.hpp>
 
 ScalarStencil operator+(const ScalarStencil& lhs, const ScalarStencil& rhs)
 {
@@ -27,43 +26,4 @@ double operator*(const ScalarStencil& scalarStencil, const Eigen::VectorXd& scal
 		interpolatedValue += weightValue * scalarField[index];
 	}
 	return interpolatedValue;
-}
-
-bool operator==(const ScalarStencil& lhs, const ScalarStencil& rhs)
-{
-	bool vality = true;
-	if(lhs.size()==rhs.size())
-	{
-		for(auto& keyValuePair: lhs)
-		{
-			auto rhsValueIterator = rhs.find(keyValuePair.first);
-			if(rhsValueIterator!=rhs.cend())
-				vality = vality && keyValuePair.second==Approx((*rhsValueIterator).second);
-			else
-			{
-				vality = false;
-				break;
-			}
-		}
-	}
-	else
-		vality = false;
-	return vality;
-}
-
-std::string scalarStencilToString(const ScalarStencil& scalarStencil)
-{
-	// Format: {{1, +5.9e-2},{7, -8.3e+5}}
-	std::string str;
-	str += "{";
-	for(auto& keyValuePair: scalarStencil)
-    {
-		str += "{";
-		str += std::to_string(keyValuePair.first);
-		str += ",";
-		str += doubleToString(keyValuePair.second);
-		str += "},";
-	}
-	str += "}";
-	return str;
 }
