@@ -33,28 +33,3 @@ Eigen::Vector3d StaggeredQuadrangle::getAreaVector3D(void)
 	return Element::computeTriangleAreaVector(*(this->vertices[0]), this->elements[0]->getCentroid(), this->elements[1]->getCentroid()) +
 		   Element::computeTriangleAreaVector(this->elements[0]->getCentroid(), *(this->vertices[1]), this->elements[1]->getCentroid());
 }
-
-bool operator==(const StaggeredQuadrangle& lhs, const StaggeredQuadrangle& rhs)
-{
-	return lhs.getIndex()==rhs.getIndex() &&
-	       *lhs.vertices[0]==*rhs.vertices[0] &&
-	       *lhs.vertices[1]==*rhs.vertices[1] &&
-	       lhs.elements[0]==rhs.elements[0] &&
-	       lhs.elements[1]==rhs.elements[1];
-}
-
-std::ostream& operator<< (std::ostream& os, const StaggeredQuadrangle& staggeredQuadrangle)
-{
-	os << "StaggeredQuadrangle{"
-	   << "I:" << staggeredQuadrangle.getIndex()
-	   << ","
-	   << "v:" << staggeredQuadrangle.vertices[0]->getIndex()
-	   << ","
-	   << "e:" << staggeredQuadrangle.elements[0]->getIndex()
-	   << ","
-	   << "v:" << staggeredQuadrangle.vertices[1]->getIndex()
-	   << ","
-	   << "e:" << staggeredQuadrangle.elements[1]->getIndex()
-	   << "}";
-	return os;
-}

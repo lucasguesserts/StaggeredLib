@@ -1,6 +1,7 @@
 #include <Utils/Test.hpp>
 #include <vector>
 
+#include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/Triangle.hpp>

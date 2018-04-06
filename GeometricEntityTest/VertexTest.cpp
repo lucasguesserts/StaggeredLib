@@ -1,6 +1,7 @@
 #include <Utils/Test.hpp>
 #include <array>
 
+#include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 
 TestCase("Vertex constructor", "[Vertex]")

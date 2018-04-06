@@ -31,25 +31,3 @@ Eigen::Vector3d StaggeredTriangle::getAreaVector3D(void)
 {
 	return Element::computeTriangleAreaVector(*(this->vertices[0]), this->element->getCentroid(), *(this->vertices[1]));
 }
-
-bool operator==(const StaggeredTriangle& lhs, const StaggeredTriangle& rhs)
-{
-	return lhs.getIndex()==rhs.getIndex() &&
-	       lhs.vertices[0]==rhs.vertices[0] &&
-	       lhs.vertices[1]==rhs.vertices[1] &&
-	       lhs.element==rhs.element;
-}
-
-std::ostream& operator<<(std::ostream& os, const StaggeredTriangle& staggeredTriangle)
-{
-	os << "StaggeredTriangle{"
-	   << "I:" << staggeredTriangle.getIndex()
-	   << ","
-	   << "v:" << staggeredTriangle.vertices[0]->getIndex()
-	   << ","
-	   << "e:" << staggeredTriangle.element->getIndex()
-	   << ","
-	   << "v:" << staggeredTriangle.vertices[1]->getIndex()
-	   << "}";
-	return os;
-}

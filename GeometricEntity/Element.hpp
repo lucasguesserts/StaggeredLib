@@ -1,7 +1,6 @@
 #ifndef ELEMENT_HPP
 #define ELEMENT_HPP
 
-#include <iostream>
 #include <vector>
 #include <Eigen/Core>
 #include <GeometricEntity/Entity.hpp>
@@ -18,8 +17,5 @@ class Element: public Entity
 		virtual double getVolume(void) = 0;
 		static Eigen::Vector3d computeTriangleAreaVector(const Eigen::Vector3d& first, const Eigen::Vector3d& second, const Eigen::Vector3d& third);
 };
-
-bool operator==(const Element& lhs, const Element& rhs);
-std::ostream& operator<<(std::ostream& os, const Element& element);
 
 #endif

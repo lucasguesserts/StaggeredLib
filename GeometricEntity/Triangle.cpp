@@ -18,9 +18,3 @@ double Triangle::getVolume(void)
 {
 	return this->getAreaVector().norm();
 }
-
-std::ostream& operator<<(std::ostream& os, const Triangle& triangle)
-{
-	os << "Triangle" << static_cast<const Element&>(triangle);
-	return os;
-}
