@@ -6,9 +6,10 @@
 
 TestCase("ScalarStencil operator==", "[ScalarStencil]")
 {
-	std::array<ScalarStencil,6> scalarStencils= {{
+	std::array<ScalarStencil,7> scalarStencils= {{
 		{{0,3.4}, {5,9.7}, {2,1.1}}, //reference
 		{{0,3.4}, {5,9.7}, {2,1.1}},
+		{{0,3.4}, {5,9.7}, {2,1.100001}},
 		{{1,3.4}, {5,9.7}, {2,1.1}},
 		{{0,9.9}, {5,9.7}, {2,1.1}},
 		{{0,3.4}, {5,9.7}},
@@ -17,14 +18,30 @@ TestCase("ScalarStencil operator==", "[ScalarStencil]")
     section("true test")
     {
         check(scalarStencils[0]==scalarStencils[1]);
+        check(scalarStencils[0]==scalarStencils[2]);
     }
     section("false tests")
     {
-        checkFalse(scalarStencils[0]==scalarStencils[2]);
         checkFalse(scalarStencils[0]==scalarStencils[3]);
         checkFalse(scalarStencils[0]==scalarStencils[4]);
         checkFalse(scalarStencils[0]==scalarStencils[5]);
+        checkFalse(scalarStencils[0]==scalarStencils[6]);
     }
+}
+
+TestCase("ScalarStencil operator== at vector", "[ScalarStencil]")
+{
+	std::vector<ScalarStencil> scalarStencilVector0 = {
+		{ {1,6.37517839005890} },
+		{ {2,8.17350651759681} },
+		{ {3,4.80209527730598} }
+	};
+	std::vector<ScalarStencil> scalarStencilVector1 = {
+		{ {1,6.37517} },
+		{ {2,8.17350} },
+		{ {3,4.80209} }
+	};
+	check(scalarStencilVector0==scalarStencilVector1);
 }
 
 TestCase("Scalar stencil", "[ScalarStencil]")
