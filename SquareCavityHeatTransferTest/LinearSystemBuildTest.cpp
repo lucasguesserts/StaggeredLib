@@ -19,12 +19,10 @@ TestCase("Linear system build", "[Eigen][EigenSolver]")
 	                       0.111618554500326, 0.846885511973542, 0.805839771614926,
 	                       0.664857365801401, 0.240344399557209, 0.348561451918039;
 	linearSystem.independent << 0.263941635488370, 0.246987790661933, 0.706521526629329;
-	Eigen::VectorXd solution;
-	solution.resize(linearSystemSize);
+	Eigen::VectorXd solution(linearSystemSize);
 	solution << 1.74452683050882, 3.77822561620858, -3.90581157526298;
 	Eigen::VectorXd linearSystemSolution = linearSystem.solve();
-	for(unsigned index=0 ; index<linearSystemSize ; ++index)
-		check(solution[index]==Approx(linearSystemSolution[index]));
+	check(solution==linearSystemSolution);
 }
 
 TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
