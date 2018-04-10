@@ -14,7 +14,7 @@ void EigenLinearSystem::addScalarStencil(const unsigned line, const ScalarStenci
 	{
 		const unsigned key = keyValuePair.first;
 		const double value = keyValuePair.second;
-		this->matrix(line,key) = value;
+		this->matrix(line,key) += value;
 	}
 	return;
 }

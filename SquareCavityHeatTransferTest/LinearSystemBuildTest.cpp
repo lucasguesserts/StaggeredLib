@@ -1,6 +1,7 @@
 #include <array>
 
 #include <Utils/Test.hpp>
+#include <Utils/EigenTest.hpp>
 #include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
@@ -34,7 +35,10 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 	problem.rho = 1;
 	problem.cp = 1;
 	problem.oldTemperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
+	const unsigned size = problem.linearSystem.independent.size();
+	problem.linearSystem.matrix += Eigen::MatrixXd::Ones(size,size);
 	problem.addAccumulationTerm();
+	problem.linearSystem.matrix -= Eigen::MatrixXd::Ones(size,size);
 	section("independent")
 	{
 		const unsigned numberOfElements = problem.grid2D.elements.size();
@@ -82,12 +86,13 @@ TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLine
 	};
 	EigenLinearSystem linearSystem;
 	linearSystem.setSize(size);
+	linearSystem.matrix = Eigen::MatrixXd::Ones(size,size);
 	for(unsigned line=0 ; line<size ; ++line)
 		linearSystem.addScalarStencil(line,scalarStencil[line]);
 	Eigen::MatrixXd matrix = Eigen::MatrixXd::Zero(size,size);
-	matrix << scalarStencil[0][0], scalarStencil[0][1], scalarStencil[0][2],
-	          scalarStencil[1][0], scalarStencil[1][1], scalarStencil[1][2],
-	          scalarStencil[2][0], scalarStencil[2][1], scalarStencil[2][2];
+	matrix << 1+scalarStencil[0][0], 1+scalarStencil[0][1], 1+scalarStencil[0][2],
+	          1+scalarStencil[1][0], 1+scalarStencil[1][1], 1+scalarStencil[1][2],
+	          1+scalarStencil[2][0], 1+scalarStencil[2][1], 1+scalarStencil[2][2];
 	check(linearSystem.matrix==matrix);
 }
 
@@ -96,7 +101,29 @@ TestCase("Add diffusive term for one staggered quadrangle", "[SquareCavityHeatTr
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
-	Grid2DInverseDistanceStencil grid(gridData);
-	const unsigned staggeredQuadrangleIndex = 0;
-	grid.staggeredQuadrangles.emplace_back(StaggeredQuadrangle(staggeredQuadrangleIndex,grid.vertices[0],grid.elements[0],grid.vertices[3],grid.elements[1])); // TODO: remove when grid with staggered elements is complete.
+	SquareCavityHeatTransfer problem(gridData);
+	const unsigned numberOfElements = problem.grid2D.elements.size();
+	problem.rho = 2;
+	problem.cp = 3;
+	problem.k = 5;
+	problem.timeImplicitCoefficient = 0.7;
+	problem.timeInterval = 1.1;
+	problem.oldTemperature << 13, 17;
+	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+	// accumulation term
+	matrix << 12.0, 0.00,
+	          0.00, 12.0;
+	problem.addAccumulationTerm();
+	check(problem.linearSystem.matrix==matrix);
+	// diffusive term
+	for(auto& staggeredQuadrangle: problem.grid2D.staggeredQuadrangles)
+		problem.addDiffusiveTerm(staggeredQuadrangle);
+	for(auto& staggeredTriangle: problem.grid2D.staggeredTriangles)
+		problem.addDiffusiveTerm(staggeredTriangle);
+	Eigen::VectorXd independent(numberOfElements);
+	matrix << 27.4, -15.4,
+	          -15.4, 27.4;
+	independent << 182.4, 177.6;
+	check(problem.linearSystem.matrix==matrix);
+	check(problem.linearSystem.independent==independent);
 }

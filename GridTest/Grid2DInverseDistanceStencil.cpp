@@ -1,4 +1,5 @@
 #include <Utils/Test.hpp>
+#include <Utils/EigenTest.hpp>
 #include <vector>
 #include <string>
 
