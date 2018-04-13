@@ -4,6 +4,7 @@
 #include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
+#include <GeometricEntity/Line.hpp>
 #include <GeometricEntity/Triangle.hpp>
 #include <GeometricEntity/Quadrangle.hpp>
 #include <GeometricEntity/StaggeredTriangle.hpp>
@@ -17,6 +18,36 @@ TestCase("Element compute triangle area vector", "[Element]")
 	vertices.push_back(Vertex( 3,  5, -6, 2));
 	const Eigen::Vector3d areaVector(40.5, 79, 31);
 	check(Element::computeTriangleAreaVector(vertices[0],vertices[1],vertices[2])==areaVector);
+}
+
+TestCase("Line", "[Element][Line]")
+{
+	const unsigned numberOfVertices = 2;
+	std::vector<Vertex> vertices;
+		vertices.push_back(Vertex(2.0, -5.0, 0.0, 0));
+		vertices.push_back(Vertex(3.0,  7.0, 0.0, 1));
+	Line line;
+	for(Vertex& vertex: vertices)
+		line.addVertex(vertex);
+	section("Basic requirements")
+	{
+		require(line.vertices.size()==2);
+	}
+	section("Centroid")
+	{
+		const Eigen::Vector3d centroid(5.0/2.0, 1.0, 0.0);
+		check(line.getCentroid()==centroid);
+	}
+	section("Area vector")
+	{
+		const Eigen::Vector3d areaVector(12.0, -1.0, 0.0);
+		check(line.getAreaVector()==areaVector);
+	}
+	section("Volume")
+	{
+		const double volume = 12.04159458; // the length
+		check(line.getVolume()==Approx(volume));
+	}
 }
 
 TestCase("Triangle", "[Element][Triangle]")
