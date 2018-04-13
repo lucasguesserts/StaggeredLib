@@ -6,10 +6,30 @@ Grid2D::Grid2D(const GridData& gridData)
 	if(gridData.dimension==2)
 	{
 		this->dimension = 2;
+		this->buildLinesOn2DGrid(gridData);
 		this->buildTrianglesOn2DGrid(gridData);
 		this->buildQuadranglesOn2DGrid(gridData);
 		this->assignElementsPointers();
 	}
+}
+
+void Grid2D::buildLinesOn2DGrid(const GridData& gridData)
+{
+	constexpr unsigned numberOfVerticesPerLine = 2;
+	const unsigned numberOfLines = gridData.line.size();
+	this->lines.reserve(numberOfLines);
+	for(const ElementDefinition<2>& lineDefinition: gridData.line)
+	{
+		Line line;
+		line.setIndex(lineDefinition.index);
+		for(unsigned vertexLocalIndexInLine=0 ; vertexLocalIndexInLine<numberOfVerticesPerLine ; ++vertexLocalIndexInLine)
+		{
+			unsigned vertexIndex = lineDefinition.connectivity(vertexLocalIndexInLine);
+			line.addVertex(this->vertices[vertexIndex]);
+		}
+		this->lines.push_back(line);
+	}
+	return;
 }
 
 void Grid2D::buildTrianglesOn2DGrid(const GridData& gridData)
