@@ -7,6 +7,7 @@
 
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
+#include <GeometricEntity/Line.hpp>
 #include <GeometricEntity/Quadrangle.hpp>
 #include <GeometricEntity/Triangle.hpp>
 #include <GeometricEntity/StaggeredTriangle.hpp>
@@ -19,6 +20,7 @@ bool operator==(const StaggeredQuadrangle& lhs, const StaggeredQuadrangle& rhs);
 
 std::ostream& operator<< (std::ostream& os, const Vertex& vertex);
 std::ostream& operator<<(std::ostream& os, const Element& element);
+std::ostream& operator<<(std::ostream& os, const Line& line);
 std::ostream& operator<<(std::ostream& os, const Triangle& triangle);
 std::ostream& operator<<(std::ostream& os, const Quadrangle& quadrangle);
 std::ostream& operator<<(std::ostream& os, const StaggeredTriangle& staggeredTriangle);

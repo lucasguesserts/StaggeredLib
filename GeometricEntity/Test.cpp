@@ -65,6 +65,12 @@ std::ostream& operator<<(std::ostream& os, const Element& element)
 	return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const Line& line)
+{
+	os << "Line" << static_cast<const Element&>(line);
+	return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const Triangle& triangle)
 {
 	os << "Triangle" << static_cast<const Element&>(triangle);

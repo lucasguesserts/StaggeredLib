@@ -81,6 +81,31 @@ TestCase("Triangle", "[Element][Triangle]")
 	}
 }
 
+TestCase("Line operator==", "[Line]")
+{
+    std::array<Vertex,3> vertices = {{
+			{2.3, 5.8, 4.1, 6},
+			{2.8, 4.9, 5.1, 32},
+			{4.5, 1.6, 2.2, 47}
+	}};
+	std::array<Line,5> lines;
+		lines[0].setIndex(0); lines[0].addVertex(vertices[0]); lines[0].addVertex(vertices[1]); //reference
+		lines[1].setIndex(0); lines[1].addVertex(vertices[0]); lines[1].addVertex(vertices[1]);
+		lines[2].setIndex(4); lines[2].addVertex(vertices[0]); lines[2].addVertex(vertices[1]);
+		lines[3].setIndex(0); lines[3].addVertex(vertices[3]); lines[3].addVertex(vertices[1]);
+		lines[4].setIndex(0); lines[4].addVertex(vertices[0]); lines[4].addVertex(vertices[2]);
+	section("true test")
+	{
+		check(lines[0]==lines[1]);
+	}
+	section("false tests")
+	{
+		checkFalse(lines[0]==lines[2]);
+		checkFalse(lines[0]==lines[3]);
+		checkFalse(lines[0]==lines[4]);
+	}
+}
+
 TestCase("Triangle operator==", "[Triangle]")
 {
     std::array<Vertex,4> vertices = {{
