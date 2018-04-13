@@ -60,6 +60,23 @@ TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 		gridData.triangle[1].connectivity << 8, 1, 6;
 		check(gridData.triangle==triangleDefinitions);
 	}
+	section("line connectivity")
+	{
+		constexpr unsigned numberOfLines = 2;
+		std::vector<ElementDefinition<2>> lineDefinitions(numberOfLines);
+		// Two answer lines
+		lineDefinitions[0].index = 48;
+		lineDefinitions[0].connectivity << 5, 7;
+		lineDefinitions[1].index = 94;
+		lineDefinitions[1].connectivity << 8, 1;
+		// Two lines in GridData to test
+		gridData.line.resize(numberOfLines);
+		gridData.line[0].index = 48;
+		gridData.line[0].connectivity << 5, 7;
+		gridData.line[1].index = 94;
+		gridData.line[1].connectivity << 8, 1;
+		check(gridData.line==lineDefinitions);
+	}
 }
 
 TestCase("grid reader from CGNS", "[GridData][CGNS]")
@@ -91,7 +108,6 @@ TestCase("grid reader from CGNS", "[GridData][CGNS]")
 	section("quadrangle connectivity")
 	{
 		constexpr unsigned numberOfQuadrangles = 2;
-		constexpr unsigned verticesPerQuadrangle = 4;
 		std::vector<ElementDefinition<4>> quadrangleDefinitions(numberOfQuadrangles);
 		quadrangleDefinitions[0].index = 0;
 		quadrangleDefinitions[0].connectivity << 0, 1, 4, 3;
@@ -102,7 +118,6 @@ TestCase("grid reader from CGNS", "[GridData][CGNS]")
 	section("triangle connectivity")
 	{
 		constexpr unsigned numberOfTriangles = 4;
-		constexpr unsigned verticesPerTriangle = 3;
 		std::vector<ElementDefinition<3>> triangleDefinitions(numberOfTriangles);
 		triangleDefinitions[0].index = 2;
 		triangleDefinitions[0].connectivity << 3, 4, 7;
@@ -113,5 +128,27 @@ TestCase("grid reader from CGNS", "[GridData][CGNS]")
 		triangleDefinitions[3].index = 5;
 		triangleDefinitions[3].connectivity << 4, 8, 7;
 		check(gridData.triangle==triangleDefinitions);
+	}
+	section("line connectivity")
+	{
+		constexpr unsigned numberOfLines = 8;
+		std::vector<ElementDefinition<2>> lineDefinitions(numberOfLines);
+		lineDefinitions[0].index = 6;
+		lineDefinitions[0].connectivity << 1, 0;
+		lineDefinitions[1].index = 7;
+		lineDefinitions[1].connectivity << 2, 1;
+		lineDefinitions[2].index = 8;
+		lineDefinitions[2].connectivity << 6, 7;
+		lineDefinitions[3].index = 9;
+		lineDefinitions[3].connectivity << 7, 8;
+		lineDefinitions[4].index = 10;
+		lineDefinitions[4].connectivity << 3, 0;
+		lineDefinitions[5].index = 11;
+		lineDefinitions[5].connectivity << 6, 3;
+		lineDefinitions[6].index = 12;
+		lineDefinitions[6].connectivity << 5, 2;
+		lineDefinitions[7].index = 13;
+		lineDefinitions[7].connectivity << 8, 5;
+		check(gridData.line==lineDefinitions);
 	}
 }

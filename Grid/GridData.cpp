@@ -18,6 +18,7 @@ void GridData::readElementConnectivity(CGNSFile& cgnsFile)
 {
 	this->quadrangle = cgnsFile.readElementsDefinition<4,cgns::QUAD_4>();
 	this->triangle = cgnsFile.readElementsDefinition<3,cgns::TRI_3>();
+	this->line = cgnsFile.readElementsDefinition<2,cgns::BAR_2>();
 	return;
 }
 

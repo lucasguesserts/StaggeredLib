@@ -15,6 +15,7 @@ class GridData
 
 		unsigned dimension;
 		Eigen::Matrix<double,Eigen::Dynamic,3> coordinates;
+		std::vector<ElementDefinition<2>> line;
 		std::vector<ElementDefinition<3>> triangle;
 		std::vector<ElementDefinition<4>> quadrangle;
 
