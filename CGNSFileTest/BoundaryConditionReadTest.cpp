@@ -4,7 +4,7 @@
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/CGNSFile.hpp>
 
-TestCase("opa", "[CGNSFile]")
+TestCase("cgns read boundary", "[CGNSFile]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -12,7 +12,7 @@ TestCase("opa", "[CGNSFile]")
 	require(numberOfBoundaries==cgnsFile.readNumberOfBoundaries());
 	section("botton boundary")
 	{
-		int boundaryIndex = 0;
+		int boundaryIndex = 1;
 		const std::vector<unsigned> boundaryElementList = {6, 7};
 		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
 	}

@@ -361,10 +361,38 @@ Eigen::VectorXd CGNSFile::readTimeArrayData(const int arrayIndex)
 
 int CGNSFile::readNumberOfBoundaries()
 {
-	return 44;
+	int error, numberOfBoundaries;
+	error = cgns::cg_nbocos(this->fileIndex,this->baseIndex,this->zoneIndex, &numberOfBoundaries);
+	if(error) throw std::runtime_error(FUNCTION_ERROR_MESSAGE + "Could not read number of boundaries.");
+	return numberOfBoundaries;
 }
 
 std::vector<unsigned> CGNSFile::readBoundaryElementList(int boundaryIndex)
 {
-	return std::vector<unsigned>{1u, 2u, 3u};
+	int error, normalIndex;
+	char boundaryName[200];
+	cgns::BCType_t boundaryConditionType;
+	cgns::PointSetType_t pointSetType;
+	cgns::cgsize_t numberOfElements;
+	cgns::cgsize_t normalListSize;
+	cgns::DataType_t dataType;
+	int numberOfDataSets;
+	error = cgns::cg_boco_info(this->fileIndex,this->baseIndex,this->zoneIndex,boundaryIndex,
+	                           boundaryName,&boundaryConditionType,
+							   &pointSetType,
+							   &numberOfElements,
+							   &normalIndex,
+							   &normalListSize,
+							   &dataType,
+							   &numberOfDataSets);
+	if(error) throw std::runtime_error(FUNCTION_ERROR_MESSAGE + "Could not read boundary " + std::to_string(boundaryIndex) + " information.");
+	if(boundaryConditionType!=CGNS_ENUMV(cgns::BCDirichlet)) throw std::runtime_error("Boundary condition type is " + std::string(cgns::BCTypeName[boundaryConditionType]) + ", but it must be 'BCDirichlet'.");
+	if(pointSetType!=CGNS_ENUMV(cgns::PointList)) throw std::runtime_error("Point set type is " + std::string(cgns::PointSetTypeName[pointSetType]) + ", but it must be 'PointList'.");
+	std::vector<cgns::cgsize_t> elements(numberOfElements);
+	error = cgns::cg_boco_read(this->fileIndex,this->baseIndex,this->zoneIndex,boundaryIndex, &elements[0], nullptr);
+	if(error) throw std::runtime_error(FUNCTION_ERROR_MESSAGE + "Could not read boundary " + std::to_string(boundaryIndex) + " elements.");
+	std::vector<unsigned> elements_u(numberOfElements);
+	for(int i=0 ; i<numberOfElements ; ++i)
+		elements_u[i] = static_cast<unsigned>(elements[i]) - 1u;
+	return elements_u;
 }

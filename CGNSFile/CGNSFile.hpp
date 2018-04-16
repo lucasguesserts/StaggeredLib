@@ -35,7 +35,6 @@ class CGNSFile
 		int fileIndex, zoneIndex, baseIndex;
 		int numberOfSections;
 
-		// TODO: add exceptions.
 		void openFile(const std::string cgnsFileName);
 		void openBase(void);
 		void openZone(void);
