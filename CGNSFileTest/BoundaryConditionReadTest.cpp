@@ -16,4 +16,22 @@ TestCase("cgns read boundary", "[CGNSFile]")
 		const std::vector<unsigned> boundaryElementList = {6, 7};
 		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
 	}
+	section("top boundary")
+	{
+		int boundaryIndex = 2;
+		const std::vector<unsigned> boundaryElementList = {8, 9};
+		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
+	}
+	section("west boundary")
+	{
+		int boundaryIndex = 3;
+		const std::vector<unsigned> boundaryElementList = {10, 11};
+		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
+	}
+	section("east boundary")
+	{
+		int boundaryIndex = 4;
+		const std::vector<unsigned> boundaryElementList = {12, 13};
+		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
+	}
 }
