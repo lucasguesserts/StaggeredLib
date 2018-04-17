@@ -2,6 +2,7 @@
 #define BOUNDARY_DEFINITION_HPP
 
 #include <vector>
+#include <string>
 namespace cgns
 {
 	#include <cgnslib.h>
@@ -21,5 +22,7 @@ struct BoundaryDefinition
 	cgns::DataType_t dataType;
 	int numberOfDataSets;
 };
+
+BoundaryDefinition& getBoundaryDefinitionInVector(const std::string& boundaryName, std::vector<BoundaryDefinition> boundaryVector);
 
 #endif

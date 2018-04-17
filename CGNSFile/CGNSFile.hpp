@@ -26,10 +26,12 @@ class CGNSFile
 		unsigned readNumberOfTimeSteps(void);
 		Eigen::VectorXd readTransientScalarField(const std::string& scalarFieldName, const unsigned timeStep);
 		Eigen::VectorXd readAllTimeInstants(void);
+
+		std::vector<BoundaryDefinition> readBoundaries(void);
 		int readNumberOfBoundaries();
 		std::vector<unsigned> readBoundaryElementList(int boundaryIndex, cgns::cgsize_t numberOfElements);
 		static std::vector<unsigned> transformCGNSIndices(const std::vector<cgns::cgsize_t>& elementsCGNSIndex);
-		BoundaryDefinition readBoundaryDefinition(const std::string& boundaryName);
+		BoundaryDefinition readBoundaryDefinition(const unsigned boundaryIndex);
 
 		static const std::string gridDirectory;
 		int cellDimension, physicalDimension; // read in base
