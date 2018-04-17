@@ -4,6 +4,24 @@
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/CGNSFile.hpp>
 
+TestCase("cgns transform indices from CGNS to my structure", "[CGNSFile]")
+{
+	const std::vector<unsigned> indices = {2, 8, 21};
+	const std::vector<cgns::cgsize_t>& indicesToTransform = {3, 9, 22};
+	std::vector<unsigned> transformedIndices = CGNSFile::transformCGNSIndices(indicesToTransform);
+	check(indices==transformedIndices);
+}
+
+TestCase("cgns read boundary elements list", "[CGNSFile]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	constexpr cgns::cgsize_t numberOfElements = 2;
+	constexpr unsigned boundaryIndex = 2;
+	std::vector<unsigned> elementIndices = {8, 9};
+	check(elementIndices==cgnsFile.readBoundaryElementList(boundaryIndex, numberOfElements));
+}
+
 TestCase("cgns read boundary", "[CGNSFile]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
@@ -12,26 +30,26 @@ TestCase("cgns read boundary", "[CGNSFile]")
 	require(numberOfBoundaries==cgnsFile.readNumberOfBoundaries());
 	section("botton boundary")
 	{
-		int boundaryIndex = 1;
+		std::string boundaryName = "bottom boundary";
 		const std::vector<unsigned> boundaryElementList = {6, 7};
-		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
+		check(boundaryElementList==cgnsFile.readBoundary(boundaryName));
 	}
 	section("top boundary")
 	{
-		int boundaryIndex = 2;
+		std::string boundaryName = "top boundary";
 		const std::vector<unsigned> boundaryElementList = {8, 9};
-		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
+		check(boundaryElementList==cgnsFile.readBoundary(boundaryName));
 	}
 	section("west boundary")
 	{
-		int boundaryIndex = 3;
+		std::string boundaryName = "west boundary";
 		const std::vector<unsigned> boundaryElementList = {10, 11};
-		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
+		check(boundaryElementList==cgnsFile.readBoundary(boundaryName));
 	}
 	section("east boundary")
 	{
-		int boundaryIndex = 4;
+		std::string boundaryName = "east boundary";
 		const std::vector<unsigned> boundaryElementList = {12, 13};
-		check(boundaryElementList==cgnsFile.readBoundaryElementList(boundaryIndex));
+		check(boundaryElementList==cgnsFile.readBoundary(boundaryName));
 	}
 }

@@ -367,32 +367,57 @@ int CGNSFile::readNumberOfBoundaries()
 	return numberOfBoundaries;
 }
 
-std::vector<unsigned> CGNSFile::readBoundaryElementList(int boundaryIndex)
+
+std::vector<unsigned> CGNSFile::readBoundary(const std::string& boundaryName)
 {
+	int toReadBoundaryIndex = 0;
 	int error, normalIndex;
-	char boundaryName[200];
+	char readBoundaryName[200];
 	cgns::BCType_t boundaryConditionType;
 	cgns::PointSetType_t pointSetType;
 	cgns::cgsize_t numberOfElements;
 	cgns::cgsize_t normalListSize;
 	cgns::DataType_t dataType;
 	int numberOfDataSets;
-	error = cgns::cg_boco_info(this->fileIndex,this->baseIndex,this->zoneIndex,boundaryIndex,
-	                           boundaryName,&boundaryConditionType,
-							   &pointSetType,
-							   &numberOfElements,
-							   &normalIndex,
-							   &normalListSize,
-							   &dataType,
-							   &numberOfDataSets);
-	if(error) throw std::runtime_error(FUNCTION_ERROR_MESSAGE + "Could not read boundary " + std::to_string(boundaryIndex) + " information.");
+	for(int boundaryIndex=1 ; boundaryIndex<=this->readNumberOfBoundaries() ; ++boundaryIndex)
+	{
+		error = cgns::cg_boco_info(this->fileIndex,this->baseIndex,this->zoneIndex,
+		                           boundaryIndex,
+		                           readBoundaryName,
+		                           &boundaryConditionType,
+		                           &pointSetType,
+		                           &numberOfElements,
+		                           &normalIndex,
+		                           &normalListSize,
+		                           &dataType,
+		                           &numberOfDataSets);
+		if(error) throw std::runtime_error(FUNCTION_ERROR_MESSAGE + "Could not read boundary " + std::to_string(boundaryIndex) + " information.");
+		if(std::string(readBoundaryName)==boundaryName)
+		{
+			toReadBoundaryIndex = boundaryIndex;
+			break;
+		}
+	}
+	if(toReadBoundaryIndex==0) throw std::runtime_error(FUNCTION_ERROR_MESSAGE + "Boundary " + boundaryName + " not found.");
+	if(error) throw std::runtime_error(FUNCTION_ERROR_MESSAGE + "Could not read boundary " + std::to_string(toReadBoundaryIndex) + " information.");
 	if(boundaryConditionType!=CGNS_ENUMV(cgns::BCDirichlet)) throw std::runtime_error("Boundary condition type is " + std::string(cgns::BCTypeName[boundaryConditionType]) + ", but it must be 'BCDirichlet'.");
 	if(pointSetType!=CGNS_ENUMV(cgns::PointList)) throw std::runtime_error("Point set type is " + std::string(cgns::PointSetTypeName[pointSetType]) + ", but it must be 'PointList'.");
-	std::vector<cgns::cgsize_t> elements(numberOfElements);
-	error = cgns::cg_boco_read(this->fileIndex,this->baseIndex,this->zoneIndex,boundaryIndex, &elements[0], nullptr);
+	return this->readBoundaryElementList(toReadBoundaryIndex, numberOfElements);
+}
+
+std::vector<unsigned> CGNSFile::readBoundaryElementList(int boundaryIndex, cgns::cgsize_t numberOfElements)
+{
+	int error;
+	std::vector<cgns::cgsize_t> elementsCGNSIndex(numberOfElements);
+	error = cgns::cg_boco_read(this->fileIndex,this->baseIndex,this->zoneIndex,boundaryIndex,&elementsCGNSIndex[0],nullptr);
 	if(error) throw std::runtime_error(FUNCTION_ERROR_MESSAGE + "Could not read boundary " + std::to_string(boundaryIndex) + " elements.");
-	std::vector<unsigned> elements_u(numberOfElements);
-	for(int i=0 ; i<numberOfElements ; ++i)
-		elements_u[i] = static_cast<unsigned>(elements[i]) - 1u;
-	return elements_u;
+	return CGNSFile::transformCGNSIndices(elementsCGNSIndex);
+}
+
+std::vector<unsigned> CGNSFile::transformCGNSIndices(const std::vector<cgns::cgsize_t>& elementsCGNSIndex)
+{
+	std::vector<unsigned> elementsIndices (elementsCGNSIndex.cbegin(),elementsCGNSIndex.cend());
+	for(auto& entry: elementsIndices)
+		--entry;
+	return elementsIndices;
 }
