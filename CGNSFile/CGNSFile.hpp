@@ -9,6 +9,7 @@ namespace cgns
 	#include <cgnslib.h>
 }
 #include <CGNSFile/ElementDefinition.hpp>
+#include <CGNSFile/BoundaryDefinition.hpp>
 
 class CGNSFile
 {
@@ -28,7 +29,7 @@ class CGNSFile
 		int readNumberOfBoundaries();
 		std::vector<unsigned> readBoundaryElementList(int boundaryIndex, cgns::cgsize_t numberOfElements);
 		static std::vector<unsigned> transformCGNSIndices(const std::vector<cgns::cgsize_t>& elementsCGNSIndex);
-		std::vector<unsigned> readBoundary(const std::string& boundaryName);
+		BoundaryDefinition readBoundaryDefinition(const std::string& boundaryName);
 
 		static const std::string gridDirectory;
 		int cellDimension, physicalDimension; // read in base

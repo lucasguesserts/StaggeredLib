@@ -32,24 +32,28 @@ TestCase("cgns read boundary", "[CGNSFile]")
 	{
 		std::string boundaryName = "bottom boundary";
 		const std::vector<unsigned> boundaryElementList = {6, 7};
-		check(boundaryElementList==cgnsFile.readBoundary(boundaryName));
+		BoundaryDefinition boundary = cgnsFile.readBoundaryDefinition(boundaryName);
+		check(boundaryElementList==boundary.elementsIndexList);
 	}
 	section("top boundary")
 	{
 		std::string boundaryName = "top boundary";
 		const std::vector<unsigned> boundaryElementList = {8, 9};
-		check(boundaryElementList==cgnsFile.readBoundary(boundaryName));
+		BoundaryDefinition boundary = cgnsFile.readBoundaryDefinition(boundaryName);
+		check(boundaryElementList==boundary.elementsIndexList);
 	}
 	section("west boundary")
 	{
 		std::string boundaryName = "west boundary";
 		const std::vector<unsigned> boundaryElementList = {10, 11};
-		check(boundaryElementList==cgnsFile.readBoundary(boundaryName));
+		BoundaryDefinition boundary = cgnsFile.readBoundaryDefinition(boundaryName);
+		check(boundaryElementList==boundary.elementsIndexList);
 	}
 	section("east boundary")
 	{
 		std::string boundaryName = "east boundary";
 		const std::vector<unsigned> boundaryElementList = {12, 13};
-		check(boundaryElementList==cgnsFile.readBoundary(boundaryName));
+		BoundaryDefinition boundary = cgnsFile.readBoundaryDefinition(boundaryName);
+		check(boundaryElementList==boundary.elementsIndexList);
 	}
 }
