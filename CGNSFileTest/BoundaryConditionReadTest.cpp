@@ -26,49 +26,47 @@ TestCase("cgns read boundary", "[CGNSFile][BoundaryDefinition]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	constexpr int numberOfBoundaries = 4;
 	std::vector<BoundaryDefinition> boundaryVector = cgnsFile.readBoundaries();
+	constexpr int numberOfBoundaries = 4;
 	require(numberOfBoundaries==cgnsFile.readNumberOfBoundaries());
 	section("botton boundary")
 	{
+		constexpr int boundaryIndex = 1;
 		std::string boundaryName = "bottom boundary";
 		const std::vector<unsigned> boundaryElementList = {6, 7};
-		BoundaryDefinition boundary = getBoundaryDefinitionInVector(boundaryName, boundaryVector);
+		BoundaryDefinition& boundary = boundaryVector[0];
+		check(boundaryIndex==boundary.index);
+		check(boundaryName==std::string(boundary.name));
 		check(boundaryElementList==boundary.elementsIndexList);
 	}
 	section("top boundary")
 	{
+		constexpr int boundaryIndex = 2;
 		std::string boundaryName = "top boundary";
 		const std::vector<unsigned> boundaryElementList = {8, 9};
-		BoundaryDefinition boundary = getBoundaryDefinitionInVector(boundaryName, boundaryVector);
+		BoundaryDefinition& boundary = boundaryVector[1];
+		check(boundaryIndex==boundary.index);
+		check(boundaryName==std::string(boundary.name));
 		check(boundaryElementList==boundary.elementsIndexList);
 	}
 	section("west boundary")
 	{
+		constexpr int boundaryIndex = 3;
 		std::string boundaryName = "west boundary";
 		const std::vector<unsigned> boundaryElementList = {10, 11};
-		BoundaryDefinition boundary = getBoundaryDefinitionInVector(boundaryName, boundaryVector);
+		BoundaryDefinition& boundary = boundaryVector[2];
+		check(boundaryIndex==boundary.index);
+		check(boundaryName==std::string(boundary.name));
 		check(boundaryElementList==boundary.elementsIndexList);
 	}
 	section("east boundary")
 	{
+		constexpr int boundaryIndex = 4;
 		std::string boundaryName = "east boundary";
 		const std::vector<unsigned> boundaryElementList = {12, 13};
-		BoundaryDefinition boundary = getBoundaryDefinitionInVector(boundaryName, boundaryVector);
+		BoundaryDefinition& boundary = boundaryVector[3];
+		check(boundaryIndex==boundary.index);
+		check(boundaryName==std::string(boundary.name));
 		check(boundaryElementList==boundary.elementsIndexList);
-	}
-	section("error")
-	{
-		std::string boundaryName = "inexistent boundary";
-		const std::vector<unsigned> boundaryElementList = {3, 6};
-		try
-		{
-			BoundaryDefinition boundary = getBoundaryDefinitionInVector(boundaryName, boundaryVector);
-			check(false);
-		}
-		catch (const std::runtime_error& error)
-		{
-			check(true);
-		}
 	}
 }
