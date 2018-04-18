@@ -1,4 +1,5 @@
 #include <Grid/GridData.hpp>
+#include <stdexcept>
 
 void GridData::readCoordinates(CGNSFile& cgnsFile)
 {
@@ -22,10 +23,24 @@ void GridData::readElementConnectivity(CGNSFile& cgnsFile)
 	return;
 }
 
+void GridData::readBoundaryDefinition(CGNSFile& cgnsFile)
+{
+	this->boundary = cgnsFile.readBoundaries();
+	return;
+}
+
 GridData::GridData(CGNSFile& cgnsFile)
 {
 	this->dimension = cgnsFile.physicalDimension;
 	this->readCoordinates(cgnsFile);
 	this->readElementConnectivity(cgnsFile);
+	this->readBoundaryDefinition(cgnsFile);
 	return;
+}
+
+BoundaryDefinition& GridData::getBoundaryDefinition(const std::string& boundaryName)
+{
+	for(auto& boundary: this->boundary)
+		if(std::string(boundary.name)==boundaryName) return boundary;
+	throw std::runtime_error(std::string(__FUNCTION__) + std::string(": ") + boundaryName + std::string(" not found."));
 }

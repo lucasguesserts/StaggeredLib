@@ -152,3 +152,53 @@ TestCase("grid reader from CGNS", "[GridData][CGNS]")
 		check(gridData.line==lineDefinitions);
 	}
 }
+
+TestCase("GridData boundaries", "[GridData]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	section("botton boundary")
+	{
+		std::string boundaryName = "bottom boundary";
+		BoundaryDefinition& boundary = gridData.getBoundaryDefinition(boundaryName);
+		const std::vector<unsigned> boundaryElementList = {6, 7};
+		check(boundaryElementList==boundary.elementsIndexList);
+	}
+	section("top boundary")
+	{
+		std::string boundaryName = "top boundary";
+		BoundaryDefinition& boundary = gridData.getBoundaryDefinition(boundaryName);
+		const std::vector<unsigned> boundaryElementList = {8, 9};
+		check(boundaryElementList==boundary.elementsIndexList);
+	}
+	section("west boundary")
+	{
+		std::string boundaryName = "west boundary";
+		BoundaryDefinition& boundary = gridData.getBoundaryDefinition(boundaryName);
+		const std::vector<unsigned> boundaryElementList = {10, 11};
+		check(boundaryElementList==boundary.elementsIndexList);
+	}
+	section("east boundary")
+	{
+		std::string boundaryName = "east boundary";
+		BoundaryDefinition& boundary = gridData.getBoundaryDefinition(boundaryName);
+		const std::vector<unsigned> boundaryElementList = {12, 13};
+		check(boundaryElementList==boundary.elementsIndexList);
+	}
+	section("error")
+	{
+		std::string boundaryName = "inexistent boundary";
+		try
+		{
+			BoundaryDefinition& boundary = gridData.getBoundaryDefinition(boundaryName);
+			check(false);
+		}
+		catch (const std::runtime_error& error)
+		{
+			std::string errorMessage = error.what();
+			std::string errorMessageSubstring = "not found";
+			check(std::string::npos!=errorMessage.find(errorMessageSubstring));
+		}
+	}
+}
