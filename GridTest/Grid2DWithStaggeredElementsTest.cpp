@@ -209,6 +209,22 @@ TestCase("Find staggered triangles in a boundary definition", "[Grid2DWithStagge
 	}
 }
 
+TestCase("Find line", "[Grid2DWithStaggeredElements]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements grid(gridData);
+	check(&grid.lines[0]==&grid.findLine(6));
+	check(&grid.lines[1]==&grid.findLine(7));
+	check(&grid.lines[2]==&grid.findLine(8));
+	check(&grid.lines[3]==&grid.findLine(9));
+	check(&grid.lines[4]==&grid.findLine(10));
+	check(&grid.lines[5]==&grid.findLine(11));
+	check(&grid.lines[6]==&grid.findLine(12));
+	check(&grid.lines[7]==&grid.findLine(13));
+}
+
 TestCase("Find staggered triangle using line", "[Grid2DWithStaggeredElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
