@@ -2,6 +2,8 @@
 #define GRID_2D_WITH_STAGGERED_ELEMENTS
 
 #include <vector>
+#include <string>
+#include <map>
 
 #include <Grid/StaggeredElementDefinition.hpp>
 #include <Grid/GridData.hpp>
@@ -17,6 +19,7 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		std::vector<StaggeredQuadrangle> staggeredQuadrangles;
 		std::vector<StaggeredTriangle> staggeredTriangles;
 		std::vector<StaggeredElementDefinition> staggeredElementDefinition;
+		std::map<std::string,std::vector<StaggeredTriangle*>> boundary;
 
 		void createStaggeredElementDefinitionVector(const GridData& gridData);
 		void createStaggeredElements(void);
@@ -24,6 +27,11 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 			void addStaggeredElementDefinitionFromElementDefinition(const ElementDefinition<NumberOfVertices>& elementDefinition);
 		void addStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition);
 		std::tuple<bool,unsigned> findStaggeredElementDefinition(const StaggeredElementDefinition& staggeredElementDefinition);
+
+		void createBoundaries(const GridData& gridData);
+		std::vector<StaggeredTriangle*> findStaggeredTrianglesInBoundaryDefinition(const BoundaryDefinition& boundaryDefinition);
+		Line& findLine(unsigned lineIndex);
+		StaggeredTriangle* findStaggeredTriangle(const Line& line);
 
 		static void organizeQuadrangle(StaggeredQuadrangle& staggeredQuadrangle);
 		static void organizeTriangle(StaggeredTriangle& staggeredTriangle);

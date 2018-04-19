@@ -1,6 +1,7 @@
 #include <Grid/Grid2DWithStaggeredElements.hpp>
 #include <exception>
 #include <algorithm>
+#include <stdexcept>
 
 Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridData)
 	: Grid2DVerticesWithNeighborElements(gridData)
@@ -10,6 +11,7 @@ Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridDat
 	this->shrinkStaggeredElementDefinition();
 	this->createStaggeredElements();
 	this->organizeStaggeredElements();
+	this->createBoundaries(gridData);
 	return;
 }
 
@@ -98,4 +100,41 @@ void Grid2DWithStaggeredElements::organizeStaggeredElements(void)
 	for(auto& staggeredTriangle: this->staggeredTriangles)
 		Grid2DWithStaggeredElements::organizeTriangle(staggeredTriangle);
 	return;
+}
+
+void Grid2DWithStaggeredElements::createBoundaries(const GridData& gridData)
+{
+	for(const BoundaryDefinition& boundaryDefinition: gridData.boundary)
+		this->boundary[boundaryDefinition.name] = this->findStaggeredTrianglesInBoundaryDefinition(boundaryDefinition);
+	return;
+}
+
+std::vector<StaggeredTriangle*> Grid2DWithStaggeredElements::findStaggeredTrianglesInBoundaryDefinition(const BoundaryDefinition& boundaryDefinition)
+{
+	const std::vector<unsigned>& lineIndices = boundaryDefinition.elementsIndexList;
+	std::vector<StaggeredTriangle*> boundaryStaggeredTriangles;
+	boundaryStaggeredTriangles.reserve(lineIndices.size());
+	for(unsigned lineIndex: lineIndices)
+	{
+		Line& line = this->findLine(lineIndex);
+		boundaryStaggeredTriangles.push_back( this->findStaggeredTriangle(line) );
+	}
+	return boundaryStaggeredTriangles;
+}
+
+Line& Grid2DWithStaggeredElements::findLine(unsigned lineIndex)
+{
+	for(Line& line: this->lines)
+		if(line.getIndex()==lineIndex) return line;
+	throw std::runtime_error(std::string(__FUNCTION__) + std::string(": not found line with index ") + std::to_string(lineIndex));
+}
+
+StaggeredTriangle* Grid2DWithStaggeredElements::findStaggeredTriangle(const Line& line)
+{
+	for(StaggeredTriangle& staggeredTriangle: this->staggeredTriangles)
+		if((staggeredTriangle.vertices[0]==line.vertices[0] && staggeredTriangle.vertices[1]==line.vertices[1])
+		   ||
+		   (staggeredTriangle.vertices[1]==line.vertices[0] && staggeredTriangle.vertices[0]==line.vertices[1]))
+		   { return &staggeredTriangle; }
+	throw std::runtime_error(std::string(__FUNCTION__) + std::string(": not found StaggeredTriangle associated with line ") + std::to_string(line.getIndex()));
 }
