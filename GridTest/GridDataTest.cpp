@@ -158,7 +158,7 @@ TestCase("GridData boundaries", "[GridData]")
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
-	section("botton boundary")
+	section("bottom boundary")
 	{
 		std::string boundaryName = "bottom boundary";
 		BoundaryDefinition& boundary = gridData.getBoundaryDefinition(boundaryName);

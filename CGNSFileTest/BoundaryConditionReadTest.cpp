@@ -29,7 +29,7 @@ TestCase("cgns read boundary", "[CGNSFile][BoundaryDefinition]")
 	std::vector<BoundaryDefinition> boundaryVector = cgnsFile.readBoundaries();
 	constexpr int numberOfBoundaries = 4;
 	require(numberOfBoundaries==cgnsFile.readNumberOfBoundaries());
-	section("botton boundary")
+	section("bottom boundary")
 	{
 		constexpr int boundaryIndex = 1;
 		std::string boundaryName = "bottom boundary";
