@@ -13,7 +13,7 @@
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
 
-TestCase("Apply dirichlet boundary condition", "[SquareCavityHeatTransfer]")
+TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -86,4 +86,45 @@ TestCase("Apply dirichlet boundary condition", "[SquareCavityHeatTransfer]")
 		check(problem.linearSystem.matrix==matrix);
 		check(problem.linearSystem.independent==independent);
 	}
+}
+
+TestCase("Apply dirichlet boundary condition - all boundaries", "[SquareCavityHeatTransfer]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	SquareCavityHeatTransfer problem(gridData);
+	const unsigned numberOfElements = problem.grid2D.elements.size();
+	problem.rho = 2;
+	problem.cp = 3;
+	problem.k = 5;
+	problem.timeImplicitCoefficient = 0.7;
+	problem.timeInterval = 1.1;
+	problem.oldTemperature << 13, 17;
+	DirichletBoundaryCondition dirichlet;
+	std::string boundaryName;
+		boundaryName = "bottom boundary";
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 19.0;
+		problem.dirichletBoundaries.push_back(dirichlet);
+		boundaryName = "east boundary";
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 23.0;
+		problem.dirichletBoundaries.push_back(dirichlet);
+		boundaryName = "top boundary";
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 29.0;
+		problem.dirichletBoundaries.push_back(dirichlet);
+		boundaryName = "west boundary";
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 31.0;
+		problem.dirichletBoundaries.push_back(dirichlet);
+	problem.applyBoundaryConditions();
+	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+	matrix << 18.48, 0.0,
+	          0.0  , 18.48;
+	Eigen::VectorXd independent(numberOfElements);
+	independent << 451.44, 657.36;
+	check(problem.linearSystem.matrix==matrix);
+	check(problem.linearSystem.independent==independent);
 }

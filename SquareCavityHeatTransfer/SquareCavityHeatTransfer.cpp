@@ -110,6 +110,13 @@ ScalarStencil SquareCavityHeatTransfer::computeDiffusiveTerm(StaggeredTriangle& 
 	return areaVector * this->k * this->timeInterval * gradient;
 }
 
+void SquareCavityHeatTransfer::applyBoundaryConditions(void)
+{
+	for(auto& dirichlet: this->dirichletBoundaries)
+		this->applyBoundaryCondition(dirichlet);
+	return;
+}
+
 void SquareCavityHeatTransfer::applyBoundaryCondition(DirichletBoundaryCondition& dirichlet)
 {
 	for(StaggeredTriangle* staggeredTriangle: dirichlet.staggeredTriangle)

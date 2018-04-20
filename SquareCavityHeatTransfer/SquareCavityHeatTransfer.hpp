@@ -24,9 +24,11 @@ class SquareCavityHeatTransfer
 		Eigen::VectorXd oldTemperature;
 		Eigen::VectorXd temperature;
 		std::vector<ScalarStencil> scalarStencilOnVertices;
+		std::vector<DirichletBoundaryCondition> dirichletBoundaries;
 
-		void applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredTriangle& staggeredTriangle, const double prescribedValue);
+		void applyBoundaryConditions(void);
 		void applyBoundaryCondition(DirichletBoundaryCondition& dirichlet);
+		void applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredTriangle& staggeredTriangle, const double prescribedValue);
 
 	private:
 		void initializeLinearSystem(void);
