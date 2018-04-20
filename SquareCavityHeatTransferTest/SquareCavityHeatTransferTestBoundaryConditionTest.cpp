@@ -41,4 +41,49 @@ TestCase("Apply dirichlet boundary condition", "[SquareCavityHeatTransfer]")
 		check(problem.linearSystem.matrix==matrix);
 		check(problem.linearSystem.independent==independent);
 	}
+	section("east")
+	{
+		std::string boundaryName = "east boundary";
+		DirichletBoundaryCondition dirichlet;
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 23.0;
+		problem.applyBoundaryCondition(dirichlet);
+		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+		matrix << 9.24, 0.0,
+		          0.0 , 0.0;
+		Eigen::VectorXd independent(numberOfElements);
+		independent << 252.12, 0.0;
+		check(problem.linearSystem.matrix==matrix);
+		check(problem.linearSystem.independent==independent);
+	}
+	section("west")
+	{
+		std::string boundaryName = "west boundary";
+		DirichletBoundaryCondition dirichlet;
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 31.0;
+		problem.applyBoundaryCondition(dirichlet);
+		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+		matrix << 0.0, 0.0,
+		          0.0, 9.24;
+		Eigen::VectorXd independent(numberOfElements);
+		independent << 0.0, 341.88;
+		check(problem.linearSystem.matrix==matrix);
+		check(problem.linearSystem.independent==independent);
+	}
+	section("top")
+	{
+		std::string boundaryName = "top boundary";
+		DirichletBoundaryCondition dirichlet;
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 29.0;
+		problem.applyBoundaryCondition(dirichlet);
+		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+		matrix << 0.0, 0.0,
+		          0.0, 9.24;
+		Eigen::VectorXd independent(numberOfElements);
+		independent << 0.0, 315.48;
+		check(problem.linearSystem.matrix==matrix);
+		check(problem.linearSystem.independent==independent);
+	}
 }
