@@ -46,6 +46,7 @@ add_subdirectory(Stencil)
 add_subdirectory(StencilTest)
 add_subdirectory(SquareCavityHeatTransfer)
 add_subdirectory(SquareCavityHeatTransferTest)
+add_subdirectory(SquareCavityHeatTransferApp)
 
 message ("\n-- Project: ${PROJECT_NAME} ${VERSION}")
 message ("-- Build type: ${CMAKE_BUILD_TYPE}")
