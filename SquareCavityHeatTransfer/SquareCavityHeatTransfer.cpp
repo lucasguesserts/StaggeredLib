@@ -122,7 +122,7 @@ void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangl
 	const unsigned elementIndex = staggeredTriangle.element->getIndex();
 	Eigen::Vector3d gradientVector = staggeredTriangle.getCentroid() - staggeredTriangle.element->getCentroid();
 	gradientVector = gradientVector / gradientVector.squaredNorm();
-	double coeff = staggeredTriangle.getAreaVector().dot(gradientVector) * this->k * this->timeInterval;
+	double coeff = - staggeredTriangle.getAreaVector().dot(gradientVector) * this->k * this->timeInterval;
 	this->linearSystem.matrix(elementIndex,elementIndex) += coeff * this->timeImplicitCoefficient;
 	this->linearSystem.independent(elementIndex) -= coeff * (1 - this->timeImplicitCoefficient) * this->oldTemperature[elementIndex];
 	this->linearSystem.independent(elementIndex) += coeff * prescribedValue;

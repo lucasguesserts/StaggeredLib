@@ -26,7 +26,7 @@ TestCase("Apply dirichlet boundary condition", "[SquareCavityHeatTransfer]")
 	problem.timeImplicitCoefficient = 0.7;
 	problem.timeInterval = 1.1;
 	problem.oldTemperature << 13, 17;
-	section("botton")
+	section("bottom")
 	{
 		std::string boundaryName = "bottom boundary";
 		DirichletBoundaryCondition dirichlet;
