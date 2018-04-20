@@ -263,28 +263,28 @@ TestCase("Staggered triangle boundary", "[Grid2DWithStaggeredElements]")
 	{
 		std::string boundaryName = "bottom boundary";
 		std::vector<StaggeredTriangle*> staggeredTraingles = { &grid.staggeredTriangles[0], &grid.staggeredTriangles[2]};
-		std::vector<StaggeredTriangle*>& boundaryStaggeredTriangles = grid.boundary[boundaryName];
+		std::vector<StaggeredTriangle*>& boundaryStaggeredTriangles = grid.boundary[boundaryName].staggeredTriangle;
 		check(boundaryStaggeredTriangles==staggeredTraingles);
 	}
 	section("top")
 	{
 		std::string boundaryName = "top boundary";
 		std::vector<StaggeredTriangle*> staggeredTraingles = { &grid.staggeredTriangles[4], &grid.staggeredTriangles[7]};
-		std::vector<StaggeredTriangle*>& boundaryStaggeredTriangles = grid.boundary[boundaryName];
+		std::vector<StaggeredTriangle*>& boundaryStaggeredTriangles = grid.boundary[boundaryName].staggeredTriangle;
 		check(boundaryStaggeredTriangles==staggeredTraingles);
 	}
 	section("west")
 	{
 		std::string boundaryName = "west boundary";
 		std::vector<StaggeredTriangle*> staggeredTraingles = { &grid.staggeredTriangles[1], &grid.staggeredTriangles[5]};
-		std::vector<StaggeredTriangle*>& boundaryStaggeredTriangles = grid.boundary[boundaryName];
+		std::vector<StaggeredTriangle*>& boundaryStaggeredTriangles = grid.boundary[boundaryName].staggeredTriangle;
 		check(boundaryStaggeredTriangles==staggeredTraingles);
 	}
 	section("east")
 	{
 		std::string boundaryName = "east boundary";
 		std::vector<StaggeredTriangle*> staggeredTraingles = { &grid.staggeredTriangles[3], &grid.staggeredTriangles[6]};
-		std::vector<StaggeredTriangle*>& boundaryStaggeredTriangles = grid.boundary[boundaryName];
+		std::vector<StaggeredTriangle*>& boundaryStaggeredTriangles = grid.boundary[boundaryName].staggeredTriangle;
 		check(boundaryStaggeredTriangles==staggeredTraingles);
 	}
 }

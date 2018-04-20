@@ -105,7 +105,7 @@ void Grid2DWithStaggeredElements::organizeStaggeredElements(void)
 void Grid2DWithStaggeredElements::createBoundaries(const GridData& gridData)
 {
 	for(const BoundaryDefinition& boundaryDefinition: gridData.boundary)
-		this->boundary[boundaryDefinition.name] = this->findStaggeredTrianglesInBoundaryDefinition(boundaryDefinition);
+		this->boundary[boundaryDefinition.name].staggeredTriangle = this->findStaggeredTrianglesInBoundaryDefinition(boundaryDefinition);
 	return;
 }
 
