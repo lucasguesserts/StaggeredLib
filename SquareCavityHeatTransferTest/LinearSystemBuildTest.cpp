@@ -116,10 +116,7 @@ TestCase("Add diffusive term for one staggered quadrangle", "[SquareCavityHeatTr
 	problem.addAccumulationTerm();
 	check(problem.linearSystem.matrix==matrix);
 	// diffusive term
-	for(auto& staggeredQuadrangle: problem.grid2D.staggeredQuadrangles)
-		problem.addDiffusiveTerm(staggeredQuadrangle);
-	for(auto& staggeredTriangle: problem.grid2D.staggeredTriangles)
-		problem.addDiffusiveTerm(staggeredTriangle);
+	problem.addDiffusiveTerm();
 	Eigen::VectorXd independent(numberOfElements);
 	matrix << 27.4, -15.4,
 	          -15.4, 27.4;
