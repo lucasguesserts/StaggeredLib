@@ -110,13 +110,41 @@ TestCase("Add diffusive term for one staggered quadrangle", "[SquareCavityHeatTr
 	problem.timeInterval = 1.1;
 	problem.oldTemperature << 13, 17;
 	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+	problem.addAccumulationTerm();
+	problem.addDiffusiveTerm();
+	Eigen::MatrixXd(numberOfElements,numberOfElements);
+	matrix <<  23.55, -11.55,
+	          -11.55,  23.55;
+	Eigen::VectorXd independent(numberOfElements);
+	independent << 175.8, 184.2;
+	check(problem.linearSystem.matrix==matrix);
+	check(problem.linearSystem.independent==independent);
+}
+
+TestCase("Add diffusive term all staggered elements", "[SquareCavityHeatTransfer]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	SquareCavityHeatTransfer problem(gridData);
+	const unsigned numberOfElements = problem.grid2D.elements.size();
+	problem.rho = 2;
+	problem.cp = 3;
+	problem.k = 5;
+	problem.timeImplicitCoefficient = 0.7;
+	problem.timeInterval = 1.1;
+	problem.oldTemperature << 13, 17;
 	// accumulation term
+	problem.addAccumulationTerm();
+	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 	matrix << 12.0, 0.00,
 	          0.00, 12.0;
-	problem.addAccumulationTerm();
 	check(problem.linearSystem.matrix==matrix);
 	// diffusive term
-	problem.addDiffusiveTerm();
+	for(auto& staggeredQuadrangle: problem.grid2D.staggeredQuadrangles)
+		problem.addDiffusiveTerm(staggeredQuadrangle);
+	for(auto& staggeredTriangle: problem.grid2D.staggeredTriangles)
+		problem.addDiffusiveTerm(staggeredTriangle);
 	Eigen::VectorXd independent(numberOfElements);
 	matrix << 27.4, -15.4,
 	          -15.4, 27.4;
