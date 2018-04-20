@@ -3,6 +3,7 @@
 #include <Eigen/Core>
 #include <Grid/GridData.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
+#include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
 
 class SquareCavityHeatTransfer
@@ -23,6 +24,9 @@ class SquareCavityHeatTransfer
 		Eigen::VectorXd oldTemperature;
 		Eigen::VectorXd temperature;
 		std::vector<ScalarStencil> scalarStencilOnVertices;
+
+		void applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredTriangle& staggeredTriangle, const double prescribedValue);
+		void applyBoundaryCondition(DirichletBoundaryCondition& dirichlet);
 
 	private:
 		void initializeLinearSystem(void);
