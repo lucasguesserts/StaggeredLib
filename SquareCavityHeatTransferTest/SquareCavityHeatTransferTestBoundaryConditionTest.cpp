@@ -128,3 +128,46 @@ TestCase("Apply dirichlet boundary condition - all boundaries", "[SquareCavityHe
 	check(problem.linearSystem.matrix==matrix);
 	check(problem.linearSystem.independent==independent);
 }
+
+TestCase("Complete heat transfer with dirichlet boundary conditions", "[SquareCavityHeatTransfer]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	SquareCavityHeatTransfer problem(gridData);
+	const unsigned numberOfElements = problem.grid2D.elements.size();
+	problem.rho = 2;
+	problem.cp = 3;
+	problem.k = 5;
+	problem.timeImplicitCoefficient = 0.7;
+	problem.timeInterval = 1.1;
+	problem.oldTemperature << 13, 17;
+	problem.addAccumulationTerm();
+	problem.addDiffusiveTerm();
+	DirichletBoundaryCondition dirichlet;
+	std::string boundaryName;
+		boundaryName = "bottom boundary";
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 19.0;
+		problem.dirichletBoundaries.push_back(dirichlet);
+		boundaryName = "east boundary";
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 23.0;
+		problem.dirichletBoundaries.push_back(dirichlet);
+		boundaryName = "top boundary";
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 29.0;
+		problem.dirichletBoundaries.push_back(dirichlet);
+		boundaryName = "west boundary";
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue = 31.0;
+		problem.dirichletBoundaries.push_back(dirichlet);
+	problem.applyBoundaryConditions();
+	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+	matrix <<  42.03, -11.55,
+	          -11.55,  42.03;
+	Eigen::VectorXd independent(numberOfElements);
+	independent << 627.24, 841.56;
+	check(problem.linearSystem.matrix==matrix);
+	check(problem.linearSystem.independent==independent);
+}
