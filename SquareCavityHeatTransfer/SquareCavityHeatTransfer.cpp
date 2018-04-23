@@ -117,8 +117,8 @@ void SquareCavityHeatTransfer::applyBoundaryConditions(void)
 
 void SquareCavityHeatTransfer::applyBoundaryCondition(DirichletBoundaryCondition& dirichlet)
 {
-	for(StaggeredTriangle* staggeredTriangle: dirichlet.staggeredTriangle)
-		this->applyDirichletBoundaryConditionInStaggeredTriangle(*staggeredTriangle, dirichlet.prescribedValue);
+	for(unsigned i=0 ; i<dirichlet.staggeredTriangle.size() ; ++i)
+		this->applyDirichletBoundaryConditionInStaggeredTriangle(*(dirichlet.staggeredTriangle[i]), dirichlet.prescribedValue[i]);
 }
 
 void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredTriangle& staggeredTriangle, const double prescribedValue)

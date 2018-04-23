@@ -1,5 +1,6 @@
 #include <array>
 #include <vector>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <boost/filesystem.hpp>
 #include <stdexcept>
@@ -22,9 +23,11 @@ TestCase("Compare numerical and analytical solution", "[SquareCavityHeatTransfer
 {
 	const std::string directory = CGNSFile::gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest/");
 	const std::vector<std::string> meshFiles = {
+		directory + "5.cgns",
 		directory + "10.cgns",
+		directory + "15.cgns",
 		directory + "20.cgns",
-		directory + "40.cgns"
+		directory + "25.cgns"
 	};
 	std::vector<double> numericalError;
 	for(auto& cgnsFileName: meshFiles)
@@ -37,32 +40,45 @@ TestCase("Compare numerical and analytical solution", "[SquareCavityHeatTransfer
 		problem.cp = 1;
 		problem.k = 1;
 		problem.timeImplicitCoefficient = 1.0;
-		problem.timeInterval = 100;
+		problem.timeInterval = 1000;
 		DirichletBoundaryCondition dirichlet;
 		for(unsigned i=0 ; i<problem.oldTemperature.size() ; ++i)
 			problem.temperature[i] = 0.0;
 		std::string boundaryName;
 			boundaryName = "bottom boundary";
 			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue = 0.0;
+			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+			for(auto& entry: dirichlet.prescribedValue)
+				entry = 0.0;
 			problem.dirichletBoundaries.push_back(dirichlet);
 			boundaryName = "east boundary";
 			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue = 0.0;
+			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+			for(auto& entry: dirichlet.prescribedValue)
+				entry = 0.0;
 			problem.dirichletBoundaries.push_back(dirichlet);
 			boundaryName = "top boundary";
 			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue = 1.0;
+			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+			for(unsigned i=0 ; i<dirichlet.staggeredTriangle.size() ; ++i)
+			{
+				Eigen::Vector3d centroid = dirichlet.staggeredTriangle[i]->getCentroid();
+				const double x = centroid.coeff(0);
+				const double y = centroid.coeff(1);
+				dirichlet.prescribedValue[i] = sin(M_PI*x) * sinh(M_PI*y) / sinh(M_PI);
+			}
 			problem.dirichletBoundaries.push_back(dirichlet);
 			boundaryName = "west boundary";
 			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue = 0.0;
+			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+			for(auto& entry: dirichlet.prescribedValue)
+				entry = 0.0;
 			problem.dirichletBoundaries.push_back(dirichlet);
 
 		// Steady numerical solution
 		unsigned iteration = 0;
 		double error;
-		constexpr double tolerance = 1.0e-5;
+		constexpr double tolerance = 1.0e-8;
 		do
 		{
 			std::cout << "\ttime step: " << iteration << std::endl;

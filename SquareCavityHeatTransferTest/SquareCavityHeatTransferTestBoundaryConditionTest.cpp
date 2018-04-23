@@ -31,7 +31,9 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		std::string boundaryName = "bottom boundary";
 		DirichletBoundaryCondition dirichlet;
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 19.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 19.0;
 		problem.applyBoundaryCondition(dirichlet);
 		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 		matrix << 9.24, 0.0,
@@ -46,7 +48,9 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		std::string boundaryName = "east boundary";
 		DirichletBoundaryCondition dirichlet;
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 23.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 23.0;
 		problem.applyBoundaryCondition(dirichlet);
 		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 		matrix << 9.24, 0.0,
@@ -61,7 +65,9 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		std::string boundaryName = "west boundary";
 		DirichletBoundaryCondition dirichlet;
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 31.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 31.0;
 		problem.applyBoundaryCondition(dirichlet);
 		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 		matrix << 0.0, 0.0,
@@ -76,7 +82,9 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		std::string boundaryName = "top boundary";
 		DirichletBoundaryCondition dirichlet;
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 29.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 29.0;
 		problem.applyBoundaryCondition(dirichlet);
 		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 		matrix << 0.0, 0.0,
@@ -105,19 +113,27 @@ TestCase("Apply dirichlet boundary condition - all boundaries", "[SquareCavityHe
 	std::string boundaryName;
 		boundaryName = "bottom boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 19.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 19.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "east boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 23.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 23.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "top boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 29.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 29.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "west boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 31.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 31.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 	problem.applyBoundaryConditions();
 	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
@@ -148,19 +164,27 @@ TestCase("Complete heat transfer with dirichlet boundary conditions", "[SquareCa
 	std::string boundaryName;
 		boundaryName = "bottom boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 19.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 19.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "east boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 23.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 23.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "top boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 29.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 29.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "west boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 31.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 31.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 	problem.applyBoundaryConditions();
 	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);

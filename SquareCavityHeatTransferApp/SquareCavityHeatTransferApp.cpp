@@ -41,19 +41,27 @@ int main()
 	std::string boundaryName;
 		boundaryName = "bottom boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 0.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 0.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "east boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 0.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 0.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "top boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 1.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 1.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 		boundaryName = "west boundary";
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue = 0.0;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = 0.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
 
 	double tolerance = 1e-3;
