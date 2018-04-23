@@ -133,3 +133,14 @@ void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangl
 	this->linearSystem.independent(elementIndex) += coeff * prescribedValue;
 	return;
 }
+
+Eigen::VectorXd SquareCavityHeatTransfer::nextTimeStep(void)
+{
+	const unsigned numberOfElements = this->linearSystem.independent.size();
+	this->linearSystem.matrix = Eigen::MatrixXd::Zero(numberOfElements,numberOfElements);
+	this->linearSystem.independent = Eigen::VectorXd::Zero(numberOfElements);
+	this->addAccumulationTerm();
+	this->addDiffusiveTerm();
+	this->applyBoundaryConditions();
+	return this->linearSystem.solve();
+}

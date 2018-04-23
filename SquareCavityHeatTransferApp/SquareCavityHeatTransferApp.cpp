@@ -67,10 +67,7 @@ int main()
 		std::cout << "time step: " << timeStep << std::endl;
 		problem.oldTemperature = problem.temperature;
 		cgnsFile.writeTransientScalarField(scalarFieldName,timeStep,problem.oldTemperature);
-		problem.addAccumulationTerm();
-		problem.addDiffusiveTerm();
-		problem.applyBoundaryConditions();
-		problem.temperature = problem.linearSystem.solve();
+		problem.temperature = problem.nextTimeStep();
 	}
 	Eigen::VectorXd timeInstants;
 	timeInstants.resize(numberOfTimeSteps);

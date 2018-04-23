@@ -30,6 +30,8 @@ class SquareCavityHeatTransfer
 		void applyBoundaryCondition(DirichletBoundaryCondition& dirichlet);
 		void applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredTriangle& staggeredTriangle, const double prescribedValue);
 
+		Eigen::VectorXd nextTimeStep(void);
+
 	private:
 		void initializeLinearSystem(void);
 		void initializeTemperatureVectors(void);
