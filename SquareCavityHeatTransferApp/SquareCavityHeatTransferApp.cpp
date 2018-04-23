@@ -2,9 +2,8 @@
 #include <boost/filesystem.hpp>
 #include <stdexcept>
 #include <iostream>
+#include <cmath>
 
-#include <Utils/Test.hpp>
-#include <Utils/EigenTest.hpp>
 #include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
@@ -31,13 +30,11 @@ int main()
 	CGNSFile cgnsFile(cgnsResultFileName);
 	GridData gridData(cgnsFile);
 	SquareCavityHeatTransfer problem(gridData);
-	problem.rho = 0.1;
-	problem.cp = 0.1;
-	problem.k = 10;
+	problem.rho = 1;
+	problem.cp = 1;
+	problem.k = 1;
 	problem.timeImplicitCoefficient = 1.0;
-	problem.timeInterval = 1.0/640;
-	problem.addAccumulationTerm();
-	problem.addDiffusiveTerm();
+	problem.timeInterval = 1.0/pow(2,8);
 	DirichletBoundaryCondition dirichlet;
 	for(unsigned i=0 ; i<problem.oldTemperature.size() ; ++i)
 		problem.temperature[i] = 0.0;
@@ -58,17 +55,22 @@ int main()
 		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
 		dirichlet.prescribedValue = 0.0;
 		problem.dirichletBoundaries.push_back(dirichlet);
-	problem.applyBoundaryConditions();
 
+	double tolerance = 1e-3;
+	unsigned timeStep = 0;
+	double error;
 	const std::string scalarFieldName = "Temperature";
-	constexpr unsigned numberOfTimeSteps = 30;
-	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
+	do
 	{
-		std::cout << "time step: " << timeStep << std::endl;
+		std::cout << "\ttime step: " << timeStep << std::endl;
 		problem.oldTemperature = problem.temperature;
 		cgnsFile.writeTransientScalarField(scalarFieldName,timeStep,problem.oldTemperature);
 		problem.temperature = problem.nextTimeStep();
-	}
+		error = (problem.temperature - problem.oldTemperature).norm();
+		++timeStep;
+		std::cout << "\t\terror = " << error << std::endl;
+	} while(error > tolerance);
+	const unsigned numberOfTimeSteps = timeStep;
 	Eigen::VectorXd timeInstants;
 	timeInstants.resize(numberOfTimeSteps);
 	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
