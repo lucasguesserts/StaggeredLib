@@ -25,9 +25,7 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 	const std::vector<std::string> meshFiles = {
 		directory + "5.cgns",
 		directory + "10.cgns",
-		directory + "15.cgns",
-		directory + "20.cgns"
-		// directory + "25.cgns"
+		directory + "15.cgns"
 	};
 	std::vector<double> numericalError;
 	for(auto& cgnsFileName: meshFiles)
@@ -119,8 +117,7 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 	const std::vector<std::string> meshFiles = {
 		directory + "5.cgns",
 		directory + "10.cgns",
-		directory + "15.cgns",
-		directory + "20.cgns"
+		directory + "15.cgns"
 	};
 	std::vector<double> numericalError;
 	for(auto& cgnsFileName: meshFiles)
