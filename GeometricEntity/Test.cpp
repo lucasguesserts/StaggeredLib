@@ -24,21 +24,25 @@ bool operator==(const Element& lhs, const Element& rhs)
 	return vality;
 }
 
-bool operator==(const StaggeredTriangle& lhs, const StaggeredTriangle& rhs)
+bool operator==(const StaggeredElement& lhs, const StaggeredElement& rhs)
 {
-	return lhs.getIndex()==rhs.getIndex() &&
-	       lhs.vertices[0]==rhs.vertices[0] &&
-	       lhs.vertices[1]==rhs.vertices[1] &&
-	       lhs.elements==rhs.elements;
-}
-
-bool operator==(const StaggeredQuadrangle& lhs, const StaggeredQuadrangle& rhs)
-{
-	return lhs.getIndex()==rhs.getIndex() &&
-	       *lhs.vertices[0]==*rhs.vertices[0] &&
-	       *lhs.vertices[1]==*rhs.vertices[1] &&
-	       lhs.elements[0]==rhs.elements[0] &&
-	       lhs.elements[1]==rhs.elements[1];
+	bool vality = true;
+	if(lhs.getIndex()==rhs.getIndex())
+	{
+		if((lhs.vertices.size()==rhs.vertices.size()) &&
+		   (lhs.elements.size()==rhs.elements.size()))
+		{
+			for(unsigned vertexLocalIndex=0 ; vertexLocalIndex<lhs.vertices.size() ; ++vertexLocalIndex)
+				vality = vality && (lhs.vertices[vertexLocalIndex]==rhs.vertices[vertexLocalIndex]);
+			for(unsigned elementLocalIndex=0 ; elementLocalIndex<lhs.elements.size() ; ++elementLocalIndex)
+				vality = vality && (lhs.elements[elementLocalIndex]==rhs.elements[elementLocalIndex]);
+		}
+		else
+			vality = false;
+	}
+	else
+		vality = false;
+	return vality;
 }
 
 std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
@@ -83,32 +87,28 @@ std::ostream& operator<<(std::ostream& os, const Quadrangle& quadrangle)
 	return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const StaggeredElement& staggeredElement)
+{
+	os << "{";
+	os << "I:" << staggeredElement.getIndex();
+	for(unsigned localIndex=0 ; localIndex<staggeredElement.vertices.size() ; ++localIndex)
+	{
+		os<< "," << "v:" << staggeredElement.vertices[localIndex]->getIndex();
+		if(localIndex<staggeredElement.elements.size())
+			os<< "," << "e:" << staggeredElement.elements[localIndex]->getIndex();
+	}
+	os << "}";
+	return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const StaggeredTriangle& staggeredTriangle)
 {
-	os << "StaggeredTriangle{"
-	   << "I:" << staggeredTriangle.getIndex()
-	   << ","
-	   << "v:" << staggeredTriangle.vertices[0]->getIndex()
-	   << ","
-	   << "e:" << staggeredTriangle.elements[0]->getIndex()
-	   << ","
-	   << "v:" << staggeredTriangle.vertices[1]->getIndex()
-	   << "}";
+	os << "StaggeredTriangle" << static_cast<const StaggeredElement&>(staggeredTriangle);
 	return os;
 }
 
 std::ostream& operator<< (std::ostream& os, const StaggeredQuadrangle& staggeredQuadrangle)
 {
-	os << "StaggeredQuadrangle{"
-	   << "I:" << staggeredQuadrangle.getIndex()
-	   << ","
-	   << "v:" << staggeredQuadrangle.vertices[0]->getIndex()
-	   << ","
-	   << "e:" << staggeredQuadrangle.elements[0]->getIndex()
-	   << ","
-	   << "v:" << staggeredQuadrangle.vertices[1]->getIndex()
-	   << ","
-	   << "e:" << staggeredQuadrangle.elements[1]->getIndex()
-	   << "}";
+	os << "StaggeredQuadrangle" << static_cast<const StaggeredElement&>(staggeredQuadrangle);
 	return os;
 }

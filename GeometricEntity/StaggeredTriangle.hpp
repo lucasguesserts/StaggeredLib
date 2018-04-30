@@ -5,15 +5,12 @@
 #include <Eigen/Core>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/Vertex.hpp>
+#include <GeometricEntity/StaggeredElement.hpp>
 
-class StaggeredTriangle: public Element
+class StaggeredTriangle: public StaggeredElement
 {
 	public:
-		std::vector<Element*> elements;
-
 		StaggeredTriangle(const unsigned index, Vertex& vertex_0, Element* element, Vertex& vertex_1);
-		virtual Eigen::Vector3d getCentroid(void) override;
-		virtual Eigen::Vector3d getAreaVector(void) override;
 		virtual double getVolume(void) override;
 	private:
 		Eigen::Vector3d getAreaVector3D(void);
