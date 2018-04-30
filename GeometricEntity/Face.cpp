@@ -2,15 +2,15 @@
 
 Face::Face(
 	const unsigned localIndex,
-	Element* parentElement,
-	Vertex* adjacentVertex,
-	StaggeredElement* backwardStaggeredElement,
-	StaggeredElement* forwardStaggeredElement)
+	Element& parentElement,
+	Vertex& adjacentVertex,
+	StaggeredElement& backwardStaggeredElement,
+	StaggeredElement& forwardStaggeredElement)
 	: localIndex(localIndex),
-	  parentElement(parentElement),
-	  adjacentVertex(adjacentVertex),
-	  backwardStaggeredElement(backwardStaggeredElement),
-	  forwardStaggeredElement(forwardStaggeredElement)
+	  parentElement(&parentElement),
+	  adjacentVertex(&adjacentVertex),
+	  backwardStaggeredElement(&backwardStaggeredElement),
+	  forwardStaggeredElement(&forwardStaggeredElement)
 	{}
 
 Eigen::Vector3d Face::getAreaVector(void)

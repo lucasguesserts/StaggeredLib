@@ -11,10 +11,11 @@ class Face
 {
 	public:
 		Face(const unsigned localIndex,
-		     Element* parentElement,
-		     Vertex* adjacentVertex,
-		     StaggeredElement* backwardStaggeredElement,
-		     StaggeredElement* forwardStaggeredElement);
+		     Element& parentElement,
+		     Vertex& adjacentVertex,
+		     StaggeredElement& backwardStaggeredElement,
+		     StaggeredElement& forwardStaggeredElement);
+
 		unsigned localIndex;
 		Element* parentElement;
 		Vertex* adjacentVertex;
