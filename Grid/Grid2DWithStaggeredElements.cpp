@@ -88,7 +88,7 @@ void Grid2DWithStaggeredElements::organizeQuadrangle(StaggeredQuadrangle& stagge
 }
 void Grid2DWithStaggeredElements::organizeTriangle(StaggeredTriangle& staggeredTriangle)
 {
-	if( staggeredTriangle.getAreaVector().dot(staggeredTriangle.element->getCentroid() - *(staggeredTriangle.vertices[0])) < 0 )
+	if( staggeredTriangle.getAreaVector().dot(staggeredTriangle.elements[0]->getCentroid() - *((Eigen::Vector3d*)(staggeredTriangle.vertices[0]))) < 0 )
 		std::swap(staggeredTriangle.vertices[0],staggeredTriangle.vertices[1]);
 	return;
 }

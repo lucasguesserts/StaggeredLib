@@ -9,7 +9,7 @@
 class StaggeredQuadrangle: public Element
 {
 	public:
-		std::array<Element*,2> elements;
+		std::vector<Element*> elements;
 
 		StaggeredQuadrangle(const unsigned index, Vertex& vertex_0, Element* element_0, Vertex& vertex_1, Element* element_1);
 		virtual Eigen::Vector3d getCentroid(void) override;

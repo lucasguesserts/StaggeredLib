@@ -9,7 +9,7 @@
 class StaggeredTriangle: public Element
 {
 	public:
-		Element* element;
+		std::vector<Element*> elements;
 
 		StaggeredTriangle(const unsigned index, Vertex& vertex_0, Element* element, Vertex& vertex_1);
 		virtual Eigen::Vector3d getCentroid(void) override;

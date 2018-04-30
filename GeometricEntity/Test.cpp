@@ -29,7 +29,7 @@ bool operator==(const StaggeredTriangle& lhs, const StaggeredTriangle& rhs)
 	return lhs.getIndex()==rhs.getIndex() &&
 	       lhs.vertices[0]==rhs.vertices[0] &&
 	       lhs.vertices[1]==rhs.vertices[1] &&
-	       lhs.element==rhs.element;
+	       lhs.elements==rhs.elements;
 }
 
 bool operator==(const StaggeredQuadrangle& lhs, const StaggeredQuadrangle& rhs)
@@ -90,7 +90,7 @@ std::ostream& operator<<(std::ostream& os, const StaggeredTriangle& staggeredTri
 	   << ","
 	   << "v:" << staggeredTriangle.vertices[0]->getIndex()
 	   << ","
-	   << "e:" << staggeredTriangle.element->getIndex()
+	   << "e:" << staggeredTriangle.elements[0]->getIndex()
 	   << ","
 	   << "v:" << staggeredTriangle.vertices[1]->getIndex()
 	   << "}";

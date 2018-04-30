@@ -90,7 +90,7 @@ ScalarStencil SquareCavityHeatTransfer::computeDiffusiveTerm(StaggeredQuadrangle
 
 void SquareCavityHeatTransfer::addDiffusiveTerm(StaggeredTriangle& staggeredTriangle)
 {
-	const unsigned elementIndex = staggeredTriangle.element->getIndex();
+	const unsigned elementIndex = staggeredTriangle.elements[0]->getIndex();
 	ScalarStencil diffusiveTerm = this->computeDiffusiveTerm(staggeredTriangle);
 	// matrix
 	ScalarStencil matrixDiffusiveTerm = this->timeImplicitCoefficient * diffusiveTerm;
@@ -124,8 +124,8 @@ void SquareCavityHeatTransfer::applyBoundaryCondition(DirichletBoundaryCondition
 void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredTriangle& staggeredTriangle, const double prescribedValue)
 {
 	// TODO: simplify this function
-	const unsigned elementIndex = staggeredTriangle.element->getIndex();
-	Eigen::Vector3d gradientVector = staggeredTriangle.getCentroid() - staggeredTriangle.element->getCentroid();
+	const unsigned elementIndex = staggeredTriangle.elements[0]->getIndex();
+	Eigen::Vector3d gradientVector = staggeredTriangle.getCentroid() - staggeredTriangle.elements[0]->getCentroid();
 	gradientVector = gradientVector / gradientVector.squaredNorm();
 	double coeff = - staggeredTriangle.getAreaVector().dot(gradientVector) * this->k * this->timeInterval;
 	this->linearSystem.matrix(elementIndex,elementIndex) += coeff * this->timeImplicitCoefficient;

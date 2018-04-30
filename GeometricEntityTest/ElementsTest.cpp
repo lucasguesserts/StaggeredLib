@@ -256,7 +256,7 @@ TestCase("staggered triangle member functions", "[StaggeredTriangle]")
 	}
 	section("element")
 	{
-		check(staggeredTriangle.element==&triangle);
+		check(staggeredTriangle.elements[0]==&triangle);
 	}
 	section("centroid")
 	{

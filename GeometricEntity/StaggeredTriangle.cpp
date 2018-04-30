@@ -5,7 +5,7 @@ StaggeredTriangle::StaggeredTriangle(const unsigned index, Vertex& vertex_0, Ele
 	this->setIndex(index);
 	this->addVertex(vertex_0);
 	this->addVertex(vertex_1);
-	this->element = element;
+	this->elements.push_back(element);
 	return;
 }
 
@@ -29,5 +29,5 @@ double StaggeredTriangle::getVolume(void)
 
 Eigen::Vector3d StaggeredTriangle::getAreaVector3D(void)
 {
-	return Element::computeTriangleAreaVector(*(this->vertices[0]), this->element->getCentroid(), *(this->vertices[1]));
+	return Element::computeTriangleAreaVector(*(this->vertices[0]), this->elements[0]->getCentroid(), *(this->vertices[1]));
 }
