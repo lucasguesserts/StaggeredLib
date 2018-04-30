@@ -45,6 +45,17 @@ bool operator==(const StaggeredElement& lhs, const StaggeredElement& rhs)
 	return vality;
 }
 
+bool operator==(const Face& lhs, const Face& rhs)
+{
+	return
+		lhs.getIndex()==rhs.getIndex() &&
+		lhs.localIndex==rhs.localIndex &&
+		lhs.parentElement==rhs.parentElement &&
+		lhs.adjacentVertex==rhs.adjacentVertex &&
+		lhs.backwardStaggeredElement==rhs.backwardStaggeredElement &&
+		lhs.forwardStaggeredElement==rhs.forwardStaggeredElement;
+}
+
 std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
 {
 	os << "Vertex{"
@@ -111,4 +122,17 @@ std::ostream& operator<< (std::ostream& os, const StaggeredQuadrangle& staggered
 {
 	os << "StaggeredQuadrangle" << static_cast<const StaggeredElement&>(staggeredQuadrangle);
 	return os;
+}
+
+std::ostream& operator<< (std::ostream& os, const Face& face)
+{
+	os << "Face{"
+	   << "I:" << face.getIndex() << ","
+	   << "li:" << face.localIndex << ","
+	   << "e:" << face.parentElement->getIndex() << ","
+	   << "v:" << face.adjacentVertex->getIndex() << ","
+	   << "b_se:" << face.backwardStaggeredElement->getIndex() << ","
+	   << "f_se:" << face.forwardStaggeredElement->getIndex()
+	   << "}";
+	   return os;
 }

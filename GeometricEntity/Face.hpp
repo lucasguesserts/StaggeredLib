@@ -7,10 +7,11 @@
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/StaggeredElement.hpp>
 
-class Face
+class Face: public Entity
 {
 	public:
-		Face(const unsigned localIndex,
+		Face(const unsigned index,
+		     const unsigned localIndex,
 		     Element& parentElement,
 		     Vertex& adjacentVertex,
 		     StaggeredElement& backwardStaggeredElement,

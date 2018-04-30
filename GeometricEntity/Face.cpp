@@ -1,12 +1,14 @@
 #include <GeometricEntity/Face.hpp>
 
 Face::Face(
+	const unsigned index,
 	const unsigned localIndex,
 	Element& parentElement,
 	Vertex& adjacentVertex,
 	StaggeredElement& backwardStaggeredElement,
 	StaggeredElement& forwardStaggeredElement)
-	: localIndex(localIndex),
+	: Entity(index),
+	  localIndex(localIndex),
 	  parentElement(&parentElement),
 	  adjacentVertex(&adjacentVertex),
 	  backwardStaggeredElement(&backwardStaggeredElement),
