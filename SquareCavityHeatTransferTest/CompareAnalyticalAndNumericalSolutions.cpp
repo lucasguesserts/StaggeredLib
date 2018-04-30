@@ -26,8 +26,8 @@ TestCase("Compare numerical and analytical solution", "[SquareCavityHeatTransfer
 		directory + "5.cgns",
 		directory + "10.cgns",
 		directory + "15.cgns",
-		directory + "20.cgns",
-		directory + "25.cgns"
+		directory + "20.cgns"
+		// directory + "25.cgns"
 	};
 	std::vector<double> numericalError;
 	for(auto& cgnsFileName: meshFiles)
@@ -65,7 +65,7 @@ TestCase("Compare numerical and analytical solution", "[SquareCavityHeatTransfer
 				Eigen::Vector3d centroid = dirichlet.staggeredTriangle[i]->getCentroid();
 				const double x = centroid.coeff(0);
 				const double y = centroid.coeff(1);
-				dirichlet.prescribedValue[i] = sin(M_PI*x) * sinh(M_PI*y) / sinh(M_PI);
+				dirichlet.prescribedValue[i] = std::sin(M_PI*x) * std::sinh(M_PI*y) / std::sinh(M_PI);
 			}
 			problem.dirichletBoundaries.push_back(dirichlet);
 			boundaryName = "west boundary";
@@ -88,7 +88,7 @@ TestCase("Compare numerical and analytical solution", "[SquareCavityHeatTransfer
 			++iteration;
 			std::cout << "\t\terror = " << error << std::endl;
 		} while(error > tolerance);
-		Eigen::Vector3d numericalSolution = problem.temperature;
+		Eigen::VectorXd numericalSolution = problem.temperature;
 
 		// Analytical
 		Eigen::Matrix<double,Eigen::Dynamic,3> elementsCentroid;
@@ -102,7 +102,7 @@ TestCase("Compare numerical and analytical solution", "[SquareCavityHeatTransfer
 		}
 		Eigen::VectorXd analyticalSolution = SquareCavityHeatTransfer::computeAnalyticalSolution(elementsCentroid);
 
-		error = (numericalSolution - analyticalSolution).norm();
+		error = (numericalSolution - analyticalSolution).norm() / numericalSolution.size();
 		numericalError.push_back(error);
 	}
 	for(unsigned i=0 ; i<(numericalError.size()-1) ; ++i)
