@@ -44,6 +44,55 @@ TestCase("staggered elements with the same vertices", "[Grid2DWithStaggeredEleme
 	}
 }
 
+TestCase("Find staggered element in Grid2D", "[Grid2DWithStaggeredElements_2]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements_2 grid(gridData);
+	std::vector<StaggeredElement> staggeredElements = {
+		{0, grid.vertices[1], grid.elements[0], grid.vertices[0]},
+		{1, grid.vertices[1], grid.elements[0], grid.vertices[0]},
+		{0, grid.vertices[1], grid.elements[1], grid.vertices[0]},
+		{0, grid.vertices[0], grid.elements[0], grid.vertices[1]},
+		{2, grid.vertices[3], grid.elements[1], grid.vertices[0], grid.elements[0]},
+		{2, grid.vertices[3], grid.elements[1], grid.vertices[0], grid.elements[0]},
+		{5, grid.vertices[3], grid.elements[0], grid.vertices[0]},
+		{0, grid.vertices[1], grid.elements[0], grid.vertices[2]},
+		{5, grid.vertices[2], grid.elements[0], grid.vertices[1]}
+	};
+	section("true tests")
+	{
+		std::tuple<bool,unsigned> location;
+		location = grid.findStaggeredElement(staggeredElements[0]);
+			check(std::get<bool>(location));
+			check(std::get<unsigned>(location)==0);
+		location = grid.findStaggeredElement(staggeredElements[1]);
+			check(std::get<bool>(location));
+			check(std::get<unsigned>(location)==0);
+		location = grid.findStaggeredElement(staggeredElements[2]);
+			check(std::get<bool>(location));
+			check(std::get<unsigned>(location)==0);
+		location = grid.findStaggeredElement(staggeredElements[3]);
+			check(std::get<bool>(location));
+			check(std::get<unsigned>(location)==0);
+		location = grid.findStaggeredElement(staggeredElements[4]);
+			check(std::get<bool>(location));
+			check(std::get<unsigned>(location)==2);
+		location = grid.findStaggeredElement(staggeredElements[5]);
+			check(std::get<bool>(location));
+			check(std::get<unsigned>(location)==2);
+		location = grid.findStaggeredElement(staggeredElements[6]);
+			check(std::get<bool>(location));
+			check(std::get<unsigned>(location)==2);
+	}
+	section("false tests")
+	{
+		checkFalse(std::get<bool>(grid.findStaggeredElement(staggeredElements[7])));
+		checkFalse(std::get<bool>(grid.findStaggeredElement(staggeredElements[8])));
+	}
+}
+
 TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
