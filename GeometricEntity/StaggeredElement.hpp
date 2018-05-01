@@ -11,7 +11,7 @@ class StaggeredElement: public Element
 		std::vector<Element*> elements;
 		virtual Eigen::Vector3d getCentroid(void) final;
 		virtual Eigen::Vector3d getAreaVector(void) final;
-		virtual double getVolume(void) = 0;
+		virtual double getVolume(void) final;
 };
 
 #endif

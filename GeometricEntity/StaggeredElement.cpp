@@ -12,3 +12,13 @@ Eigen::Vector3d StaggeredElement::getAreaVector(void)
 	areaVector[1] = - areaVector[1];
 	return areaVector;
 }
+
+double StaggeredElement::getVolume(void)
+{
+	double volume = 0.0;
+	for(Element* element: this->elements)
+	{
+		volume += Element::computeTriangleAreaVector(*(this->vertices[0]), element->getCentroid(), *(this->vertices[1])).norm();
+	}
+	return volume;
+}

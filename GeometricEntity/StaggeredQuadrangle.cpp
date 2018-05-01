@@ -10,11 +10,6 @@ StaggeredQuadrangle::StaggeredQuadrangle(const unsigned index, Vertex& vertex_0,
 	return;
 }
 
-double StaggeredQuadrangle::getVolume(void)
-{
-	return this->getAreaVector3D().norm();
-}
-
 Eigen::Vector3d StaggeredQuadrangle::getAreaVector3D(void)
 {
 	return Element::computeTriangleAreaVector(*(this->vertices[0]), this->elements[0]->getCentroid(), this->elements[1]->getCentroid()) +

@@ -11,7 +11,6 @@ class StaggeredQuadrangle: public StaggeredElement
 {
 	public:
 		StaggeredQuadrangle(const unsigned index, Vertex& vertex_0, Element* element_0, Vertex& vertex_1, Element* element_1);
-		virtual double getVolume(void) override;
 	private:
 		Eigen::Vector3d getAreaVector3D(void);
 };
