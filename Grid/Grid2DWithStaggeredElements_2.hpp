@@ -16,6 +16,12 @@ class Grid2DWithStaggeredElements_2: public Grid2DVerticesWithNeighborElements
 		std::vector<StaggeredElement*> staggeredQuadrangles;
 		std::vector<StaggeredElement*> staggeredTriangles;
 		std::vector<Face> faces;
+
+		void createStaggeredElements(void);
+		void addStaggeredEntitiesFromElement(Element* element, unsigned& staggeredElementIndex, unsigned& faceIndex);
+		StaggeredElement* addStaggeredElement(Vertex* firstVertex, Element* element, Vertex* secondVertex, unsigned& staggeredElementIndex);
+		std::tuple<bool,unsigned> findStaggeredElement(const StaggeredElement& staggeredElement);
+		bool staggeredElementsHaveTheSameVertices(const StaggeredElement& lhs, const StaggeredElement& rhs);
 };
 
 #endif
