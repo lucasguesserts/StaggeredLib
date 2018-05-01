@@ -129,10 +129,10 @@ std::ostream& operator<< (std::ostream& os, const Face& face)
 	os << "Face{"
 	   << "I:" << face.getIndex() << ","
 	   << "li:" << face.localIndex << ","
-	   << "e:" << face.parentElement->getIndex() << ","
-	   << "v:" << face.adjacentVertex->getIndex() << ","
-	   << "b_se:" << face.backwardStaggeredElement->getIndex() << ","
-	   << "f_se:" << face.forwardStaggeredElement->getIndex()
+	   << "e:" << face.parentElement << ","
+	   << "v:" << face.adjacentVertex << ","
+	   << "b_se:" << face.backwardStaggeredElement << ","
+	   << "f_se:" << face.forwardStaggeredElement
 	   << "}";
 	   return os;
 }
