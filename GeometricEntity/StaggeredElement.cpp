@@ -1,5 +1,23 @@
 #include <GeometricEntity/StaggeredElement.hpp>
 
+StaggeredElement::StaggeredElement(const unsigned index, Vertex& vertex_0, Element* element, Vertex& vertex_1)
+{
+	this->setIndex(index);
+	this->addVertex(vertex_0);
+	this->addVertex(vertex_1);
+	this->elements.push_back(element);
+	return;
+}
+
+StaggeredElement::StaggeredElement(const unsigned index, Vertex& vertex_0, Element* element_0, Vertex& vertex_1, Element* element_1)
+{
+	this->setIndex(index);
+	this->addVertex(vertex_0);
+	this->addVertex(vertex_1);
+	this->elements.push_back(element_0);
+	this->elements.push_back(element_1);
+}
+
 Eigen::Vector3d StaggeredElement::getCentroid(void)
 {
 	return 0.5 * (*(this->vertices[0]) + *(this->vertices[1]));

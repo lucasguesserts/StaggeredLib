@@ -1,13 +1,8 @@
 #include <GeometricEntity/StaggeredTriangle.hpp>
 
 StaggeredTriangle::StaggeredTriangle(const unsigned index, Vertex& vertex_0, Element* element, Vertex& vertex_1)
-{
-	this->setIndex(index);
-	this->addVertex(vertex_0);
-	this->addVertex(vertex_1);
-	this->elements.push_back(element);
-	return;
-}
+	: StaggeredElement(index, vertex_0, element, vertex_1)
+{}
 
 Eigen::Vector3d StaggeredTriangle::getAreaVector3D(void)
 {
