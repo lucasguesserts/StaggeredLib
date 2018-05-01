@@ -11,8 +11,6 @@ class StaggeredTriangle: public StaggeredElement
 {
 	public:
 		StaggeredTriangle(const unsigned index, Vertex& vertex_0, Element* element, Vertex& vertex_1);
-	private:
-		Eigen::Vector3d getAreaVector3D(void);
 };
 
 #endif
