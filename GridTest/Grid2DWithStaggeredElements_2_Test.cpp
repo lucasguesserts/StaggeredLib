@@ -9,16 +9,48 @@
 #include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
-#include <GeometricEntity/StaggeredQuadrangle.hpp>
-#include <GeometricEntity/StaggeredTriangle.hpp>
+#include <GeometricEntity/StaggeredElement.hpp>
 
-#include <Grid/StaggeredElementDefinition.hpp>
 #include <Grid/Grid2DWithStaggeredElements_2.hpp>
 
-TestCase("Grid2DWithStaggeredElements build", "[Grid][Grid2D]")
+TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
-	Grid2DWithStaggeredElements_2 grid2D(gridData);
+	Grid2DWithStaggeredElements_2 grid(gridData);
+	section("grid vertices")
+	{
+		constexpr unsigned numberOfVertices = 4;
+		std::vector<Vertex> vertices;
+		vertices.push_back(Vertex(0.0, 0.0, 0.0, 0));
+		vertices.push_back(Vertex(2.0, 0.0, 0.0, 1));
+		vertices.push_back(Vertex(0.0, 2.0, 0.0, 2));
+		vertices.push_back(Vertex(2.0, 2.0, 0.0, 3));
+		for(Vertex& vertex: grid.vertices)
+			require(vertex==vertices[vertex.getIndex()]);
+	}
+	section("grid triangles")
+	{
+		constexpr unsigned numberOfTriangles = 2;
+		// 0
+		require(grid.elements[0]->vertices[0]==&(grid.vertices[0]));
+		require(grid.elements[0]->vertices[1]==&(grid.vertices[1]));
+		require(grid.elements[0]->vertices[2]==&(grid.vertices[3]));
+		// 1
+		require(grid.elements[1]->vertices[0]==&(grid.vertices[0]));
+		require(grid.elements[1]->vertices[1]==&(grid.vertices[3]));
+		require(grid.elements[1]->vertices[2]==&(grid.vertices[2]));
+	}
+	section("staggered elements")
+	{
+		std::vector<StaggeredElement> staggeredElements = {
+			{0, grid.vertices[1], grid.elements[0], grid.vertices[0]},
+			{1, grid.vertices[3], grid.elements[0], grid.vertices[1]},
+			{2 ,grid.vertices[3], grid.elements[1], grid.vertices[0], grid.elements[0]},
+			{3, grid.vertices[2], grid.elements[1], grid.vertices[3]},
+			{4, grid.vertices[0], grid.elements[1], grid.vertices[2]}
+		};
+		check(grid.staggeredElements==staggeredElements);
+	}
 }
