@@ -1,7 +1,7 @@
 #include <GeometricEntity/Element.hpp>
 #include <Eigen/Geometry>
 
-void Element::addVertex(const Vertex& vertex)
+void Element::addVertex(Vertex& vertex)
 {
 	this->vertices.push_back(&vertex);
 	return;

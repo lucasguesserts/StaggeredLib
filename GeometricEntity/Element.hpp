@@ -9,9 +9,9 @@
 class Element: public Entity
 {
 	public:
-		std::vector<const Vertex*> vertices;
+		std::vector<Vertex*> vertices;
 
-		void addVertex(const Vertex& vertex);
+		void addVertex(Vertex& vertex);
 		virtual Eigen::Vector3d getCentroid(void) = 0;
 		virtual Eigen::Vector3d getAreaVector(void) = 0;
 		virtual double getVolume(void) = 0;
