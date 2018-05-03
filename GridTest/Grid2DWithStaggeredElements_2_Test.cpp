@@ -93,28 +93,6 @@ TestCase("Find staggered element in Grid2D", "[Grid2DWithStaggeredElements_2]")
 	}
 }
 
-TestCase("add staggered element to grid2D with staggered elements", "[Grid2DWithStaggeredElements_2]")
-{
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
-	Grid2DWithStaggeredElements_2 grid(gridData);
-	unsigned staggeredElementIndex = 4;
-	section("Staggered element that exists")
-	{
-		check(&grid.staggeredElements[0]==grid.addStaggeredElement(&grid.vertices[0], grid.elements[1], &grid.vertices[1], staggeredElementIndex));
-		check(grid.staggeredElements[0].elements[1]==grid.elements[1]);
-		check(staggeredElementIndex==4);
-	}
-	section("Staggered element that doesn't exist")
-	{
-		StaggeredElement* newStaggeredElement = grid.addStaggeredElement(&grid.vertices[1], grid.elements[1], &grid.vertices[2], staggeredElementIndex);
-		check(newStaggeredElement==&grid.staggeredElements[5]);
-		check(staggeredElementIndex==5);
-		check(grid.staggeredElements[5]==StaggeredElement(4,grid.vertices[1],grid.elements[1],grid.vertices[2]));
-	}
-}
-
 TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
