@@ -18,8 +18,10 @@ class Grid2DWithStaggeredElements_2: public Grid2DVerticesWithNeighborElements
 		std::vector<Face> faces;
 
 		void createStaggeredElements(void);
+		void createFaces(void);
 		std::tuple<bool,unsigned> findStaggeredElement(const StaggeredElement& staggeredElement);
 		bool staggeredElementsHaveTheSameVertices(const StaggeredElement& lhs, const StaggeredElement& rhs);
+		std::tuple<unsigned,unsigned> findStaggeredElements(Vertex* adjacentVertex, Element* element);
 };
 
 #endif

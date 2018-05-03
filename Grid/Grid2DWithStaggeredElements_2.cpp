@@ -4,6 +4,7 @@ Grid2DWithStaggeredElements_2::Grid2DWithStaggeredElements_2(const GridData& gri
 	: Grid2DVerticesWithNeighborElements(gridData)
 {
 	this->createStaggeredElements();
+	this->createFaces();
 }
 
 void Grid2DWithStaggeredElements_2::createStaggeredElements(void)
@@ -44,6 +45,28 @@ void Grid2DWithStaggeredElements_2::createStaggeredElements(void)
 			}
 		}
 	}
+}
+
+void Grid2DWithStaggeredElements_2::createFaces(void)
+{
+	unsigned faceIndex = 0;
+	for(Element* element: this->elements)
+	{
+		unsigned localIndex;
+		for(localIndex=0 ; localIndex<element->vertices.size() ; ++localIndex)
+		{
+			Vertex *adjacentVertex = element->vertices[localIndex];
+			std::tuple<unsigned,unsigned> staggredElementsLocation = this->findStaggeredElements(adjacentVertex, element);
+			StaggeredElement* back = &(this->staggeredElements[std::get<0>(staggredElementsLocation)]);
+			StaggeredElement* front = &(this->staggeredElements[std::get<1>(staggredElementsLocation)]);
+			this->faces.emplace_back( Face(faceIndex, localIndex, *element, *adjacentVertex, *back, *front) );
+		}
+	}
+}
+
+std::tuple<unsigned,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElements(Vertex* adjacentVertex, Element* element)
+{
+	return std::make_tuple(0,1);
 }
 
 std::tuple<bool,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElement(const StaggeredElement& staggeredElement)

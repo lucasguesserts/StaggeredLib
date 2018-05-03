@@ -143,6 +143,6 @@ TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]
 			{4, 2, *(grid.elements[1]), grid.vertices[2], grid.staggeredElements[4], grid.staggeredElements[3]},
 			{5, 0, *(grid.elements[1]), grid.vertices[0], grid.staggeredElements[2], grid.staggeredElements[4]}
 		};
-		// check(grid.faces==faces);
+		check(grid.faces==faces);
 	}
 }
