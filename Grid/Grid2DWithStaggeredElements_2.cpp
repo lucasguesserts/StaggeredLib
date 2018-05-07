@@ -63,6 +63,7 @@ void Grid2DWithStaggeredElements_2::createFaces(void)
 			StaggeredElement* front = &(this->staggeredElements[staggredElementsLocation[1]]);
 			this->organizeStaggeredElements(element, adjacentVertex, back, front);
 			this->faces.emplace_back( Face(faceIndex, localIndex, *element, *adjacentVertex, *back, *front) );
+			++faceIndex;
 		}
 	}
 }

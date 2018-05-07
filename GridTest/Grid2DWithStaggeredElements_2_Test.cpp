@@ -186,13 +186,13 @@ TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]
 	section("faces")
 	{
 		std::vector<Face> faces = {
-			{0, 1, *(grid.elements[0]), grid.vertices[1], grid.staggeredElements[1], grid.staggeredElements[0]},
-			{1, 2, *(grid.elements[0]), grid.vertices[3], grid.staggeredElements[2], grid.staggeredElements[1]},
-			{2, 0, *(grid.elements[0]), grid.vertices[0], grid.staggeredElements[0], grid.staggeredElements[2]},
-			{3, 1, *(grid.elements[1]), grid.vertices[3], grid.staggeredElements[3], grid.staggeredElements[2]},
-			{4, 2, *(grid.elements[1]), grid.vertices[2], grid.staggeredElements[4], grid.staggeredElements[3]},
-			{5, 0, *(grid.elements[1]), grid.vertices[0], grid.staggeredElements[2], grid.staggeredElements[4]}
+			{0, 0, *(grid.elements[0]), grid.vertices[0], grid.staggeredElements[0], grid.staggeredElements[2]},
+			{1, 1, *(grid.elements[0]), grid.vertices[1], grid.staggeredElements[1], grid.staggeredElements[0]},
+			{2, 2, *(grid.elements[0]), grid.vertices[3], grid.staggeredElements[2], grid.staggeredElements[1]},
+			{3, 0, *(grid.elements[1]), grid.vertices[0], grid.staggeredElements[2], grid.staggeredElements[4]},
+			{4, 1, *(grid.elements[1]), grid.vertices[3], grid.staggeredElements[3], grid.staggeredElements[2]},
+			{5, 2, *(grid.elements[1]), grid.vertices[2], grid.staggeredElements[4], grid.staggeredElements[3]}
 		};
-		//check(grid.faces==faces);
+		check(grid.faces==faces);
 	}
 }
