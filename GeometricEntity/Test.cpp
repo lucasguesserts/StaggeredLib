@@ -45,6 +45,15 @@ bool operator==(const StaggeredElement& lhs, const StaggeredElement& rhs)
 	return vality;
 }
 
+bool operator==(const StaggeredElement2D& lhs, const StaggeredElement2D& rhs)
+{
+	return lhs.getIndex() == rhs.getIndex() &&
+	       lhs.vertices[0]==rhs.vertices[0] &&
+	       lhs.vertices[1]==rhs.vertices[1] &&
+	       lhs.elements[0]==rhs.elements[0] &&
+	       lhs.elements[1]==rhs.elements[1];
+}
+
 bool operator==(const Face& lhs, const Face& rhs)
 {
 	return
@@ -109,6 +118,16 @@ std::ostream& operator<<(std::ostream& os, const StaggeredElement& staggeredElem
 			os<< "," << "e:" << staggeredElement.elements[localIndex]->getIndex();
 	}
 	os << "}";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const StaggeredElement2D& staggeredElement)
+{
+	os << "{I:" << staggeredElement.getIndex() << "," <<
+	      "v:" << staggeredElement.vertices[0] << "," <<
+	      "e:" << staggeredElement.elements[0] << "," <<
+	      "v:" << staggeredElement.vertices[1] << "," <<
+	      "e:" << staggeredElement.elements[1] << "}" << std::endl;
 	return os;
 }
 
