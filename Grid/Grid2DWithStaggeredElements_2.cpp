@@ -1,4 +1,6 @@
 #include <Grid/Grid2DWithStaggeredElements_2.hpp>
+#include <array>
+#include <stdexcept>
 
 Grid2DWithStaggeredElements_2::Grid2DWithStaggeredElements_2(const GridData& gridData)
 	: Grid2DVerticesWithNeighborElements(gridData)
@@ -56,17 +58,47 @@ void Grid2DWithStaggeredElements_2::createFaces(void)
 		for(localIndex=0 ; localIndex<element->vertices.size() ; ++localIndex)
 		{
 			Vertex *adjacentVertex = element->vertices[localIndex];
-			std::tuple<unsigned,unsigned> staggredElementsLocation = this->findStaggeredElements(adjacentVertex, element);
-			StaggeredElement* back = &(this->staggeredElements[std::get<0>(staggredElementsLocation)]);
-			StaggeredElement* front = &(this->staggeredElements[std::get<1>(staggredElementsLocation)]);
+			std::array<unsigned,2> staggredElementsLocation = this->findStaggeredElements(adjacentVertex, element);
+			StaggeredElement* back = &(this->staggeredElements[staggredElementsLocation[0]]);
+			StaggeredElement* front = &(this->staggeredElements[staggredElementsLocation[1]]);
 			this->faces.emplace_back( Face(faceIndex, localIndex, *element, *adjacentVertex, *back, *front) );
 		}
 	}
 }
 
-std::tuple<unsigned,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElements(Vertex* adjacentVertex, Element* element)
+std::array<unsigned,2> Grid2DWithStaggeredElements_2::findStaggeredElements(Vertex* adjacentVertex, Element* element)
 {
-	return std::make_tuple(0,1);
+	unsigned staggeredElementPosition, numberOfStaggeredElementsFound = 0;
+	std::array<unsigned,2> positions;
+	const unsigned numberOfStaggeredElements = this->staggeredElements.size();
+	for(staggeredElementPosition=0 ; staggeredElementPosition<numberOfStaggeredElements ; ++staggeredElementPosition)
+	{
+		// get elements
+		std::array<Element*,2> elements;
+		elements[0] = this->staggeredElements[staggeredElementPosition].elements[0];
+		if(this->staggeredElements[staggeredElementPosition].elements.size()==2)
+			elements[1] = this->staggeredElements[staggeredElementPosition].elements[1];
+		else
+			elements[1] = nullptr;
+		// get vertices
+		std::array<Vertex*,2> vertices;
+		vertices[0] = this->staggeredElements[staggeredElementPosition].vertices[0];
+		vertices[1] = this->staggeredElements[staggeredElementPosition].vertices[1];
+		// verify
+		if(((elements[0]==element) || (elements[1]==element))
+		    &&
+		    ((vertices[0]==adjacentVertex) || (vertices[1]==adjacentVertex)))
+		{
+			positions[numberOfStaggeredElementsFound] = staggeredElementPosition;
+			++numberOfStaggeredElementsFound;
+		}
+	}
+	if(numberOfStaggeredElementsFound<2)
+		throw std::runtime_error("Found less than 2 staggered elements for a face.");
+	if(numberOfStaggeredElementsFound>2)
+		throw std::runtime_error("Found more than 2 staggered elements for a face.");
+
+	return positions;
 }
 
 std::tuple<bool,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElement(const StaggeredElement& staggeredElement)
