@@ -61,6 +61,7 @@ void Grid2DWithStaggeredElements_2::createFaces(void)
 			std::array<unsigned,2> staggredElementsLocation = this->findStaggeredElements(adjacentVertex, element);
 			StaggeredElement* back = &(this->staggeredElements[staggredElementsLocation[0]]);
 			StaggeredElement* front = &(this->staggeredElements[staggredElementsLocation[1]]);
+			this->organizeStaggeredElements(element, adjacentVertex, back, front);
 			this->faces.emplace_back( Face(faceIndex, localIndex, *element, *adjacentVertex, *back, *front) );
 		}
 	}
@@ -99,6 +100,17 @@ std::array<unsigned,2> Grid2DWithStaggeredElements_2::findStaggeredElements(Vert
 		throw std::runtime_error("Found more than 2 staggered elements for a face.");
 
 	return positions;
+}
+
+void Grid2DWithStaggeredElements_2::organizeStaggeredElements(Element* element, Vertex* adjacentVertex, StaggeredElement*& back, StaggeredElement*& front)
+{
+	Eigen::Vector3d areaVector = *adjacentVertex - element->getCentroid();
+		std::swap(areaVector[0],areaVector[1]);
+		areaVector[1] = - areaVector[1];
+	Eigen::Vector3d staggeredElementVector = front->getCentroid() - element->getCentroid();
+	if(staggeredElementVector.dot(areaVector) < 0.0)
+		std::swap(front,back);
+	return;
 }
 
 std::tuple<bool,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElement(const StaggeredElement& staggeredElement)

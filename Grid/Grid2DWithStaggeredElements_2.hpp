@@ -22,6 +22,7 @@ class Grid2DWithStaggeredElements_2: public Grid2DVerticesWithNeighborElements
 		std::tuple<bool,unsigned> findStaggeredElement(const StaggeredElement& staggeredElement);
 		bool staggeredElementsHaveTheSameVertices(const StaggeredElement& lhs, const StaggeredElement& rhs);
 		std::array<unsigned,2> findStaggeredElements(Vertex* adjacentVertex, Element* element);
+		void organizeStaggeredElements(Element* element, Vertex* adjacentVertex, StaggeredElement*& back, StaggeredElement*& front);
 };
 
 #endif
