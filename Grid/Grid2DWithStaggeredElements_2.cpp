@@ -61,7 +61,7 @@ void Grid2DWithStaggeredElements_2::createFaces(void)
 			std::array<unsigned,2> staggredElementsLocation = this->findStaggeredElements(adjacentVertex, element);
 			StaggeredElement* back = &(this->staggeredElements[staggredElementsLocation[0]]);
 			StaggeredElement* front = &(this->staggeredElements[staggredElementsLocation[1]]);
-			this->organizeStaggeredElements(element, adjacentVertex, back, front);
+			this->organizeStaggeredElementsForFace(element, adjacentVertex, back, front);
 			this->faces.emplace_back( Face(faceIndex, localIndex, *element, *adjacentVertex, *back, *front) );
 			++faceIndex;
 		}
@@ -103,7 +103,7 @@ std::array<unsigned,2> Grid2DWithStaggeredElements_2::findStaggeredElements(Vert
 	return positions;
 }
 
-void Grid2DWithStaggeredElements_2::organizeStaggeredElements(Element* element, Vertex* adjacentVertex, StaggeredElement*& back, StaggeredElement*& front)
+void Grid2DWithStaggeredElements_2::organizeStaggeredElementsForFace(Element* element, Vertex* adjacentVertex, StaggeredElement*& back, StaggeredElement*& front)
 {
 	Eigen::Vector3d areaVector = *adjacentVertex - element->getCentroid();
 		std::swap(areaVector[0],areaVector[1]);

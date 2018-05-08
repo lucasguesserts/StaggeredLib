@@ -107,7 +107,7 @@ TestCase("Organize staggered elements for face creation", "[Grid2DWithStaggeredE
 		{
 			StaggeredElement* front = &grid.staggeredElements[0];
 			StaggeredElement* back = &grid.staggeredElements[2];
-			grid.organizeStaggeredElements(element, vertex, back, front);
+			grid.organizeStaggeredElementsForFace(element, vertex, back, front);
 			check(front==&grid.staggeredElements[2]);
 			check(back==&grid.staggeredElements[0]);
 		}
@@ -115,7 +115,7 @@ TestCase("Organize staggered elements for face creation", "[Grid2DWithStaggeredE
 		{
 			StaggeredElement* front = &grid.staggeredElements[2];
 			StaggeredElement* back = &grid.staggeredElements[0];
-			grid.organizeStaggeredElements(element, vertex, back, front);
+			grid.organizeStaggeredElementsForFace(element, vertex, back, front);
 			check(front==&grid.staggeredElements[2]);
 			check(back==&grid.staggeredElements[0]);
 		}
@@ -128,7 +128,7 @@ TestCase("Organize staggered elements for face creation", "[Grid2DWithStaggeredE
 		{
 			StaggeredElement* front = &grid.staggeredElements[4];
 			StaggeredElement* back = &grid.staggeredElements[3];
-			grid.organizeStaggeredElements(element, vertex, back, front);
+			grid.organizeStaggeredElementsForFace(element, vertex, back, front);
 			check(front==&grid.staggeredElements[3]);
 			check(back==&grid.staggeredElements[4]);
 		}
@@ -136,7 +136,7 @@ TestCase("Organize staggered elements for face creation", "[Grid2DWithStaggeredE
 		{
 			StaggeredElement* front = &grid.staggeredElements[3];
 			StaggeredElement* back = &grid.staggeredElements[4];
-			grid.organizeStaggeredElements(element, vertex, back, front);
+			grid.organizeStaggeredElementsForFace(element, vertex, back, front);
 			check(front==&grid.staggeredElements[3]);
 			check(back==&grid.staggeredElements[4]);
 		}
