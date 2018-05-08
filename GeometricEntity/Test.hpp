@@ -14,6 +14,7 @@
 #include <GeometricEntity/StaggeredTriangle.hpp>
 #include <GeometricEntity/StaggeredQuadrangle.hpp>
 #include <GeometricEntity/Face.hpp>
+#include <GeometricEntity/Face2D.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
 
 bool operator==(const Vertex& lhs, const Vertex& rhs);
@@ -21,6 +22,7 @@ bool operator==(const Element& lhs, const Element& rhs);
 bool operator==(const StaggeredElement& lhs, const StaggeredElement& rhs);
 bool operator==(const StaggeredElement2D& lhs, const StaggeredElement2D& rhs);
 bool operator==(const Face& lhs, const Face& rhs);
+bool operator==(const Face2D& lhs, const Face2D& rhs);
 
 std::ostream& operator<< (std::ostream& os, const Vertex& vertex);
 std::ostream& operator<<(std::ostream& os, const Element& element);

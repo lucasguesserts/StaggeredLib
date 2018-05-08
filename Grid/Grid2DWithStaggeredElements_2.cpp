@@ -23,10 +23,10 @@ void Grid2DWithStaggeredElements_2::createStaggeredElements(void)
 		{
 			Vertex* vertex_0 = element->vertices[vertexLocalIndex];
 			Vertex* vertex_1 = element->vertices[vertexLocalIndex+1];
-			StaggeredElement staggeredElement(staggeredElementIndex, *vertex_1, element, *vertex_0);
+			StaggeredElement2D staggeredElement(staggeredElementIndex, *vertex_1, element, *vertex_0);
 			std::tuple<bool,unsigned> location = this->findStaggeredElement(staggeredElement);
 			if(std::get<bool>(location))
-				this->staggeredElements[std::get<unsigned>(location)].elements.push_back(element);
+				this->staggeredElements[std::get<unsigned>(location)].elements[1] = element;
 			else
 			{
 				this->staggeredElements.push_back(staggeredElement);
@@ -37,10 +37,10 @@ void Grid2DWithStaggeredElements_2::createStaggeredElements(void)
 		{
 			Vertex* vertex_0 = element->vertices[vertexLocalIndex];
 			Vertex* vertex_1 = element->vertices[0];
-			StaggeredElement staggeredElement(staggeredElementIndex, *vertex_1, element, *vertex_0);
+			StaggeredElement2D staggeredElement(staggeredElementIndex, *vertex_1, element, *vertex_0);
 			std::tuple<bool,unsigned> location = this->findStaggeredElement(staggeredElement);
 			if(std::get<bool>(location))
-				this->staggeredElements[std::get<unsigned>(location)].elements.push_back(element);
+				this->staggeredElements[std::get<unsigned>(location)].elements[1] = element;
 			else
 			{
 				this->staggeredElements.push_back(staggeredElement);
@@ -60,10 +60,10 @@ void Grid2DWithStaggeredElements_2::createFaces(void)
 		{
 			Vertex *adjacentVertex = element->vertices[localIndex];
 			std::array<unsigned,2> staggredElementsLocation = this->findStaggeredElements(adjacentVertex, element);
-			StaggeredElement* back = &(this->staggeredElements[staggredElementsLocation[0]]);
-			StaggeredElement* front = &(this->staggeredElements[staggredElementsLocation[1]]);
+			StaggeredElement2D* back = &(this->staggeredElements[staggredElementsLocation[0]]);
+			StaggeredElement2D* front = &(this->staggeredElements[staggredElementsLocation[1]]);
 			this->organizeStaggeredElementsForFace(element, adjacentVertex, back, front);
-			this->faces.emplace_back( Face(faceIndex, localIndex, *element, *adjacentVertex, *back, *front) );
+			this->faces.emplace_back( Face2D(faceIndex, localIndex, *element, *adjacentVertex, *back, *front) );
 			++faceIndex;
 		}
 	}
@@ -104,7 +104,7 @@ std::array<unsigned,2> Grid2DWithStaggeredElements_2::findStaggeredElements(Vert
 	return positions;
 }
 
-void Grid2DWithStaggeredElements_2::organizeStaggeredElementsForFace(Element* element, Vertex* adjacentVertex, StaggeredElement*& back, StaggeredElement*& front)
+void Grid2DWithStaggeredElements_2::organizeStaggeredElementsForFace(Element* element, Vertex* adjacentVertex, StaggeredElement2D*& back, StaggeredElement2D*& front)
 {
 	Eigen::Vector3d areaVector = *adjacentVertex - element->getCentroid();
 		std::swap(areaVector[0],areaVector[1]);
@@ -115,7 +115,7 @@ void Grid2DWithStaggeredElements_2::organizeStaggeredElementsForFace(Element* el
 	return;
 }
 
-std::tuple<bool,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElement(const StaggeredElement& staggeredElement)
+std::tuple<bool,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElement(const StaggeredElement2D& staggeredElement)
 {
 	bool elementExists;
 	unsigned staggeredElementPosition;
@@ -129,7 +129,7 @@ std::tuple<bool,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElement(co
 	return std::make_tuple(elementExists,staggeredElementPosition);
 }
 
-bool Grid2DWithStaggeredElements_2::staggeredElementsHaveTheSameVertices(const StaggeredElement& lhs, const StaggeredElement& rhs)
+bool Grid2DWithStaggeredElements_2::staggeredElementsHaveTheSameVertices(const StaggeredElement2D& lhs, const StaggeredElement2D& rhs)
 {
 	return
 		(lhs.vertices[0]==rhs.vertices[0] && lhs.vertices[1]==rhs.vertices[1])
@@ -139,9 +139,9 @@ bool Grid2DWithStaggeredElements_2::staggeredElementsHaveTheSameVertices(const S
 
 void Grid2DWithStaggeredElements_2::setStaggeredTrianglesAndQuadrangles(void)
 {
-	for(StaggeredElement& staggeredElement: this->staggeredElements)
+	for(StaggeredElement2D& staggeredElement: this->staggeredElements)
 	{
-		if(staggeredElement.elements.size()==1)
+		if(staggeredElement.elements[1]==nullptr)
 			this->staggeredTriangles.push_back(&staggeredElement);
 		else
 			this->staggeredQuadrangles.push_back(&staggeredElement);

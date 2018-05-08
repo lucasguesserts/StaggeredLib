@@ -65,6 +65,17 @@ bool operator==(const Face& lhs, const Face& rhs)
 		lhs.forwardStaggeredElement==rhs.forwardStaggeredElement;
 }
 
+bool operator==(const Face2D& lhs, const Face2D& rhs)
+{
+	return
+		lhs.getIndex()==rhs.getIndex() &&
+		lhs.localIndex==rhs.localIndex &&
+		lhs.parentElement==rhs.parentElement &&
+		lhs.adjacentVertex==rhs.adjacentVertex &&
+		lhs.backwardStaggeredElement==rhs.backwardStaggeredElement &&
+		lhs.forwardStaggeredElement==rhs.forwardStaggeredElement;
+}
+
 std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
 {
 	os << "Vertex{"

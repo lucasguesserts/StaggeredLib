@@ -9,7 +9,7 @@
 #include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
-#include <GeometricEntity/StaggeredElement.hpp>
+#include <GeometricEntity/StaggeredElement2D.hpp>
 
 #include <Grid/Grid2DWithStaggeredElements_2.hpp>
 
@@ -19,7 +19,7 @@ TestCase("staggered elements with the same vertices", "[Grid2DWithStaggeredEleme
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DWithStaggeredElements_2 grid(gridData);
-	std::vector<StaggeredElement> staggeredElements = {
+	std::vector<StaggeredElement2D> staggeredElements = {
 		{14, grid.vertices[0], grid.elements[1], grid.vertices[1]},
 		{14, grid.vertices[0], grid.elements[1], grid.vertices[1]}, //true
 		{29, grid.vertices[0], grid.elements[1], grid.vertices[1]}, //true
@@ -50,7 +50,7 @@ TestCase("Find staggered element in Grid2D", "[Grid2DWithStaggeredElements_2]")
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DWithStaggeredElements_2 grid(gridData);
-	std::vector<StaggeredElement> staggeredElements = {
+	std::vector<StaggeredElement2D> staggeredElements = {
 		{0, grid.vertices[1], grid.elements[0], grid.vertices[0]},
 		{1, grid.vertices[1], grid.elements[0], grid.vertices[0]},
 		{0, grid.vertices[1], grid.elements[1], grid.vertices[0]},
@@ -105,16 +105,16 @@ TestCase("Organize staggered elements for face creation", "[Grid2DWithStaggeredE
 		Element* element = grid.elements[0];
 		section("swap")
 		{
-			StaggeredElement* front = &grid.staggeredElements[0];
-			StaggeredElement* back = &grid.staggeredElements[2];
+			StaggeredElement2D* front = &grid.staggeredElements[0];
+			StaggeredElement2D* back = &grid.staggeredElements[2];
 			grid.organizeStaggeredElementsForFace(element, vertex, back, front);
 			check(front==&grid.staggeredElements[2]);
 			check(back==&grid.staggeredElements[0]);
 		}
 		section("do not swap")
 		{
-			StaggeredElement* front = &grid.staggeredElements[2];
-			StaggeredElement* back = &grid.staggeredElements[0];
+			StaggeredElement2D* front = &grid.staggeredElements[2];
+			StaggeredElement2D* back = &grid.staggeredElements[0];
 			grid.organizeStaggeredElementsForFace(element, vertex, back, front);
 			check(front==&grid.staggeredElements[2]);
 			check(back==&grid.staggeredElements[0]);
@@ -126,16 +126,16 @@ TestCase("Organize staggered elements for face creation", "[Grid2DWithStaggeredE
 		Element* element = grid.elements[1];
 		section("swap")
 		{
-			StaggeredElement* front = &grid.staggeredElements[4];
-			StaggeredElement* back = &grid.staggeredElements[3];
+			StaggeredElement2D* front = &grid.staggeredElements[4];
+			StaggeredElement2D* back = &grid.staggeredElements[3];
 			grid.organizeStaggeredElementsForFace(element, vertex, back, front);
 			check(front==&grid.staggeredElements[3]);
 			check(back==&grid.staggeredElements[4]);
 		}
 		section("do not swap")
 		{
-			StaggeredElement* front = &grid.staggeredElements[3];
-			StaggeredElement* back = &grid.staggeredElements[4];
+			StaggeredElement2D* front = &grid.staggeredElements[3];
+			StaggeredElement2D* back = &grid.staggeredElements[4];
 			grid.organizeStaggeredElementsForFace(element, vertex, back, front);
 			check(front==&grid.staggeredElements[3]);
 			check(back==&grid.staggeredElements[4]);
@@ -174,7 +174,7 @@ TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]
 	}
 	section("staggered elements")
 	{
-		std::vector<StaggeredElement> staggeredElements = {
+		std::vector<StaggeredElement2D> staggeredElements = {
 			{0, grid.vertices[1], grid.elements[0], grid.vertices[0]},
 			{1, grid.vertices[3], grid.elements[0], grid.vertices[1]},
 			{2, grid.vertices[0], grid.elements[0], grid.vertices[3], grid.elements[1]},
@@ -185,7 +185,7 @@ TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]
 	}
 	section("faces")
 	{
-		std::vector<Face> faces = {
+		std::vector<Face2D> faces = {
 			{0, 0, *(grid.elements[0]), grid.vertices[0], grid.staggeredElements[0], grid.staggeredElements[2]},
 			{1, 1, *(grid.elements[0]), grid.vertices[1], grid.staggeredElements[1], grid.staggeredElements[0]},
 			{2, 2, *(grid.elements[0]), grid.vertices[3], grid.staggeredElements[2], grid.staggeredElements[1]},
@@ -197,7 +197,7 @@ TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]
 	}
 	section("staggered triangles")
 	{
-		std::vector<StaggeredElement*> staggeredTriangles = {
+		std::vector<StaggeredElement2D*> staggeredTriangles = {
 			&grid.staggeredElements[0],
 			&grid.staggeredElements[1],
 			&grid.staggeredElements[3],
@@ -207,7 +207,7 @@ TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]
 	}
 	section("staggered quadrangles")
 	{
-		std::vector<StaggeredElement*> staggeredQuadrangles = { &grid.staggeredElements[2] };
+		std::vector<StaggeredElement2D*> staggeredQuadrangles = { &grid.staggeredElements[2] };
 		check(grid.staggeredQuadrangles==staggeredQuadrangles);
 	}
 }
