@@ -7,6 +7,7 @@ Grid2DWithStaggeredElements_2::Grid2DWithStaggeredElements_2(const GridData& gri
 {
 	this->createStaggeredElements();
 	this->createFaces();
+	this->setStaggeredTrianglesAndQuadrangles();
 }
 
 void Grid2DWithStaggeredElements_2::createStaggeredElements(void)
@@ -134,4 +135,16 @@ bool Grid2DWithStaggeredElements_2::staggeredElementsHaveTheSameVertices(const S
 		(lhs.vertices[0]==rhs.vertices[0] && lhs.vertices[1]==rhs.vertices[1])
 		||
 		(lhs.vertices[1]==rhs.vertices[0] && lhs.vertices[0]==rhs.vertices[1]);
+}
+
+void Grid2DWithStaggeredElements_2::setStaggeredTrianglesAndQuadrangles(void)
+{
+	for(StaggeredElement& staggeredElement: this->staggeredElements)
+	{
+		if(staggeredElement.elements.size()==1)
+			this->staggeredTriangles.push_back(&staggeredElement);
+		else
+			this->staggeredQuadrangles.push_back(&staggeredElement);
+	}
+	return;
 }

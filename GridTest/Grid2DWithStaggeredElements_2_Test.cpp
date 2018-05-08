@@ -195,4 +195,19 @@ TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]
 		};
 		check(grid.faces==faces);
 	}
+	section("staggered triangles")
+	{
+		std::vector<StaggeredElement*> staggeredTriangles = {
+			&grid.staggeredElements[0],
+			&grid.staggeredElements[1],
+			&grid.staggeredElements[3],
+			&grid.staggeredElements[4]
+		};
+		check(grid.staggeredTriangles==staggeredTriangles);
+	}
+	section("staggered quadrangles")
+	{
+		std::vector<StaggeredElement*> staggeredQuadrangles = { &grid.staggeredElements[2] };
+		check(grid.staggeredQuadrangles==staggeredQuadrangles);
+	}
 }
