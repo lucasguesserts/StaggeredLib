@@ -1,8 +1,8 @@
-#include <Grid/Grid2DWithStaggeredElements_2.hpp>
+#include <Grid/Grid2DWithStaggeredElements.hpp>
 #include <array>
 #include <stdexcept>
 
-Grid2DWithStaggeredElements_2::Grid2DWithStaggeredElements_2(const GridData& gridData)
+Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridData)
 	: Grid2DVerticesWithNeighborElements(gridData)
 {
 	this->createStaggeredElements();
@@ -11,7 +11,7 @@ Grid2DWithStaggeredElements_2::Grid2DWithStaggeredElements_2(const GridData& gri
 	this->createBoundaries(gridData);
 }
 
-void Grid2DWithStaggeredElements_2::createStaggeredElements(void)
+void Grid2DWithStaggeredElements::createStaggeredElements(void)
 {
 	// TODO: separate in several functions
 	// TODO: add a fucntion to correct the vertices order or show to yourself that this algorithm will never fail!
@@ -51,7 +51,7 @@ void Grid2DWithStaggeredElements_2::createStaggeredElements(void)
 	}
 }
 
-void Grid2DWithStaggeredElements_2::createFaces(void)
+void Grid2DWithStaggeredElements::createFaces(void)
 {
 	unsigned faceIndex = 0;
 	for(Element* element: this->elements)
@@ -70,7 +70,7 @@ void Grid2DWithStaggeredElements_2::createFaces(void)
 	}
 }
 
-std::array<unsigned,2> Grid2DWithStaggeredElements_2::findStaggeredElements(Vertex* adjacentVertex, Element* element)
+std::array<unsigned,2> Grid2DWithStaggeredElements::findStaggeredElements(Vertex* adjacentVertex, Element* element)
 {
 	unsigned staggeredElementPosition, numberOfStaggeredElementsFound = 0;
 	std::array<unsigned,2> positions;
@@ -105,7 +105,7 @@ std::array<unsigned,2> Grid2DWithStaggeredElements_2::findStaggeredElements(Vert
 	return positions;
 }
 
-void Grid2DWithStaggeredElements_2::organizeStaggeredElementsForFace(Element* element, Vertex* adjacentVertex, StaggeredElement2D*& back, StaggeredElement2D*& front)
+void Grid2DWithStaggeredElements::organizeStaggeredElementsForFace(Element* element, Vertex* adjacentVertex, StaggeredElement2D*& back, StaggeredElement2D*& front)
 {
 	Eigen::Vector3d areaVector = *adjacentVertex - element->getCentroid();
 		std::swap(areaVector[0],areaVector[1]);
@@ -116,7 +116,7 @@ void Grid2DWithStaggeredElements_2::organizeStaggeredElementsForFace(Element* el
 	return;
 }
 
-std::tuple<bool,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElement(const StaggeredElement2D& staggeredElement)
+std::tuple<bool,unsigned> Grid2DWithStaggeredElements::findStaggeredElement(const StaggeredElement2D& staggeredElement)
 {
 	bool elementExists;
 	unsigned staggeredElementPosition;
@@ -130,7 +130,7 @@ std::tuple<bool,unsigned> Grid2DWithStaggeredElements_2::findStaggeredElement(co
 	return std::make_tuple(elementExists,staggeredElementPosition);
 }
 
-bool Grid2DWithStaggeredElements_2::staggeredElementsHaveTheSameVertices(const StaggeredElement2D& lhs, const StaggeredElement2D& rhs)
+bool Grid2DWithStaggeredElements::staggeredElementsHaveTheSameVertices(const StaggeredElement2D& lhs, const StaggeredElement2D& rhs)
 {
 	return
 		(lhs.vertices[0]==rhs.vertices[0] && lhs.vertices[1]==rhs.vertices[1])
@@ -138,7 +138,7 @@ bool Grid2DWithStaggeredElements_2::staggeredElementsHaveTheSameVertices(const S
 		(lhs.vertices[1]==rhs.vertices[0] && lhs.vertices[0]==rhs.vertices[1]);
 }
 
-void Grid2DWithStaggeredElements_2::setStaggeredTrianglesAndQuadrangles(void)
+void Grid2DWithStaggeredElements::setStaggeredTrianglesAndQuadrangles(void)
 {
 	for(StaggeredElement2D& staggeredElement: this->staggeredElements)
 	{
@@ -150,14 +150,14 @@ void Grid2DWithStaggeredElements_2::setStaggeredTrianglesAndQuadrangles(void)
 	return;
 }
 
-void Grid2DWithStaggeredElements_2::createBoundaries(const GridData& gridData)
+void Grid2DWithStaggeredElements::createBoundaries(const GridData& gridData)
 {
 	for(const BoundaryDefinition& boundaryDefinition: gridData.boundary)
 		this->boundary[boundaryDefinition.name].staggeredTriangle = this->findStaggeredTrianglesInBoundaryDefinition(boundaryDefinition);
 	return;
 }
 
-std::vector<StaggeredElement2D*> Grid2DWithStaggeredElements_2::findStaggeredTrianglesInBoundaryDefinition(const BoundaryDefinition& boundaryDefinition)
+std::vector<StaggeredElement2D*> Grid2DWithStaggeredElements::findStaggeredTrianglesInBoundaryDefinition(const BoundaryDefinition& boundaryDefinition)
 {
 	const std::vector<unsigned>& lineIndices = boundaryDefinition.elementsIndexList;
 	std::vector<StaggeredElement2D*> boundaryStaggeredTriangles;
@@ -170,14 +170,14 @@ std::vector<StaggeredElement2D*> Grid2DWithStaggeredElements_2::findStaggeredTri
 	return boundaryStaggeredTriangles;
 }
 
-Line& Grid2DWithStaggeredElements_2::findLine(unsigned lineIndex)
+Line& Grid2DWithStaggeredElements::findLine(unsigned lineIndex)
 {
 	for(Line& line: this->lines)
 		if(line.getIndex()==lineIndex) return line;
 	throw std::runtime_error(std::string(__FUNCTION__) + std::string(": not found line with index ") + std::to_string(lineIndex));
 }
 
-StaggeredElement2D* Grid2DWithStaggeredElements_2::findStaggeredTriangle(const Line& line)
+StaggeredElement2D* Grid2DWithStaggeredElements::findStaggeredTriangle(const Line& line)
 {
 	for(StaggeredElement2D* staggeredTriangle: this->staggeredTriangles)
 		if((staggeredTriangle->vertices[0]==line.vertices[0] && staggeredTriangle->vertices[1]==line.vertices[1])

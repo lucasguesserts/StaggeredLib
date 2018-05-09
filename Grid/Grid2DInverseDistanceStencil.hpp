@@ -4,12 +4,12 @@
 #include <vector>
 
 #include <Grid/GridData.hpp>
-#include <Grid/Grid2DWithStaggeredElements_2.hpp>
+#include <Grid/Grid2DWithStaggeredElements.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
 
-class Grid2DInverseDistanceStencil: public Grid2DWithStaggeredElements_2
+class Grid2DInverseDistanceStencil: public Grid2DWithStaggeredElements
 {
 	public:
 		Grid2DInverseDistanceStencil(const GridData& gridData);

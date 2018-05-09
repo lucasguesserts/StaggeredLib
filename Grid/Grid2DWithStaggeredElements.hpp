@@ -10,10 +10,10 @@
 #include <GeometricEntity/Face2D.hpp>
 #include <Grid/Boundary_2.hpp>
 
-class Grid2DWithStaggeredElements_2: public Grid2DVerticesWithNeighborElements
+class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 {
 	public:
-		Grid2DWithStaggeredElements_2(const GridData& gridData);
+		Grid2DWithStaggeredElements(const GridData& gridData);
 		std::vector<StaggeredElement2D> staggeredElements;
 		std::vector<StaggeredElement2D*> staggeredQuadrangles;
 		std::vector<StaggeredElement2D*> staggeredTriangles;

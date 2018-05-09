@@ -2,7 +2,7 @@
 #include <array>
 
 Grid2DInverseDistanceStencil::Grid2DInverseDistanceStencil(const GridData& gridData)
-	: Grid2DWithStaggeredElements_2(gridData)
+	: Grid2DWithStaggeredElements(gridData)
 {}
 
 ScalarStencil Grid2DInverseDistanceStencil::computeScalarStencil(Vertex& vertex)
