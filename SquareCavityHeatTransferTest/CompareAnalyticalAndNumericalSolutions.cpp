@@ -11,10 +11,9 @@
 #include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
-#include <GeometricEntity/StaggeredQuadrangle.hpp>
 #include <Grid/GridData.hpp>
 #include <Grid/Grid2DInverseDistanceStencil_2.hpp>
-#include <Grid/Boundary.hpp>
+#include <Grid/Boundary_2.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
