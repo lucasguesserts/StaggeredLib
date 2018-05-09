@@ -7,7 +7,7 @@
 #include <CGNSFile/CGNSFile.hpp>
 #include <GeometricEntity/Face2D.hpp>
 #include <Grid/GridData.hpp>
-#include <Grid/Grid2DWithStaggeredElements.hpp>
+#include <Grid/Grid2D.hpp>
 
 TestCase("Face2D constructor", "[Face2D]")
 {
