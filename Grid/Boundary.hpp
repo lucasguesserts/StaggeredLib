@@ -1,12 +1,12 @@
-#ifndef BOUNDARY_HPP
-#define BOUNDARY_HPP
+#ifndef BOUNDARY_2_HPP
+#define BOUNDARY_2_HPP
 
 #include <vector>
-#include <GeometricEntity/StaggeredTriangle.hpp>
+#include <GeometricEntity/StaggeredElement2D.hpp>
 
 struct Boundary
 {
-	std::vector<StaggeredTriangle*> staggeredTriangle;
+	std::vector<StaggeredElement2D*> staggeredTriangle;
 };
 
 #endif

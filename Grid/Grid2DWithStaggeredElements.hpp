@@ -8,7 +8,7 @@
 #include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
 #include <GeometricEntity/Face2D.hpp>
-#include <Grid/Boundary_2.hpp>
+#include <Grid/Boundary.hpp>
 
 class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 {
@@ -18,7 +18,7 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		std::vector<StaggeredElement2D*> staggeredQuadrangles;
 		std::vector<StaggeredElement2D*> staggeredTriangles;
 		std::vector<Face2D> faces;
-		std::map<std::string,Boundary_2> boundary;
+		std::map<std::string,Boundary> boundary;
 
 		void createStaggeredElements(void);
 		void createFaces(void);
