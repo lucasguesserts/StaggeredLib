@@ -2,9 +2,9 @@
 #define DIRICHLET_BOUNDARY_CONDITION_HPP
 
 #include <vector>
-#include <Grid/Boundary.hpp>
+#include <Grid/Boundary_2.hpp>
 
-struct DirichletBoundaryCondition: public Boundary
+struct DirichletBoundaryCondition: public Boundary_2
 {
 	std::vector<double> prescribedValue;
 };

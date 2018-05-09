@@ -2,7 +2,7 @@
 #include <string>
 #include <Eigen/Core>
 #include <Grid/GridData.hpp>
-#include <Grid/Grid2DInverseDistanceStencil.hpp>
+#include <Grid/Grid2DInverseDistanceStencil_2.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
 
@@ -12,13 +12,13 @@ class SquareCavityHeatTransfer
 		SquareCavityHeatTransfer(const GridData& gridData);
 		void addAccumulationTerm(void);
 		void addDiffusiveTerm(void);
-		void addDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle);
+		void addDiffusiveTerm(StaggeredElement2D& staggeredQuadrangle);
 
 		static Eigen::VectorXd computeAnalyticalSolution(const Eigen::Matrix<double,Eigen::Dynamic,3> coordinates);
 
 		double rho, cp, k;
 		double timeInterval, timeImplicitCoefficient;
-		Grid2DInverseDistanceStencil grid2D;
+		Grid2DInverseDistanceStencil_2 grid2D;
 		EigenLinearSystem linearSystem;
 		Eigen::VectorXd oldTemperature;
 		Eigen::VectorXd temperature;
@@ -27,7 +27,7 @@ class SquareCavityHeatTransfer
 
 		void applyBoundaryConditions(void);
 		void applyBoundaryCondition(DirichletBoundaryCondition& dirichlet);
-		void applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredTriangle& staggeredTriangle, const double prescribedValue);
+		void applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredElement2D& staggeredTriangle, const double prescribedValue);
 
 		Eigen::VectorXd nextTimeStep(void);
 
@@ -35,5 +35,5 @@ class SquareCavityHeatTransfer
 		void initializeLinearSystem(void);
 		void initializeTemperatureVectors(void);
 		void initializeScalarStencilOnVertices(void);
-		ScalarStencil computeDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle); //areaVector * k * timeInterval * gradientScalarStencil
+		ScalarStencil computeDiffusiveTerm(StaggeredElement2D& staggeredQuadrangle); //areaVector * k * timeInterval * gradientScalarStencil
 };

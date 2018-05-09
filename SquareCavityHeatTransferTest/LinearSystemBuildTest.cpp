@@ -5,9 +5,9 @@
 #include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
-#include <GeometricEntity/StaggeredQuadrangle.hpp>
+#include <GeometricEntity/StaggeredElement2D.hpp>
 #include <Grid/GridData.hpp>
-#include <Grid/Grid2DInverseDistanceStencil.hpp>
+#include <Grid/Grid2DInverseDistanceStencil_2.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
 
@@ -142,7 +142,7 @@ TestCase("Add diffusive term all staggered elements", "[SquareCavityHeatTransfer
 	check(problem.linearSystem.matrix==matrix);
 	// diffusive term
 	for(auto& staggeredQuadrangle: problem.grid2D.staggeredQuadrangles)
-		problem.addDiffusiveTerm(staggeredQuadrangle);
+		problem.addDiffusiveTerm(*staggeredQuadrangle);
 	Eigen::VectorXd independent(numberOfElements);
 	matrix << 23.55, -11.55,
 	          -11.55, 23.55;

@@ -61,11 +61,11 @@ Eigen::VectorXd SquareCavityHeatTransfer::computeAnalyticalSolution(const Eigen:
 void SquareCavityHeatTransfer::addDiffusiveTerm(void)
 {
 	for(auto& staggeredQuadrangle: this->grid2D.staggeredQuadrangles)
-		addDiffusiveTerm(staggeredQuadrangle);
+		addDiffusiveTerm(*staggeredQuadrangle);
 	return;
 }
 
-void SquareCavityHeatTransfer::addDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle)
+void SquareCavityHeatTransfer::addDiffusiveTerm(StaggeredElement2D& staggeredQuadrangle)
 {
 	const unsigned frontElementIndex = staggeredQuadrangle.elements[0]->getIndex();
 	const unsigned backElementIndex = staggeredQuadrangle.elements[1]->getIndex();
@@ -81,7 +81,7 @@ void SquareCavityHeatTransfer::addDiffusiveTerm(StaggeredQuadrangle& staggeredQu
 	return;
 }
 
-ScalarStencil SquareCavityHeatTransfer::computeDiffusiveTerm(StaggeredQuadrangle& staggeredQuadrangle)
+ScalarStencil SquareCavityHeatTransfer::computeDiffusiveTerm(StaggeredElement2D& staggeredQuadrangle)
 {
 	Eigen::Vector3d areaVector = staggeredQuadrangle.getAreaVector();
 	VectorStencil gradient = this->grid2D.computeVectorStencilOnQuadrangle(staggeredQuadrangle,this->scalarStencilOnVertices);
@@ -101,7 +101,7 @@ void SquareCavityHeatTransfer::applyBoundaryCondition(DirichletBoundaryCondition
 		this->applyDirichletBoundaryConditionInStaggeredTriangle(*(dirichlet.staggeredTriangle[i]), dirichlet.prescribedValue[i]);
 }
 
-void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredTriangle& staggeredTriangle, const double prescribedValue)
+void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredElement2D& staggeredTriangle, const double prescribedValue)
 {
 	// TODO: simplify this function
 	const unsigned elementIndex = staggeredTriangle.elements[0]->getIndex();
