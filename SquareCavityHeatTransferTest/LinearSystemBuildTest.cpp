@@ -7,7 +7,7 @@
 #include <Stencil/VectorStencil.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
 #include <Grid/GridData.hpp>
-#include <Grid/Grid2DInverseDistanceStencil_2.hpp>
+#include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
 

@@ -9,10 +9,10 @@
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
 
-class Grid2DInverseDistanceStencil_2: public Grid2DWithStaggeredElements_2
+class Grid2DInverseDistanceStencil: public Grid2DWithStaggeredElements_2
 {
 	public:
-		Grid2DInverseDistanceStencil_2(const GridData& gridData);
+		Grid2DInverseDistanceStencil(const GridData& gridData);
 		ScalarStencil computeScalarStencil(Vertex& vertex);
 		std::vector<ScalarStencil> computeScalarStencilOnVertices(void);
 		VectorStencil computeVectorStencilOnQuadrangle(StaggeredElement2D& staggeredQuadrangle, std::vector<ScalarStencil>& scalarStencilOnVertices);

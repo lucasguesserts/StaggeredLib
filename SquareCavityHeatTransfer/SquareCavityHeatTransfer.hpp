@@ -2,7 +2,7 @@
 #include <string>
 #include <Eigen/Core>
 #include <Grid/GridData.hpp>
-#include <Grid/Grid2DInverseDistanceStencil_2.hpp>
+#include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
 
@@ -18,7 +18,7 @@ class SquareCavityHeatTransfer
 
 		double rho, cp, k;
 		double timeInterval, timeImplicitCoefficient;
-		Grid2DInverseDistanceStencil_2 grid2D;
+		Grid2DInverseDistanceStencil grid2D;
 		EigenLinearSystem linearSystem;
 		Eigen::VectorXd oldTemperature;
 		Eigen::VectorXd temperature;

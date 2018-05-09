@@ -12,7 +12,7 @@
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
 #include <Grid/GridData.hpp>
-#include <Grid/Grid2DInverseDistanceStencil_2.hpp>
+#include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/Boundary_2.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
