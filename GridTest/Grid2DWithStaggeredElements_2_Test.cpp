@@ -211,3 +211,115 @@ TestCase("Grid2DWithStaggeredElements_2 build", "[Grid2DWithStaggeredElements_2]
 		check(grid.staggeredQuadrangles==staggeredQuadrangles);
 	}
 }
+
+TestCase("Find staggered triangles in a boundary definition - version 2", "[Grid2DWithStaggeredElements_2]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements_2 grid(gridData);
+	section("bottom")
+	{
+		std::string boundaryName = "bottom boundary";
+		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[0], grid.staggeredTriangles[2]};
+		check(staggeredTraingles==grid.findStaggeredTrianglesInBoundaryDefinition(gridData.getBoundaryDefinition(boundaryName)));
+	}
+	section("top")
+	{
+		std::string boundaryName = "top boundary";
+		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[4], grid.staggeredTriangles[7]};
+		check(staggeredTraingles==grid.findStaggeredTrianglesInBoundaryDefinition(gridData.getBoundaryDefinition(boundaryName)));
+	}
+	section("west")
+	{
+		std::string boundaryName = "west boundary";
+		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[1], grid.staggeredTriangles[5]};
+		check(staggeredTraingles==grid.findStaggeredTrianglesInBoundaryDefinition(gridData.getBoundaryDefinition(boundaryName)));
+	}
+	section("east")
+	{
+		std::string boundaryName = "east boundary";
+		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[3], grid.staggeredTriangles[6]};
+		check(staggeredTraingles==grid.findStaggeredTrianglesInBoundaryDefinition(gridData.getBoundaryDefinition(boundaryName)));
+	}
+}
+
+TestCase("Find line - version 2", "[Grid2DWithStaggeredElements_2]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements_2 grid(gridData);
+	check(&grid.lines[0]==&grid.findLine(6));
+	check(&grid.lines[1]==&grid.findLine(7));
+	check(&grid.lines[2]==&grid.findLine(8));
+	check(&grid.lines[3]==&grid.findLine(9));
+	check(&grid.lines[4]==&grid.findLine(10));
+	check(&grid.lines[5]==&grid.findLine(11));
+	check(&grid.lines[6]==&grid.findLine(12));
+	check(&grid.lines[7]==&grid.findLine(13));
+}
+
+TestCase("Find staggered triangle using line - version 2", "[Grid2DWithStaggeredElements_2]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements_2 grid(gridData);
+	section("bottom")
+	{
+		check(grid.findStaggeredTriangle(grid.lines[0])==grid.staggeredTriangles[0]);
+		check(grid.findStaggeredTriangle(grid.lines[1])==grid.staggeredTriangles[2]);
+	}
+	section("top")
+	{
+		check(grid.findStaggeredTriangle(grid.lines[2])==grid.staggeredTriangles[4]);
+		check(grid.findStaggeredTriangle(grid.lines[3])==grid.staggeredTriangles[7]);
+	}
+	section("west")
+	{
+		check(grid.findStaggeredTriangle(grid.lines[4])==grid.staggeredTriangles[1]);
+		check(grid.findStaggeredTriangle(grid.lines[5])==grid.staggeredTriangles[5]);
+	}
+	section("east")
+	{
+		check(grid.findStaggeredTriangle(grid.lines[6])==grid.staggeredTriangles[3]);
+		check(grid.findStaggeredTriangle(grid.lines[7])==grid.staggeredTriangles[6]);
+	}
+}
+
+TestCase("Staggered triangle boundary - version 2", "[Grid2DWithStaggeredElements_2]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DWithStaggeredElements_2 grid(gridData);
+	section("bottom")
+	{
+		std::string boundaryName = "bottom boundary";
+		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[0], grid.staggeredTriangles[2]};
+		std::vector<StaggeredElement2D*>& boundaryStaggeredTriangles = grid.boundary[boundaryName].staggeredTriangle;
+		check(boundaryStaggeredTriangles==staggeredTraingles);
+	}
+	section("top")
+	{
+		std::string boundaryName = "top boundary";
+		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[4], grid.staggeredTriangles[7]};
+		std::vector<StaggeredElement2D*>& boundaryStaggeredTriangles = grid.boundary[boundaryName].staggeredTriangle;
+		check(boundaryStaggeredTriangles==staggeredTraingles);
+	}
+	section("west")
+	{
+		std::string boundaryName = "west boundary";
+		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[1], grid.staggeredTriangles[5]};
+		std::vector<StaggeredElement2D*>& boundaryStaggeredTriangles = grid.boundary[boundaryName].staggeredTriangle;
+		check(boundaryStaggeredTriangles==staggeredTraingles);
+	}
+	section("east")
+	{
+		std::string boundaryName = "east boundary";
+		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[3], grid.staggeredTriangles[6]};
+		std::vector<StaggeredElement2D*>& boundaryStaggeredTriangles = grid.boundary[boundaryName].staggeredTriangle;
+		check(boundaryStaggeredTriangles==staggeredTraingles);
+	}
+}
