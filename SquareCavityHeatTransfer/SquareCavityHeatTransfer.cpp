@@ -88,26 +88,6 @@ ScalarStencil SquareCavityHeatTransfer::computeDiffusiveTerm(StaggeredQuadrangle
 	return areaVector * this->k * this->timeInterval * gradient;
 }
 
-void SquareCavityHeatTransfer::addDiffusiveTerm(StaggeredTriangle& staggeredTriangle)
-{
-	const unsigned elementIndex = staggeredTriangle.elements[0]->getIndex();
-	ScalarStencil diffusiveTerm = this->computeDiffusiveTerm(staggeredTriangle);
-	// matrix
-	ScalarStencil matrixDiffusiveTerm = this->timeImplicitCoefficient * diffusiveTerm;
-	this->linearSystem.addScalarStencil(elementIndex, matrixDiffusiveTerm);
-	// independent
-	double independentDiffusiveTerm = (1-this->timeImplicitCoefficient) * diffusiveTerm * this->oldTemperature;
-	this->linearSystem.independent[elementIndex] += - independentDiffusiveTerm;
-	return;
-}
-
-ScalarStencil SquareCavityHeatTransfer::computeDiffusiveTerm(StaggeredTriangle& staggeredTriangle)
-{
-	Eigen::Vector3d areaVector = staggeredTriangle.getAreaVector();
-	VectorStencil gradient = this->grid2D.computeVectorStencilOnTriangle(staggeredTriangle,this->scalarStencilOnVertices);
-	return areaVector * this->k * this->timeInterval * gradient;
-}
-
 void SquareCavityHeatTransfer::applyBoundaryConditions(void)
 {
 	for(auto& dirichlet: this->dirichletBoundaries)

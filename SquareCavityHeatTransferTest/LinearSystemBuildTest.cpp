@@ -143,12 +143,10 @@ TestCase("Add diffusive term all staggered elements", "[SquareCavityHeatTransfer
 	// diffusive term
 	for(auto& staggeredQuadrangle: problem.grid2D.staggeredQuadrangles)
 		problem.addDiffusiveTerm(staggeredQuadrangle);
-	for(auto& staggeredTriangle: problem.grid2D.staggeredTriangles)
-		problem.addDiffusiveTerm(staggeredTriangle);
 	Eigen::VectorXd independent(numberOfElements);
-	matrix << 27.4, -15.4,
-	          -15.4, 27.4;
-	independent << 182.4, 177.6;
+	matrix << 23.55, -11.55,
+	          -11.55, 23.55;
+	independent << 175.8, 184.2;
 	check(problem.linearSystem.matrix==matrix);
 	check(problem.linearSystem.independent==independent);
 }
