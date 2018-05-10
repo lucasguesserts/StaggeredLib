@@ -4,6 +4,7 @@
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>
+#include <Stencil/VectorStencil.hpp>
 
 class FacetCenterHeatTransfer
 {

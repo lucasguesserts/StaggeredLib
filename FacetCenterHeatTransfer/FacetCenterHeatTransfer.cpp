@@ -1,4 +1,5 @@
 #include <FacetCenterHeatTransfer/FacetCenterHeatTransfer.hpp>
+#include <stdexcept>
 
 FacetCenterHeatTransfer::FacetCenterHeatTransfer(const GridData& gridData)
 	: grid2D(gridData)
@@ -52,6 +53,13 @@ std::vector<ScalarStencil> FacetCenterHeatTransfer::getScalarStencilOnElementVer
 
 VectorStencil operator*(Eigen::MatrixXd gradientMatrix, std::vector<ScalarStencil> scalarStencilOnElementVertices)
 {
-	// TODO: complete it.
-	return VectorStencil{ {0,{0.0,0.0,0.0}} };
+	VectorStencil result;
+	if(gradientMatrix.cols()!=static_cast<unsigned>(scalarStencilOnElementVertices.size()))
+		throw std::runtime_error("Class FacetCenterHeatTransfer: gradientMatrix and scalarStencilOnElementVertices with incompatible sizes.");
+	const unsigned numberOfColumns = gradientMatrix.cols();
+	for(unsigned column=0 ; column<numberOfColumns ; ++column)
+	{
+		result = result + scalarStencilOnElementVertices[column] * Eigen::Vector3d(gradientMatrix.block(0,column,3,1));
+	}
+	return result;
 }
