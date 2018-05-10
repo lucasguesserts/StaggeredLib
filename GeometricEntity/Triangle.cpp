@@ -1,5 +1,11 @@
 #include <GeometricEntity/Triangle.hpp>
 
+const std::array<Eigen::Vector3d,3> Triangle::staggeredElementFaceCentroidLocalIndex = {{
+			{1.0/6.0, 1.0/6.0, 0.0},
+			{2.0/3.0, 1.0/6.0, 0.0},
+			{1.0/6.0, 2.0/3.0, 0.0}
+}};
+
 Eigen::Vector3d Triangle::getCentroid(void)
 {
 	Eigen::Vector3d centroid = Eigen::Vector3d::Zero();

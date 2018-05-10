@@ -1,5 +1,12 @@
 #include <GeometricEntity/Quadrangle.hpp>
 
+const std::array<Eigen::Vector3d,4> Quadrangle::staggeredElementFaceCentroidLocalIndex = {{
+			{1.0/4.0, 1.0/4.0, 0.0},
+			{3.0/4.0, 1.0/4.0, 0.0},
+			{1.0/4.0, 3.0/4.0, 0.0},
+			{3.0/4.0, 3.0/4.0, 0.0}
+}};
+
 Eigen::Vector3d Quadrangle::getCentroid(void)
 {
 	Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
