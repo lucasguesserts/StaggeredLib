@@ -46,9 +46,10 @@ Eigen::MatrixXd FacetCenterHeatTransfer::computeGradientMatrix(Face2D& face)
 
 std::vector<ScalarStencil> FacetCenterHeatTransfer::getScalarStencilOnElementVertices(Face2D& face)
 {
-	const unsigned numberOfVertices = face.parentElement->vertices.size();
-	// TODO: complete it.
-	return std::vector<ScalarStencil>{ {{0, numberOfVertices/3.14156535898}} };
+	std::vector<ScalarStencil> scalarStencilOnElementVertices;
+	for(auto vertex: face.parentElement->vertices)
+		scalarStencilOnElementVertices.push_back( this->scalarStencilOnVertices[vertex->getIndex()] );
+	return scalarStencilOnElementVertices;
 }
 
 VectorStencil operator*(Eigen::MatrixXd gradientMatrix, std::vector<ScalarStencil> scalarStencilOnElementVertices)
