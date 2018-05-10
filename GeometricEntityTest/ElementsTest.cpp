@@ -131,6 +131,14 @@ TestCase("Triangle", "[Element][Triangle]")
 		}
 		check(triangle.getPositionsMatrix()==positionsMatrix);
 	}
+	section("gradient matrix")
+	{
+		Eigen::MatrixXd gradientMatrix(3,numberOfVertices);
+		gradientMatrix <<  0.105263157894737, 0.052631578947368, -0.157894736842105,
+		                  -0.092105263157895, 0.078947368421053,  0.013157894736842,
+		                   0.000000000000000, 0.000000000000000,  0.000000000000000;
+		check(triangle.getGradientMatrix2D(localCoordinates)==gradientMatrix);
+	}
 }
 
 TestCase("Line operator==", "[Line]")
@@ -245,6 +253,14 @@ TestCase("Quadrangle", "[Element][Quadrangle]")
 			positionsMatrix(2,vertex) = vertices[vertex].coeff(2);
 		}
 		check(quadrangle.getPositionsMatrix()==positionsMatrix);
+	}
+	section("gradient matrix")
+	{
+		Eigen::MatrixXd gradientMatrix(3,numberOfVertices);
+		gradientMatrix << -0.365853658536585,  0.463414634146341, 0.170731707317073, -0.268292682926829,
+		                  -0.048780487804878, -0.054878048780488, 0.006097560975610,  0.097560975609756,
+		                   0.000000000000000,  0.000000000000000, 0.000000000000000,  0.000000000000000;
+		check(quadrangle.getGradientMatrix2D(localCoordinates)==gradientMatrix);
 	}
 }
 

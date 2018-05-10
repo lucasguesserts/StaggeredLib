@@ -19,7 +19,7 @@ class Element: public Entity
 
 		virtual Eigen::VectorXd getShapeFunctionValues(const Eigen::Vector3d localCoordinates) = 0;
 		virtual Eigen::MatrixXd getShapeFunctionDerivatives(const Eigen::Vector3d localCoordinates) = 0;
-		Eigen::MatrixXd getGradientMatrix(const Eigen::Vector3d& localCoordinates);
+		Eigen::MatrixXd getGradientMatrix2D(const Eigen::Vector3d& localCoordinates);
 		Eigen::MatrixXd getPositionsMatrix(void);
 
 };
