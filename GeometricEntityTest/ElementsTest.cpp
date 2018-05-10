@@ -1,6 +1,7 @@
 #include <Utils/Test.hpp>
 #include <vector>
 
+#include <Utils/EigenTest.hpp>
 #include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
@@ -24,6 +25,7 @@ TestCase("Line", "[Element][Line]")
 	std::vector<Vertex> vertices;
 		vertices.push_back(Vertex(2.0, -5.0, 0.0, 0));
 		vertices.push_back(Vertex(3.0,  7.0, 0.0, 1));
+	const Eigen::Vector3d localCoordinates(0.4, 0.0, 0.0);
 	Line line;
 	for(Vertex& vertex: vertices)
 		line.addVertex(vertex);
@@ -46,6 +48,32 @@ TestCase("Line", "[Element][Line]")
 		const double volume = 12.04159458; // the length
 		check(line.getVolume()==Approx(volume));
 	}
+	section("Shape function values")
+	{
+		Eigen::VectorXd shapeFunctionValues(2);
+		shapeFunctionValues << 0.6, 0.4;
+		check(line.getShapeFunctionValues(localCoordinates)==shapeFunctionValues);
+	}
+	section("Shape function derivatives")
+	{
+		const unsigned numberOfRows = 2;
+		const unsigned numberOfColumns = 3;
+		Eigen::MatrixXd shapeFunctionDerivatives(numberOfRows, numberOfColumns);
+			shapeFunctionDerivatives << -1.0, 0.0, 0.0,
+		                                 1.0, 0.0, 0.0;
+		check(line.getShapeFunctionDerivatives(localCoordinates)==shapeFunctionDerivatives);
+	}
+	section("positions matrix")
+	{
+		Eigen::MatrixXd positionsMatrix(3,numberOfVertices);
+		for(unsigned vertex=0 ; vertex<numberOfVertices ; ++vertex)
+		{
+			positionsMatrix(0,vertex) = vertices[vertex].coeff(0);
+			positionsMatrix(1,vertex) = vertices[vertex].coeff(1);
+			positionsMatrix(2,vertex) = vertices[vertex].coeff(2);
+		}
+		check(line.getPositionsMatrix()==positionsMatrix);
+	}
 }
 
 TestCase("Triangle", "[Element][Triangle]")
@@ -55,6 +83,7 @@ TestCase("Triangle", "[Element][Triangle]")
 		vertices.push_back(Vertex(2.0, -5.0, 3.0, 0));
 		vertices.push_back(Vertex(3.0, 7.0, -2.0, 1));
 		vertices.push_back(Vertex(-4.0, -1.0, 6.0, 2));
+	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Triangle triangle;
 	for(Vertex& vertex: vertices)
 		triangle.addVertex(vertex);
@@ -76,6 +105,31 @@ TestCase("Triangle", "[Element][Triangle]")
 	{
 		const double volume = 49.09429702; // the area
 		check(triangle.getVolume()==Approx(volume));
+	}
+	section("Shape function values")
+	{
+		Eigen::VectorXd shapeFunctionValues(3);
+		shapeFunctionValues << 0.5, 0.2, 0.3;
+		check(triangle.getShapeFunctionValues(localCoordinates)==shapeFunctionValues);
+	}
+	section("Shape function derivatives")
+	{
+		Eigen::MatrixXd shapeFunctionDerivatives(3,3);
+		shapeFunctionDerivatives << -1.0, -1.0, 0.0,
+									 1.0,  0.0, 0.0,
+									 0.0,  1.0, 0.0;
+		check(triangle.getShapeFunctionDerivatives(localCoordinates)==shapeFunctionDerivatives);
+	}
+	section("positions matrix")
+	{
+		Eigen::MatrixXd positionsMatrix(3,numberOfVertices);
+		for(unsigned vertex=0 ; vertex<numberOfVertices ; ++vertex)
+		{
+			positionsMatrix(0,vertex) = vertices[vertex].coeff(0);
+			positionsMatrix(1,vertex) = vertices[vertex].coeff(1);
+			positionsMatrix(2,vertex) = vertices[vertex].coeff(2);
+		}
+		check(triangle.getPositionsMatrix()==positionsMatrix);
 	}
 }
 
@@ -140,6 +194,7 @@ TestCase("Quadrangle", "[Element][Quadrangle]")
 		vertices.push_back(Vertex( 4.0, -1.0,  6.0, 1));
 		vertices.push_back(Vertex( 4.0,  3.0,  3.4, 2));
 		vertices.push_back(Vertex( 3.0,  7.0, -2.0, 3));
+	const Eigen::Vector3d localCoordinates(0.2, 0.3, 0.0);
 	Quadrangle quadrangle;
 	for(Vertex& vertex: vertices)
 		quadrangle.addVertex(vertex);
@@ -163,6 +218,33 @@ TestCase("Quadrangle", "[Element][Quadrangle]")
 	{
 		const double volume = 36.5212267044797; // the area
 		check(quadrangle.getVolume()==Approx(volume));
+	}
+
+	section("Shape function values")
+	{
+		Eigen::VectorXd shapeFunctionValues(4);
+		shapeFunctionValues << 0.56, 0.14, 0.06, 0.24;
+		check(quadrangle.getShapeFunctionValues(localCoordinates)==shapeFunctionValues);
+	}
+	section("Shape function derivatives")
+	{
+		Eigen::MatrixXd shapeFunctionDerivatives(4, 3);
+		shapeFunctionDerivatives << -0.7, -0.8, 0.0,
+									0.7, -0.2, 0.0,
+									0.3,  0.2, 0.0,
+									-0.3,  0.8, 0.0;
+		check(quadrangle.getShapeFunctionDerivatives(localCoordinates)==shapeFunctionDerivatives);
+	}
+	section("positions matrix")
+	{
+		Eigen::MatrixXd positionsMatrix(3,numberOfVertices);
+		for(unsigned vertex=0 ; vertex<numberOfVertices ; ++vertex)
+		{
+			positionsMatrix(0,vertex) = vertices[vertex].coeff(0);
+			positionsMatrix(1,vertex) = vertices[vertex].coeff(1);
+			positionsMatrix(2,vertex) = vertices[vertex].coeff(2);
+		}
+		check(quadrangle.getPositionsMatrix()==positionsMatrix);
 	}
 }
 

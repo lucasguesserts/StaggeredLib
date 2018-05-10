@@ -19,3 +19,27 @@ double Quadrangle::getVolume(void)
 {
 	return this->getAreaVector().norm();
 }
+
+Eigen::VectorXd Quadrangle::getShapeFunctionValues(const Eigen::Vector3d localCoordinates)
+{
+	const double xi = localCoordinates[0];
+	const double eta = localCoordinates[1];
+	Eigen::VectorXd shapeFunctionValues(4);
+	shapeFunctionValues[0] = (1-xi)*(1-eta);
+	shapeFunctionValues[1] = xi*(1-eta);
+	shapeFunctionValues[2] = xi*eta;
+	shapeFunctionValues[3] = (1-xi)*eta;
+	return shapeFunctionValues;
+}
+
+Eigen::MatrixXd Quadrangle::getShapeFunctionDerivatives(const Eigen::Vector3d localCoordinates)
+{
+	const double xi = localCoordinates[0];
+	const double eta = localCoordinates[1];
+	Eigen::MatrixXd shapeFunctionDerivatives(4,3);
+	shapeFunctionDerivatives << (eta-1), (xi-1), 0,
+	                            (1-eta), -xi,    0,
+	                             eta,     xi,    0,
+	                            -eta,    (1-xi), 0;
+	return shapeFunctionDerivatives;
+}
