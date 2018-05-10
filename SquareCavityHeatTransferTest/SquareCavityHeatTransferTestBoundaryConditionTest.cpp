@@ -10,7 +10,7 @@
 #include <Grid/Boundary.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
-#include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
+#include <LinearSystem/EigenLinearSystem.hpp>
 
 TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavityHeatTransfer]")
 {

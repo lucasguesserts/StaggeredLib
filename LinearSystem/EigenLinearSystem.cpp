@@ -1,4 +1,4 @@
-#include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
+#include <LinearSystem/EigenLinearSystem.hpp>
 #include <Eigen/LU>
 
 void EigenLinearSystem::setSize(const unsigned size)

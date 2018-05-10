@@ -4,7 +4,7 @@
 #include <Grid/GridData.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
-#include <SquareCavityHeatTransfer/EigenLinearSystem.hpp>
+#include <LinearSystem/EigenLinearSystem.hpp>
 
 class SquareCavityHeatTransfer
 {
