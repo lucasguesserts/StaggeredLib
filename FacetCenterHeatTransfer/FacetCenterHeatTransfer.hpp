@@ -26,7 +26,6 @@ class FacetCenterHeatTransfer
 
 	private:
 		void initializeLinearSystem(void);
-		void initializeTemperatureVectors(void);
 		void initializeScalarStencilOnVertices(void);
 		void initializeGradientOnFaces(void);
 };
