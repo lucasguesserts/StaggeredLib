@@ -195,6 +195,16 @@ TestCase("Grid2DWithStaggeredElements build", "[Grid2DWithStaggeredElements]")
 		};
 		check(grid.faces==faces);
 	}
+	section("vertices neighbor faces")
+	{
+		std::vector<std::vector<Face2D*>> verticesNeighborFaces = {
+			{&grid.faces[0], &grid.faces[3]},
+			{&grid.faces[1]},
+			{&grid.faces[5]},
+			{&grid.faces[2], &grid.faces[4]}
+		};
+		check(grid.verticesNeighborFaces==verticesNeighborFaces);
+	}
 	section("staggered triangles")
 	{
 		std::vector<StaggeredElement2D*> staggeredTriangles = {

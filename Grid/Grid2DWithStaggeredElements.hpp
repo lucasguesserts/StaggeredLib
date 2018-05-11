@@ -17,6 +17,7 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		std::vector<StaggeredElement2D> staggeredElements;
 		std::vector<StaggeredElement2D*> staggeredQuadrangles;
 		std::vector<StaggeredElement2D*> staggeredTriangles;
+		std::vector<std::vector<Face2D*>> verticesNeighborFaces;
 		std::vector<Face2D> faces;
 		std::map<std::string,Boundary> boundary;
 
@@ -32,6 +33,8 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		std::vector<StaggeredElement2D*> findStaggeredTrianglesInBoundaryDefinition(const BoundaryDefinition& boundaryDefinition);
 		Line& findLine(unsigned lineIndex);
 		StaggeredElement2D* findStaggeredTriangle(const Line& line);
+
+		void setVerticesNeighborFaces(void);
 };
 
 #endif

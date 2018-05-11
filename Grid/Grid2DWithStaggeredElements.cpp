@@ -7,6 +7,7 @@ Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridDat
 {
 	this->createStaggeredElements();
 	this->createFaces();
+	this->setVerticesNeighborFaces();
 	this->setStaggeredTrianglesAndQuadrangles();
 	this->createBoundaries(gridData);
 }
@@ -185,4 +186,16 @@ StaggeredElement2D* Grid2DWithStaggeredElements::findStaggeredTriangle(const Lin
 		   (staggeredTriangle->vertices[1]==line.vertices[0] && staggeredTriangle->vertices[0]==line.vertices[1]))
 		   { return staggeredTriangle; }
 	throw std::runtime_error(std::string(__FUNCTION__) + std::string(": not found StaggeredElement2D associated with line ") + std::to_string(line.getIndex()));
+}
+
+void Grid2DWithStaggeredElements::setVerticesNeighborFaces(void)
+{
+	const unsigned numberOfVertices = this->vertices.size();
+	this->verticesNeighborFaces.resize(numberOfVertices);
+	for(auto& face: this->faces)
+	{
+		const unsigned vertexIndex = face.adjacentVertex->getIndex();
+		this->verticesNeighborFaces[vertexIndex].push_back(&face);
+	}
+	return;
 }
