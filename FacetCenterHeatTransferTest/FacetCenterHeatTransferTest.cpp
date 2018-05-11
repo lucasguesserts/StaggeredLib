@@ -82,7 +82,7 @@ TestCase("Facet center method - gradient on faces", "[FacetCenterHeatTransfer]")
 	section("triangle 1")
 	{
 		VectorStencil gradientOnTriangle = {
-			{ 0 , { auxuliarValue[2]-auxuliarValue[0], -auxuliarValue[0],                  0.0} },
+			{ 0 , { auxuliarValue[2]-auxuliarValue[0], -auxuliarValue[2],                  0.0} },
 			{ 1 , { auxuliarValue[2],                   auxuliarValue[0]-auxuliarValue[2], 0.0} },
 			{ 2 , {-auxuliarValue[1],                   auxuliarValue[1],                  0.0} },
 			{ 3 , { 0.0,                                auxuliarValue[0],                  0.0} },
@@ -96,7 +96,7 @@ TestCase("Facet center method - gradient on faces", "[FacetCenterHeatTransfer]")
 		VectorStencil gradientOnTriangle = {
 			{ 0 , { 0.0,                               -auxuliarValue[0],                  0.0} },
 			{ 1 , { auxuliarValue[0],                   0.0,                               0.0} },
-			{ 2 , { auxuliarValue[2],                  -auxuliarValue[2],                  0.0} },
+			{ 2 , { auxuliarValue[1],                  -auxuliarValue[1],                  0.0} },
 			{ 3 , { auxuliarValue[0]-auxuliarValue[2],  auxuliarValue[2],                  0.0} },
 			{ 4 , {-auxuliarValue[2],                   auxuliarValue[2]-auxuliarValue[0], 0.0} },
 		};

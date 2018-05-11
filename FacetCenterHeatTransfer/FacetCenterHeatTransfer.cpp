@@ -1,4 +1,5 @@
 #include <FacetCenterHeatTransfer/FacetCenterHeatTransfer.hpp>
+#include <Eigen/Dense>
 #include <stdexcept>
 
 FacetCenterHeatTransfer::FacetCenterHeatTransfer(const GridData& gridData)
@@ -91,7 +92,7 @@ VectorStencil operator*(Eigen::MatrixXd gradientMatrix, std::vector<ScalarStenci
 	const unsigned numberOfColumns = gradientMatrix.cols();
 	for(unsigned column=0 ; column<numberOfColumns ; ++column)
 	{
-		result = result + scalarStencilOnElementVertices[column] * Eigen::Vector3d(gradientMatrix.block(0,column,3,1));
+		result = result + scalarStencilOnElementVertices[column] * Eigen::Vector3d(gradientMatrix.block<3,1>(0,column));
 	}
 	return result;
 }
