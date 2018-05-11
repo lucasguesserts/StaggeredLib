@@ -44,3 +44,8 @@ Eigen::MatrixXd Triangle::getShapeFunctionDerivatives(const Eigen::Vector3d loca
 	                             0.0,  1.0,  0.0;
 	return shapeFunctionDerivatives;
 }
+
+Eigen::Vector3d Triangle::getFaceLocalCoordinates(const unsigned faceLocalIndex)
+{
+	return staggeredElementFaceCentroidLocalIndex[faceLocalIndex];
+}

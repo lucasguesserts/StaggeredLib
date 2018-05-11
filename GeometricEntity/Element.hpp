@@ -22,6 +22,8 @@ class Element: public Entity
 		Eigen::MatrixXd getGradientMatrix2D(const Eigen::Vector3d& localCoordinates);
 		Eigen::MatrixXd getPositionsMatrix(void);
 
+		virtual Eigen::Vector3d getFaceLocalCoordinates(const unsigned faceLocalIndex) = 0;
+
 };
 
 #endif

@@ -1,5 +1,10 @@
 #include <GeometricEntity/Line.hpp>
 
+const std::array<Eigen::Vector3d,2> Line::staggeredElementFaceCentroidLocalIndex = {{
+			{1.0/4.0, 0.0, 0.0},
+			{3.0/4.0, 0.0, 0.0}
+}};
+
 Eigen::Vector3d Line::getCentroid(void)
 {
 	Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
@@ -37,4 +42,9 @@ Eigen::MatrixXd Line::getShapeFunctionDerivatives(const Eigen::Vector3d localCoo
 	shapeFunctionDerivatives << -1.0, 0.0, 0.0,
 	                             1.0, 0.0, 0.0;
 	return shapeFunctionDerivatives;
+}
+
+Eigen::Vector3d Line::getFaceLocalCoordinates(const unsigned faceLocalIndex)
+{
+	return staggeredElementFaceCentroidLocalIndex[faceLocalIndex];
 }

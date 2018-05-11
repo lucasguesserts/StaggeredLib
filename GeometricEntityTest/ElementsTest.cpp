@@ -74,6 +74,13 @@ TestCase("Line", "[Element][Line]")
 		}
 		check(line.getPositionsMatrix()==positionsMatrix);
 	}
+	section("staggered elements face local coordinates")
+	{
+		constexpr unsigned faceLocalIndex = 1;
+		Eigen::Vector3d localCoordinates = line.getFaceLocalCoordinates(faceLocalIndex);
+		Eigen::Vector3d correctLocalCoordinates(3.0/4.0, 0.0, 0.0);
+		check(localCoordinates==correctLocalCoordinates);
+	}
 }
 
 TestCase("Triangle", "[Element][Triangle]")
@@ -138,6 +145,13 @@ TestCase("Triangle", "[Element][Triangle]")
 		                  -0.092105263157895, 0.078947368421053,  0.013157894736842,
 		                   0.000000000000000, 0.000000000000000,  0.000000000000000;
 		check(triangle.getGradientMatrix2D(localCoordinates)==gradientMatrix);
+	}
+	section("staggered elements face local coordinates")
+	{
+		constexpr unsigned faceLocalIndex = 2;
+		Eigen::Vector3d localCoordinates = triangle.getFaceLocalCoordinates(faceLocalIndex);
+		Eigen::Vector3d correctLocalCoordinates(1.0/6.0, 2.0/3.0, 0.0);
+		check(localCoordinates==correctLocalCoordinates);
 	}
 }
 
@@ -261,6 +275,13 @@ TestCase("Quadrangle", "[Element][Quadrangle]")
 		                  -0.048780487804878, -0.054878048780488, 0.006097560975610,  0.097560975609756,
 		                   0.000000000000000,  0.000000000000000, 0.000000000000000,  0.000000000000000;
 		check(quadrangle.getGradientMatrix2D(localCoordinates)==gradientMatrix);
+	}
+	section("staggered elements face local coordinates")
+	{
+		constexpr unsigned faceLocalIndex = 2;
+		Eigen::Vector3d localCoordinates = quadrangle.getFaceLocalCoordinates(faceLocalIndex);
+		Eigen::Vector3d correctLocalCoordinates(1.0/4.0, 3.0/4.0, 0.0);
+		check(localCoordinates==correctLocalCoordinates);
 	}
 }
 

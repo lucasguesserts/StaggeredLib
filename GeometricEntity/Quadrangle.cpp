@@ -50,3 +50,8 @@ Eigen::MatrixXd Quadrangle::getShapeFunctionDerivatives(const Eigen::Vector3d lo
 	                            -eta,    (1-xi), 0;
 	return shapeFunctionDerivatives;
 }
+
+Eigen::Vector3d Quadrangle::getFaceLocalCoordinates(const unsigned faceLocalIndex)
+{
+	return staggeredElementFaceCentroidLocalIndex[faceLocalIndex];
+}

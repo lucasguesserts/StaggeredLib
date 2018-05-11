@@ -13,6 +13,8 @@ class Quadrangle: public Element
 		virtual Eigen::VectorXd getShapeFunctionValues(const Eigen::Vector3d localCoordinates) final;
 		virtual Eigen::MatrixXd getShapeFunctionDerivatives(const Eigen::Vector3d localCoordinates) final;
 
+		virtual Eigen::Vector3d getFaceLocalCoordinates(const unsigned faceLocalIndex) final;
+
 		static const std::array<Eigen::Vector3d,4> staggeredElementFaceCentroidLocalIndex;
 
 };
