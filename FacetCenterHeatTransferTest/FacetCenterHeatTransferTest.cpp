@@ -71,3 +71,36 @@ TestCase("Facet center method - scalar stencil on element vertices", "[FacetCent
 		}
 	}
 }
+
+TestCase("Facet center method - apply boundary conditions", "[FacetCenterHeatTransfer]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	FacetCenterHeatTransfer problem(gridData);
+	const unsigned numberOfStaggeredElements = problem.grid2D.staggeredElements.size();
+	problem.linearSystem.matrix = Eigen::MatrixXd::Random(numberOfStaggeredElements,numberOfStaggeredElements);
+	DirichletBoundaryCondition dirichlet;
+	auto addBoudaryWithRandomPrescribedValues = [&](const std::string& boundaryName) {
+		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
+		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+		for(auto& entry: dirichlet.prescribedValue)
+			entry = static_cast<double>(std::rand());
+		problem.dirichletBoundaries.push_back(dirichlet);
+	};
+	addBoudaryWithRandomPrescribedValues("bottom boundary");
+	addBoudaryWithRandomPrescribedValues("top boundary");
+	addBoudaryWithRandomPrescribedValues("east boundary");
+	addBoudaryWithRandomPrescribedValues("west boundary");
+	problem.applyBoundaryConditions();
+	for(unsigned i=0 ; i<dirichlet.staggeredTriangle.size() ; ++i)
+	{
+		unsigned row = dirichlet.staggeredTriangle[i]->getIndex();
+		for(unsigned col=0 ; col<problem.linearSystem.matrix.cols() ; ++col)
+			if(row==col)
+				check(problem.linearSystem.matrix(row,col)==1.0);
+			else
+				check(problem.linearSystem.matrix(row,col)==0.0);
+		check(problem.linearSystem.independent(row)==dirichlet.prescribedValue[i]);
+	}
+}

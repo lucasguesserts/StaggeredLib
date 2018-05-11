@@ -12,10 +12,10 @@ FacetCenterHeatTransfer::FacetCenterHeatTransfer(const GridData& gridData)
 
 void FacetCenterHeatTransfer::initializeLinearSystem(void)
 {
-	const unsigned numberOfFaces = this->grid2D.faces.size();
-	this->linearSystem.matrix = Eigen::MatrixXd::Zero(numberOfFaces,numberOfFaces);
-	this->linearSystem.independent = Eigen::VectorXd::Zero(numberOfFaces);
-	this->temperature = Eigen::VectorXd::Zero(numberOfFaces);
+	const unsigned numberOfStaggeredElements = this->grid2D.staggeredElements.size();
+	this->linearSystem.matrix = Eigen::MatrixXd::Zero(numberOfStaggeredElements,numberOfStaggeredElements);
+	this->linearSystem.independent = Eigen::VectorXd::Zero(numberOfStaggeredElements);
+	this->temperature = Eigen::VectorXd::Zero(numberOfStaggeredElements);
 	return;
 }
 
