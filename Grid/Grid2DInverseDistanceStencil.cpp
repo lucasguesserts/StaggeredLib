@@ -24,6 +24,12 @@ void Grid2DInverseDistanceStencil::normalizeScalarStencil(ScalarStencil& scalarS
 	return;
 }
 
+std::vector<ScalarStencil> Grid2DInverseDistanceStencil::computeScalarStencilOnVerticesUsingFaces(void)
+{
+	// TODO: complete it.
+	return std::vector<ScalarStencil>(1, ScalarStencil{ {0, 0.0} });
+}
+
 std::vector<ScalarStencil> Grid2DInverseDistanceStencil::computeScalarStencilOnVertices(void)
 {
 	std::vector<ScalarStencil> scalarStencilOnVertices;

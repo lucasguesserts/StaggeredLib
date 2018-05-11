@@ -6,6 +6,7 @@ FacetCenterHeatTransfer::FacetCenterHeatTransfer(const GridData& gridData)
 {
 	this->initializeLinearSystem();
 	this->initializeTemperatureVectors();
+	this->initializeScalarStencilOnVertices();
 	this->initializeGradientOnFaces();
 	return;
 }
@@ -21,6 +22,12 @@ void FacetCenterHeatTransfer::initializeLinearSystem(void)
 void FacetCenterHeatTransfer::initializeTemperatureVectors(void)
 {
 	this->temperature = Eigen::VectorXd::Zero(this->grid2D.elements.size());
+	return;
+}
+
+void FacetCenterHeatTransfer::initializeScalarStencilOnVertices(void)
+{
+	this->scalarStencilOnVertices = this->grid2D.computeScalarStencilOnVerticesUsingFaces();
 	return;
 }
 
