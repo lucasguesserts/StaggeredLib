@@ -26,5 +26,6 @@ TestCase("Face2D constructor", "[Face2D]")
 	check(face.adjacentVertex==&grid.vertices[0]);
 	check(face.backwardStaggeredElement==&staggeredTriangle);
 	check(face.forwardStaggeredElement==&staggeredQuadrangle);
+	check(face.getCentroid()==Eigen::Vector3d(0.375,0.375,0.0));
 	check(face.getAreaVector()==Eigen::Vector3d(-0.75,0.75,0.0));
 }

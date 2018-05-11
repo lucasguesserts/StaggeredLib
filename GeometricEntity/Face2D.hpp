@@ -23,6 +23,7 @@ class Face2D: public Entity
 		StaggeredElement2D* backwardStaggeredElement;
 		StaggeredElement2D* forwardStaggeredElement;
 
+		Eigen::Vector3d getCentroid(void);
 		Eigen::Vector3d getAreaVector(void);
 };
 

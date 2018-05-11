@@ -15,6 +15,11 @@ Face2D::Face2D(
 	  forwardStaggeredElement(&forwardStaggeredElement)
 	{}
 
+Eigen::Vector3d Face2D::getCentroid(void)
+{
+	return 0.5*(this->parentElement->getCentroid() + *(this->adjacentVertex));
+}
+
 Eigen::Vector3d Face2D::getAreaVector(void)
 {
 	Eigen::Vector3d areaVector = *(this->adjacentVertex) - this->parentElement->getCentroid();
