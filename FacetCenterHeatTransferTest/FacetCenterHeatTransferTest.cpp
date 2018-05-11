@@ -45,9 +45,9 @@ TestCase("Facet center method - scalar stencil on element vertices", "[FacetCent
 	section("triangle 0")
 	{
 		std::vector<ScalarStencil> correct = {
-			{{0,0.5},{3,0.5}},
-			{{1,1.0}},
-			{{2,0.5},{4,0.5}}
+			{ {0,0.36939806252}, {2,0.26120387496}, {4,0.36939806252} },
+			{ {0,0.5},           {1,0.5} },
+			{ {1,0.36939806252}, {2,0.26120387496}, {3,0.36939806252} }
 		};
 		for(unsigned faceIndex=0 ; faceIndex<3 ; ++faceIndex)
 		{
@@ -59,9 +59,9 @@ TestCase("Facet center method - scalar stencil on element vertices", "[FacetCent
 	section("triangle 1")
 	{
 		std::vector<ScalarStencil> correct = {
-			{{0,0.5},{3,0.5}},
-			{{2,0.5},{4,0.5}},
-			{{5,1.0}}
+			{ {0,0.36939806252}, {2,0.26120387496}, {4,0.36939806252} },
+			{ {1,0.36939806252}, {2,0.26120387496}, {3,0.36939806252} },
+			{ {3,0.5},           {4,0.5} },
 		};
 		for(unsigned faceIndex=3 ; faceIndex<6 ; ++faceIndex)
 		{

@@ -121,17 +121,17 @@ TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistan
 	check(toTestScalarStencilOnVertices==correctScalarStencilOnVertices);
 }
 
-TestCase("Compute ScalarStencil based on faces ]for all vertices", "[Grid2DInverseDistanceStencil]")
+TestCase("Compute ScalarStencil based on staggered elements for all vertices", "[Grid2DInverseDistanceStencil]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	Grid2DInverseDistanceStencil grid(gridData);
 	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
-		{ {0,0.5}, {3,0.5} },
-		{ {1,1.0} },
-		{ {5,1.0} },
-		{ {2,0.5}, {4,0.5}, }
+		{ {0,0.36939806252}, {2,0.26120387496}, {4,0.36939806252} },
+		{ {0,0.5},           {1,0.5} },
+		{ {3,0.5},           {4,0.5} },
+		{ {1,0.36939806252}, {2,0.26120387496}, {3,0.36939806252} }
 	};
 	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVerticesUsingStaggeredElements();
 	check(scalarStencilOnVertices==correctScalarStencilOnVertices);
