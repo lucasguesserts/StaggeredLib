@@ -21,7 +21,7 @@ void FacetCenterHeatTransfer::initializeLinearSystem(void)
 
 void FacetCenterHeatTransfer::initializeScalarStencilOnVertices(void)
 {
-	this->scalarStencilOnVertices = this->grid2D.computeScalarStencilOnVerticesUsingFaces();
+	this->scalarStencilOnVertices = this->grid2D.computeScalarStencilOnVerticesUsingStaggeredElements();
 	return;
 }
 

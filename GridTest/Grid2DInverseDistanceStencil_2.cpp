@@ -133,7 +133,7 @@ TestCase("Compute ScalarStencil based on faces ]for all vertices", "[Grid2DInver
 		{ {5,1.0} },
 		{ {2,0.5}, {4,0.5}, }
 	};
-	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVerticesUsingFaces();
+	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVerticesUsingStaggeredElements();
 	check(scalarStencilOnVertices==correctScalarStencilOnVertices);
 }
 

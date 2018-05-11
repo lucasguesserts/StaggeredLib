@@ -24,14 +24,14 @@ void Grid2DInverseDistanceStencil::normalizeScalarStencil(ScalarStencil& scalarS
 	return;
 }
 
-std::vector<ScalarStencil> Grid2DInverseDistanceStencil::computeScalarStencilOnVerticesUsingFaces(void)
+std::vector<ScalarStencil> Grid2DInverseDistanceStencil::computeScalarStencilOnVerticesUsingStaggeredElements(void)
 {
 	std::vector<ScalarStencil> vertexScalarStencil;
 	for(auto vertex: this->vertices)
 	{
 		ScalarStencil scalarStencil;
-		for(auto face: this->verticesNeighborFaces[vertex.getIndex()])
-			scalarStencil[face->getIndex()] = 1 / (vertex - face->getCentroid()).norm();
+		for(auto& staggeredElement: this->verticesNeighborStaggeredElements[vertex.getIndex()])
+			scalarStencil[staggeredElement->getIndex()] = 1 / (vertex - staggeredElement->getCentroid()).norm();
 		Grid2DInverseDistanceStencil::normalizeScalarStencil(scalarStencil);
 		vertexScalarStencil.push_back(scalarStencil);
 	}
