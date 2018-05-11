@@ -39,9 +39,8 @@ void FacetCenterHeatTransfer::initializeGradientOnFaces(void)
 
 Eigen::MatrixXd FacetCenterHeatTransfer::computeGradientMatrix(Face2D& face)
 {
-	const unsigned numberOfVertices = face.parentElement->vertices.size();
-	// TODO: complete it.
-	return Eigen::MatrixXd::Zero(3,numberOfVertices);
+	const Eigen::Vector3d faceLocalCoordinates = face.parentElement->getFaceLocalCoordinates(face.localIndex);
+	return face.parentElement->getGradientMatrix2D(faceLocalCoordinates);
 }
 
 std::vector<ScalarStencil> FacetCenterHeatTransfer::getScalarStencilOnElementVertices(Face2D& face)
