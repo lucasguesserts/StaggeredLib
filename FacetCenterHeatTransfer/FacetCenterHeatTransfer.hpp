@@ -12,12 +12,14 @@ class FacetCenterHeatTransfer
 		FacetCenterHeatTransfer(const GridData& gridData);
 
 		void addDiffusiveTerm(void);
+		void applyBoundaryConditions(void);
 
 		Grid2DInverseDistanceStencil grid2D;
 		EigenLinearSystem linearSystem;
 		Eigen::VectorXd temperature;
 		std::vector<ScalarStencil> scalarStencilOnVertices;
 		std::vector<VectorStencil> gradientOnFaces;
+		std::vector<DirichletBoundaryCondition> dirichletBoundaries;
 
 		Eigen::MatrixXd computeGradientMatrix(Face2D& face);
 		std::vector<ScalarStencil> getScalarStencilOnElementVertices(Face2D& face);

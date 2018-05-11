@@ -62,6 +62,26 @@ void FacetCenterHeatTransfer::addDiffusiveTerm(void)
 	return;
 }
 
+void FacetCenterHeatTransfer::applyBoundaryConditions(void)
+{
+	for(auto& dirichlet: this->dirichletBoundaries)
+	{
+		for(unsigned localIndex=0 ; localIndex<dirichlet.staggeredTriangle.size() ; ++localIndex)
+		{
+			// TODO: separate into several functions.
+			auto staggeredTriangle = dirichlet.staggeredTriangle[localIndex];
+			const unsigned row = staggeredTriangle->getIndex();
+			for(unsigned col=0 ; col<this->linearSystem.matrix.cols() ; ++col)
+			{
+				this->linearSystem.matrix(row,col) = 0.0; // TODO:consider create a "clear line" function at LinearSystem.
+			}
+			this->linearSystem.matrix(row,row) = 1.0;
+			this->linearSystem.independent(row) = dirichlet.prescribedValue[localIndex];
+		}
+	}
+	return;
+}
+
 VectorStencil operator*(Eigen::MatrixXd gradientMatrix, std::vector<ScalarStencil> scalarStencilOnElementVertices)
 {
 	VectorStencil result;
