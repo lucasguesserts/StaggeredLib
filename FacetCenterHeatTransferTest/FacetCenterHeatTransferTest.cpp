@@ -72,6 +72,39 @@ TestCase("Facet center method - scalar stencil on element vertices", "[FacetCent
 	}
 }
 
+TestCase("Facet center method - gradient on faces", "[FacetCenterHeatTransfer]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	FacetCenterHeatTransfer problem(gridData);
+	std::array<double,3> auxuliarValue = {0.36939806252/2.0, 0.26120387496/2.0, 0.5/2.0};
+	section("triangle 1")
+	{
+		VectorStencil gradientOnTriangle = {
+			{ 0 , { auxuliarValue[2]-auxuliarValue[0], -auxuliarValue[0],                  0.0} },
+			{ 1 , { auxuliarValue[2],                   auxuliarValue[0]-auxuliarValue[2], 0.0} },
+			{ 2 , {-auxuliarValue[1],                   auxuliarValue[1],                  0.0} },
+			{ 3 , { 0.0,                                auxuliarValue[0],                  0.0} },
+			{ 4 , {-auxuliarValue[0],                   0.0,                               0.0} },
+		};
+		for(unsigned faceIndex=0 ; faceIndex<3 ; ++faceIndex)
+			check(problem.gradientOnFaces[faceIndex]==gradientOnTriangle);
+	}
+	section("triangle 1")
+	{
+		VectorStencil gradientOnTriangle = {
+			{ 0 , { 0.0,                               -auxuliarValue[0],                  0.0} },
+			{ 1 , { auxuliarValue[0],                   0.0,                               0.0} },
+			{ 2 , { auxuliarValue[2],                  -auxuliarValue[2],                  0.0} },
+			{ 3 , { auxuliarValue[0]-auxuliarValue[2],  auxuliarValue[2],                  0.0} },
+			{ 4 , {-auxuliarValue[2],                   auxuliarValue[2]-auxuliarValue[0], 0.0} },
+		};
+		for(unsigned faceIndex=3 ; faceIndex<6 ; ++faceIndex)
+			check(problem.gradientOnFaces[faceIndex]==gradientOnTriangle);
+	}
+}
+
 TestCase("Facet center method - apply boundary conditions", "[FacetCenterHeatTransfer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
