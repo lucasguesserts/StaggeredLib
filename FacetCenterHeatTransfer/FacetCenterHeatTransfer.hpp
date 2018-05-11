@@ -11,6 +11,8 @@ class FacetCenterHeatTransfer
 	public:
 		FacetCenterHeatTransfer(const GridData& gridData);
 
+		void addDiffusiveTerm(void);
+
 		Grid2DInverseDistanceStencil grid2D;
 		EigenLinearSystem linearSystem;
 		Eigen::VectorXd temperature;

@@ -51,6 +51,17 @@ std::vector<ScalarStencil> FacetCenterHeatTransfer::getScalarStencilOnElementVer
 	return scalarStencilOnElementVertices;
 }
 
+void FacetCenterHeatTransfer::addDiffusiveTerm(void)
+{
+	for(Face2D& face: this->grid2D.faces)
+	{
+		ScalarStencil heatDiffusion = face.getAreaVector() * this->gradientOnFaces[face.getIndex()];
+		this->linearSystem.addScalarStencil(face.forwardStaggeredElement->getIndex(), (-1)*heatDiffusion);
+		this->linearSystem.addScalarStencil(face.backwardStaggeredElement->getIndex(), heatDiffusion);
+	}
+	return;
+}
+
 VectorStencil operator*(Eigen::MatrixXd gradientMatrix, std::vector<ScalarStencil> scalarStencilOnElementVertices)
 {
 	VectorStencil result;
