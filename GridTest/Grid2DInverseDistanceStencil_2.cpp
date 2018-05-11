@@ -16,7 +16,7 @@
 
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 
-TestCase("Compute ScalarStencil in grid - version 2, vertex by vertex", "[Grid2DInverseDistanceStencil]")
+TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDistanceStencil]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -100,7 +100,7 @@ TestCase("Compute ScalarStencil in grid - version 2, vertex by vertex", "[Grid2D
 	}
 }
 
-TestCase("Compute ScalarStencil for all vertices in grid - version 2", "[Grid2DInverseDistanceStencil]")
+TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistanceStencil]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
@@ -121,7 +121,23 @@ TestCase("Compute ScalarStencil for all vertices in grid - version 2", "[Grid2DI
 	check(toTestScalarStencilOnVertices==correctScalarStencilOnVertices);
 }
 
-TestCase("Compute scalar stencil for one element - version 2", "[Grid2DInverseDistanceStencil]")
+TestCase("Compute ScalarStencil based on faces ]for all vertices", "[Grid2DInverseDistanceStencil]")
+{
+	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	CGNSFile cgnsFile(cgnsGridFileName);
+	GridData gridData(cgnsFile);
+	Grid2DInverseDistanceStencil grid(gridData);
+	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
+		{ {0,0.5}, {3,0.5} },
+		{ {1,1.0} },
+		{ {5,1.0} },
+		{ {2,0.5}, {4,0.5}, }
+	};
+	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVerticesUsingFaces();
+	check(scalarStencilOnVertices==correctScalarStencilOnVertices);
+}
+
+TestCase("Compute scalar stencil for one element", "[Grid2DInverseDistanceStencil]")
 {
 	constexpr unsigned index = 14;
 	constexpr double elementWeight = 1.0;

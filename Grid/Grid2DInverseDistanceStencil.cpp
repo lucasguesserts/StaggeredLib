@@ -26,8 +26,16 @@ void Grid2DInverseDistanceStencil::normalizeScalarStencil(ScalarStencil& scalarS
 
 std::vector<ScalarStencil> Grid2DInverseDistanceStencil::computeScalarStencilOnVerticesUsingFaces(void)
 {
-	// TODO: complete it.
-	return std::vector<ScalarStencil>(1, ScalarStencil{ {0, 0.0} });
+	std::vector<ScalarStencil> vertexScalarStencil;
+	for(auto vertex: this->vertices)
+	{
+		ScalarStencil scalarStencil;
+		for(auto face: this->verticesNeighborFaces[vertex.getIndex()])
+			scalarStencil[face->getIndex()] = 1 / (vertex - face->getCentroid()).norm();
+		Grid2DInverseDistanceStencil::normalizeScalarStencil(scalarStencil);
+		vertexScalarStencil.push_back(scalarStencil);
+	}
+	return vertexScalarStencil;
 }
 
 std::vector<ScalarStencil> Grid2DInverseDistanceStencil::computeScalarStencilOnVertices(void)
