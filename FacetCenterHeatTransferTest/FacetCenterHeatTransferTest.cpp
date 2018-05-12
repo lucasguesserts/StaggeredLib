@@ -105,26 +105,48 @@ TestCase("Facet center method - gradient on faces", "[FacetCenterHeatTransfer]")
 	}
 }
 
-TestCase("Facet center method - linear system assembly", "[FacetCenterHeatTransfer]")
+TestCase("Facet center method - linear system assembly for diffusive term", "[FacetCenterHeatTransfer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData gridData(cgnsFile);
 	FacetCenterHeatTransfer problem(gridData);
-	std::vector<ScalarStencil> diffusionOnFaces = {
-		{ {0, -0.376867312493333}, {1, -0.253734624986667}, {2,  0.261203874960000}, {3,  0.246265375013333}, {4,  0.123132687506667} },
-		{ {0,  0.123132687506667}, {1, -0.123132687506667}, {2,  0.000000000000000}, {3, -0.123132687506667}, {4,  0.123132687506667} },
-		{ {0,  0.253734624986667}, {1,  0.376867312493333}, {2, -0.261203874960000}, {3, -0.123132687506667}, {4, -0.246265375013333} },
-		{ {0, -0.123132687506667}, {1, -0.246265375013333}, {2, -0.261203874960000}, {3,  0.253734624986667}, {4,  0.376867312493333} },
-		{ {0,  0.246265375013333}, {1,  0.123132687506667}, {2,  0.261203874960000}, {3, -0.376867312493333}, {4, -0.253734624986667} },
-		{ {0, -0.123132687506667}, {1,  0.123132687506667}, {2,  0.000000000000000}, {3,  0.123132687506667}, {4, -0.123132687506667} }
-	};
-	require(problem.grid2D.faces.size()==diffusionOnFaces.size());
-	for(unsigned i=0 ; i<problem.grid2D.faces.size() ; ++i)
+	const unsigned numberOfStaggeredElements = problem.grid2D.staggeredElements.size();
+	section("diffusion scalar stencil on faces")
 	{
-		Face2D& face = problem.grid2D.faces[i];
-		ScalarStencil heatDiffusion = face.getAreaVector() * problem.gradientOnFaces[face.getIndex()];
-		check(heatDiffusion==diffusionOnFaces[i]);
+		std::vector<ScalarStencil> diffusionOnFaces = {
+			{ {0, -0.376867312493333}, {1, -0.253734624986667}, {2,  0.261203874960000}, {3,  0.246265375013333}, {4,  0.123132687506667} },
+			{ {0,  0.123132687506667}, {1, -0.123132687506667}, {2,  0.000000000000000}, {3, -0.123132687506667}, {4,  0.123132687506667} },
+			{ {0,  0.253734624986667}, {1,  0.376867312493333}, {2, -0.261203874960000}, {3, -0.123132687506667}, {4, -0.246265375013333} },
+			{ {0, -0.123132687506667}, {1, -0.246265375013333}, {2, -0.261203874960000}, {3,  0.253734624986667}, {4,  0.376867312493333} },
+			{ {0,  0.246265375013333}, {1,  0.123132687506667}, {2,  0.261203874960000}, {3, -0.376867312493333}, {4, -0.253734624986667} },
+			{ {0, -0.123132687506667}, {1,  0.123132687506667}, {2,  0.000000000000000}, {3,  0.123132687506667}, {4, -0.123132687506667} }
+		};
+		require(problem.grid2D.faces.size()==diffusionOnFaces.size());
+		for(unsigned i=0 ; i<problem.grid2D.faces.size() ; ++i)
+		{
+			Face2D& face = problem.grid2D.faces[i];
+			ScalarStencil heatDiffusion = face.getAreaVector() * problem.gradientOnFaces[face.getIndex()];
+			check(heatDiffusion==diffusionOnFaces[i]);
+		}
+	}
+	section("matrix")
+	{
+		Eigen::MatrixXd matrix(numberOfStaggeredElements,numberOfStaggeredElements);
+		matrix <<
+			-0.500000000000000, -0.130601937480000,  0.261203874960000,  0.369398062520000,  0.000000000000000,
+			-0.130601937480000, -0.500000000000000,  0.261203874960000,  0.000000000000000,  0.369398062520000,
+			 0.261203874960000,  0.261203874960000, -1.044815499840000,  0.261203874960000,  0.261203874960000,
+			 0.369398062520000,  0.000000000000000,  0.261203874960000, -0.500000000000000, -0.130601937480000,
+			 0.000000000000000,  0.369398062520000,  0.261203874960000, -0.130601937480000, -0.500000000000000;
+		problem.addDiffusiveTerm();
+		check(problem.linearSystem.matrix==matrix);
+	}
+	section("independent")
+	{
+		problem.addDiffusiveTerm();
+		Eigen::VectorXd independent = Eigen::VectorXd::Zero(numberOfStaggeredElements);
+		check(problem.linearSystem.independent==independent);
 	}
 }
 
