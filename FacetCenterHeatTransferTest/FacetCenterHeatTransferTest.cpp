@@ -119,6 +119,7 @@ TestCase("Facet center method - linear system assembly", "[FacetCenterHeatTransf
 		{ {0,  0.246265375013333}, {1,  0.123132687506667}, {2,  0.261203874960000}, {3, -0.376867312493333}, {4, -0.253734624986667} },
 		{ {0, -0.123132687506667}, {1,  0.123132687506667}, {2,  0.000000000000000}, {3,  0.123132687506667}, {4, -0.123132687506667} }
 	};
+	require(problem.grid2D.faces.size()==diffusionOnFaces.size());
 	for(unsigned i=0 ; i<problem.grid2D.faces.size() ; ++i)
 	{
 		Face2D& face = problem.grid2D.faces[i];

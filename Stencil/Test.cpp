@@ -9,7 +9,12 @@ bool operator==(const ScalarStencil& lhs, const ScalarStencil& rhs)
 		{
 			auto rhsValueIterator = rhs.find(keyValuePair.first);
 			if(rhsValueIterator!=rhs.cend())
-				vality = vality && keyValuePair.second==Approx((*rhsValueIterator).second);
+			{
+				if(keyValuePair.second==0.0 || (*rhsValueIterator).second==0.0)
+					vality = vality && (keyValuePair.second - (*rhsValueIterator).second) < 1E-12;
+				else
+					vality = vality && keyValuePair.second==Approx((*rhsValueIterator).second);
+			}
 			else
 			{
 				vality = false;
