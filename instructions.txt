@@ -1,0 +1,15 @@
+- install external packages:
+	gcc
+	g++
+	gfortran
+	make
+	cmake
+	boost
+
+- clone with the command (see the repository url at scarlett):
+	$ git clone --recursive-submodule repository_url
+
+- install CGNS:
+	$ ./install_cgns
+
+- build the project with cmake.

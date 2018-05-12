@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# install gcc, g++, gfortran, make
+
+BUILD_DIR="$HOME/.build_cgns"
+CGNS_DIR="$BUILD_DIR/cgns"
+INSTALL_DIR="$HOME/Libraries/cgns"
+
+mkdir $BUILD_DIR
+git clone https://github.com/CGNS/CGNS.git $CGNS_DIR
+cd $CGNS_DIR/src
+./configure --prefix=$INSTALL_DIR
+make
+make install
+rm -rf $BUILD_DIR

@@ -22,6 +22,7 @@ include_directories ("${CMAKE_SOURCE_DIR}")
 include_directories ("${CMAKE_SOURCE_DIR}/Eigen")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/findsCMake/")
+set(CGNS_DIR "$ENV{HOME}/Libraries/cgns")
 find_package (CGNS REQUIRED)
 if (CGNS_FOUND)
     include_directories (${CGNS_INCLUDE_DIR})
