@@ -1,0 +1,16 @@
+#!/bin/bash
+
+BUILD_DIR="$HOME/.build_MSHtoCGNS"
+BUILD_LIB_DIR="$BUILD_DIR/MSHtoCGNS"
+INSTALL_DIR="$HOME/Libraries/MSHtoCGNS"
+GITHUB_LINK="https://github.com/felipegiacomelli/MSHtoCGNS.git"
+FLAGS="-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=False"
+
+mkdir $BUILD_DIR
+git clone -b master $GITHUB_LINK $BUILD_LIB_DIR
+cd $BUILD_LIB_DIR
+mkdir build
+cd build
+cmake .. $FLAGS
+make
+make install

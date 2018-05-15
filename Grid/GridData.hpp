@@ -1,5 +1,5 @@
-#ifndef GRID_DATA_HPP
-#define GRID_DATA_HPP
+#ifndef GRID_DATA_2_HPP
+#define GRID_DATA_2_HPP
 
 #include <Eigen/Core>
 #include <string>

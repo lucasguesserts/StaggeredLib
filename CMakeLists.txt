@@ -27,9 +27,16 @@ find_package (CGNS REQUIRED)
 if (CGNS_FOUND)
     include_directories (${CGNS_INCLUDE_DIR})
 endif ()
+
 find_package (Boost REQUIRED COMPONENTS filesystem)
 if (Boost_FOUND)
 	include_directories (${Boost_INCLUDE_DIRS})
+endif ()
+
+set (MSHtoCGNS_DIR "$ENV{HOME}/Libraries/MSHtoCGNS/${CMAKE_BUILD_TYPE}/Static")
+find_package (MSHtoCGNS REQUIRED)
+if (MSHtoCGNS_FOUND)
+	include_directories (${MSHtoCGNS_INCLUDE_DIR})
 endif ()
 
 add_definitions("-DGRID_DIRECTORY=\"${CMAKE_SOURCE_DIR}/grids/\"")

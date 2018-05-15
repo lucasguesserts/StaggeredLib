@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# install gcc, g++, gfortran, make
+
+BUILD_DIR="$HOME/.build_cgns"
+CGNS_DIR="$BUILD_DIR/cgns"
+INSTALL_DIR="$HOME/Libraries/cgns"
+GITHUB_LINK="https://github.com/felipegiacomelli/MSHtoCGNS.git"
+
+mkdir $BUILD_DIR
+git clone $GITHUB_LINK $CGNS_DIR
+cd $CGNS_DIR/src
+./configure --prefix=$INSTALL_DIR --without-fortran --disable-cgnstools --enable-debug
+make
+make install
+rm -rf $BUILD_DIR

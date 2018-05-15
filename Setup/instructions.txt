@@ -1,10 +1,15 @@
 - install external packages:
 	gcc
 	g++
-	gfortran
 	make
 	cmake
 	boost
+
+- install cgns
+	$ ./install_cgns
+
+- install MSHtoCGNS
+	$ ./install_msh_to_cgns
 
 - clone with the command (see the repository url at scarlett):
 	$ git clone --recursive-submodule repository_url
