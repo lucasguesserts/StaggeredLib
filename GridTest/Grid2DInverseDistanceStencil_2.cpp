@@ -20,7 +20,7 @@ TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDista
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DInverseDistanceStencil grid(gridData);
 	auto scalarStencilTest = [&grid](const unsigned vertexIndex, ScalarStencil& correctScalarStencil) -> void
 		{
@@ -104,7 +104,7 @@ TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistan
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DInverseDistanceStencil grid(gridData);
 	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
 		{ {0,1.0} },
@@ -125,7 +125,7 @@ TestCase("Compute ScalarStencil based on staggered elements for all vertices", "
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DInverseDistanceStencil grid(gridData);
 	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
 		{ {0,0.36939806252}, {2,0.26120387496}, {4,0.36939806252} },
@@ -179,7 +179,7 @@ TestCase("Grid2DInverseDistanceStencil compute gradient using StaggeredQuadrangl
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DInverseDistanceStencil grid(gridData);
 	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVertices();
 	VectorStencil correctVectorStencil = { { 0, {0.75,-0.75,0.0} }, { 1, {-0.75,0.75,0.0} } };

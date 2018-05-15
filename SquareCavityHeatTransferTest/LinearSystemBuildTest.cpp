@@ -6,7 +6,7 @@
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>
@@ -15,7 +15,7 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	SquareCavityHeatTransfer problem(gridData);
 	problem.rho = 1;
 	problem.cp = 1;
@@ -85,7 +85,7 @@ TestCase("Add diffusive term for one staggered quadrangle", "[SquareCavityHeatTr
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	SquareCavityHeatTransfer problem(gridData);
 	const unsigned numberOfElements = problem.grid2D.elements.size();
 	problem.rho = 2;
@@ -110,7 +110,7 @@ TestCase("Add diffusive term all staggered elements", "[SquareCavityHeatTransfer
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	SquareCavityHeatTransfer problem(gridData);
 	const unsigned numberOfElements = problem.grid2D.elements.size();
 	problem.rho = 2;

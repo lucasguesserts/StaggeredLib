@@ -5,12 +5,12 @@
 
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/CGNSFile.hpp>
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 
-TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
+TestCase("Grid data structure", "[Grid][GridData_2][ElementDefinition]")
 {
 	const unsigned numberOfVertices = 7;
-	GridData gridData;
+	GridData_2 gridData;
 	gridData.coordinates.resize(numberOfVertices,Eigen::NoChange);
 	gridData.coordinates <<
 		0.0, 0.0, 0.0,
@@ -35,7 +35,7 @@ TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 		quadrangleDefinitions[0].connectivity << 0, 1, 3, 2;
 		quadrangleDefinitions[1].index = 17;
 		quadrangleDefinitions[1].connectivity << 3, 5, 6, 4;
-		// Two quadrangles in GridData to test
+		// Two quadrangles in GridData_2 to test
 		gridData.quadrangle.resize(numberOfQuadrangles);
 		gridData.quadrangle[0].index = 12;
 		gridData.quadrangle[0].connectivity << 0, 1, 3, 2;
@@ -52,7 +52,7 @@ TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 		triangleDefinitions[0].connectivity << 5, 7, 1;
 		triangleDefinitions[1].index = 94;
 		triangleDefinitions[1].connectivity << 8, 1, 6;
-		// Two triangles in GridData to test
+		// Two triangles in GridData_2 to test
 		gridData.triangle.resize(numberOfTriangles);
 		gridData.triangle[0].index = 48;
 		gridData.triangle[0].connectivity << 5, 7, 1;
@@ -69,7 +69,7 @@ TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 		lineDefinitions[0].connectivity << 5, 7;
 		lineDefinitions[1].index = 94;
 		lineDefinitions[1].connectivity << 8, 1;
-		// Two lines in GridData to test
+		// Two lines in GridData_2 to test
 		gridData.line.resize(numberOfLines);
 		gridData.line[0].index = 48;
 		gridData.line[0].connectivity << 5, 7;
@@ -79,11 +79,11 @@ TestCase("Grid data structure", "[Grid][GridData][ElementDefinition]")
 	}
 }
 
-TestCase("grid reader from CGNS", "[GridData][CGNS]")
+TestCase("grid reader from CGNS", "[GridData_2][CGNS]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	section("dimension")
 	{
 		const unsigned dimension = 2;
@@ -153,11 +153,11 @@ TestCase("grid reader from CGNS", "[GridData][CGNS]")
 	}
 }
 
-TestCase("GridData boundaries", "[GridData]")
+TestCase("GridData_2 boundaries", "[GridData_2]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	section("bottom boundary")
 	{
 		std::string boundaryName = "bottom boundary";

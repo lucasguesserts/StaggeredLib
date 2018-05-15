@@ -8,14 +8,14 @@
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 
 TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWithNeighborElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DVerticesWithNeighborElements grid(gridData);
 	section("Vertex 3 neighborhood")
 	{

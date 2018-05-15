@@ -11,7 +11,7 @@
 #include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/Boundary.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
@@ -31,7 +31,7 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 	{
 		std::cout << "File: " << cgnsFileName << std::endl;
 		CGNSFile cgnsFile(cgnsFileName);
-		GridData gridData(cgnsFile);
+		GridData_2 gridData(cgnsFile);
 		SquareCavityHeatTransfer problem(gridData);
 		problem.rho = 1;
 		problem.cp = 1;
@@ -123,7 +123,7 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 	{
 		std::cout << "File: " << cgnsFileName << std::endl;
 		CGNSFile cgnsFile(cgnsFileName);
-		GridData gridData(cgnsFile);
+		GridData_2 gridData(cgnsFile);
 		SquareCavityHeatTransfer problem(gridData);
 		problem.rho = 1;
 		problem.cp = 1;

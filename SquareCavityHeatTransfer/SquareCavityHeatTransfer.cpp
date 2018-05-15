@@ -2,7 +2,7 @@
 #include <cmath>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 
-SquareCavityHeatTransfer::SquareCavityHeatTransfer(const GridData& gridData)
+SquareCavityHeatTransfer::SquareCavityHeatTransfer(const GridData_2& gridData)
 	: grid2D(gridData)
 {
 	this->initializeLinearSystem();

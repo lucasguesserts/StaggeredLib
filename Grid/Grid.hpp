@@ -2,20 +2,20 @@
 #define GRID_HPP
 
 #include <vector>
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/Vertex.hpp>
 
 struct Grid
 {
 	public:
-		Grid(const GridData& gridData);
+		Grid(const GridData_2& gridData);
 
 		unsigned dimension;
 		std::vector<Vertex> vertices;
 		std::vector<Element*> elements;
 	private:
-		void buildVertices(const GridData& gridData);
+		void buildVertices(const GridData_2& gridData);
 };
 
 #endif

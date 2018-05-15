@@ -6,14 +6,14 @@
 #include <CGNSFile/CGNSFile.hpp>
 #include <GeometricEntity/Vertex.hpp>
 
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2D.hpp>
 
 TestCase("Grid 2D build", "[Grid][Grid2D]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2D grid2D(gridData);
 	section("vertices")
 	{

@@ -2,7 +2,7 @@
 #include <Eigen/Dense>
 #include <stdexcept>
 
-FacetCenterHeatTransfer::FacetCenterHeatTransfer(const GridData& gridData)
+FacetCenterHeatTransfer::FacetCenterHeatTransfer(const GridData_2& gridData)
 	: grid2D(gridData)
 {
 	this->initializeLinearSystem();

@@ -17,7 +17,7 @@ TestCase("staggered elements with the same vertices", "[Grid2DWithStaggeredEleme
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
 	std::vector<StaggeredElement2D> staggeredElements = {
 		{14, grid.vertices[0], grid.elements[1], grid.vertices[1]},
@@ -48,7 +48,7 @@ TestCase("Find staggered element in Grid2D", "[Grid2DWithStaggeredElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
 	std::vector<StaggeredElement2D> staggeredElements = {
 		{0, grid.vertices[1], grid.elements[0], grid.vertices[0]},
@@ -97,7 +97,7 @@ TestCase("Organize staggered elements for face creation", "[Grid2DWithStaggeredE
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
 	section("element 0 and vertex 0")
 	{
@@ -147,7 +147,7 @@ TestCase("Grid2DWithStaggeredElements build", "[Grid2DWithStaggeredElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
 	section("grid vertices")
 	{
@@ -226,7 +226,7 @@ TestCase("Find staggered triangles in a boundary definition - version 2", "[Grid
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
 	section("bottom")
 	{
@@ -258,7 +258,7 @@ TestCase("Find line - version 2", "[Grid2DWithStaggeredElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
 	check(&grid.lines[0]==&grid.findLine(6));
 	check(&grid.lines[1]==&grid.findLine(7));
@@ -274,7 +274,7 @@ TestCase("Find staggered triangle using line - version 2", "[Grid2DWithStaggered
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
 	section("bottom")
 	{
@@ -302,7 +302,7 @@ TestCase("Staggered triangle boundary - version 2", "[Grid2DWithStaggeredElement
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	Grid2DWithStaggeredElements grid(gridData);
 	section("bottom")
 	{

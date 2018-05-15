@@ -7,7 +7,7 @@
 #include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/Boundary.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
@@ -27,7 +27,7 @@ int main()
 	boost::filesystem::copy(filePath, resultFilePath);
 
 	CGNSFile cgnsFile(cgnsResultFileName);
-	GridData gridData(cgnsFile);
+	GridData_2 gridData(cgnsFile);
 	SquareCavityHeatTransfer problem(gridData);
 	problem.rho = 1;
 	problem.cp = 1;

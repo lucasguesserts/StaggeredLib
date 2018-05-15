@@ -8,12 +8,12 @@
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/BoundaryDefinition.hpp>
 
-class GridData
+class GridData_2
 {
 	public:
-		GridData() = default;
-		GridData(const std::string){};
-		GridData(CGNSFile& cgnsFile);
+		GridData_2() = default;
+		GridData_2(const std::string){};
+		GridData_2(CGNSFile& cgnsFile);
 
 		unsigned dimension;
 		Eigen::Matrix<double,Eigen::Dynamic,3> coordinates;

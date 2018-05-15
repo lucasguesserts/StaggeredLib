@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DWithStaggeredElements.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
 #include <Stencil/ScalarStencil.hpp>
@@ -12,7 +12,7 @@
 class Grid2DInverseDistanceStencil: public Grid2DWithStaggeredElements
 {
 	public:
-		Grid2DInverseDistanceStencil(const GridData& gridData);
+		Grid2DInverseDistanceStencil(const GridData_2& gridData);
 		ScalarStencil computeScalarStencil(Vertex& vertex);
 		std::vector<ScalarStencil> computeScalarStencilOnVertices(void);
 		std::vector<ScalarStencil> computeScalarStencilOnVerticesUsingStaggeredElements(void);

@@ -1,7 +1,7 @@
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <array>
 
-Grid2DInverseDistanceStencil::Grid2DInverseDistanceStencil(const GridData& gridData)
+Grid2DInverseDistanceStencil::Grid2DInverseDistanceStencil(const GridData_2& gridData)
 	: Grid2DWithStaggeredElements(gridData)
 {}
 

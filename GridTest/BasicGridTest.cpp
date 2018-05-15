@@ -1,13 +1,13 @@
 #include <Utils/Test.hpp>
 
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <Grid/Grid.hpp>
 
 TestCase("Grid structure", "[Grid]")
 {
 	const unsigned dimension = 2;
 	const unsigned numberOfVertices = 4;
-	GridData gridData;
+	GridData_2 gridData;
 	gridData.dimension = dimension;
 	gridData.coordinates.resize(numberOfVertices,Eigen::NoChange);
 	gridData.coordinates <<

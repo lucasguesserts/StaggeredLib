@@ -3,13 +3,13 @@
 
 #include <vector>
 #include <Grid/Grid2D.hpp>
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <GeometricEntity/Element.hpp>
 
 class Grid2DVerticesWithNeighborElements: public Grid2D
 {
 	public:
-		Grid2DVerticesWithNeighborElements(const GridData& gridData);
+		Grid2DVerticesWithNeighborElements(const GridData_2& gridData);
 
 		std::vector<std::vector<Element*>> verticesNeighborElements;
 	private:

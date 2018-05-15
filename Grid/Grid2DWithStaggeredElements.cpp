@@ -2,7 +2,7 @@
 #include <array>
 #include <stdexcept>
 
-Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData& gridData)
+Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData_2& gridData)
 	: Grid2DVerticesWithNeighborElements(gridData)
 {
 	this->createStaggeredElements();
@@ -151,7 +151,7 @@ void Grid2DWithStaggeredElements::setStaggeredTrianglesAndQuadrangles(void)
 	return;
 }
 
-void Grid2DWithStaggeredElements::createBoundaries(const GridData& gridData)
+void Grid2DWithStaggeredElements::createBoundaries(const GridData_2& gridData)
 {
 	for(const BoundaryDefinition& boundaryDefinition: gridData.boundary)
 		this->boundary[boundaryDefinition.name].staggeredTriangle = this->findStaggeredTrianglesInBoundaryDefinition(boundaryDefinition);

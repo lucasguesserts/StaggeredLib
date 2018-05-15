@@ -1,7 +1,7 @@
 #include <vector>
 #include <string>
 #include <Eigen/Core>
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>
@@ -9,7 +9,7 @@
 class SquareCavityHeatTransfer
 {
 	public:
-		SquareCavityHeatTransfer(const GridData& gridData);
+		SquareCavityHeatTransfer(const GridData_2& gridData);
 		void addAccumulationTerm(void);
 		void addDiffusiveTerm(void);
 		void addDiffusiveTerm(StaggeredElement2D& staggeredQuadrangle);

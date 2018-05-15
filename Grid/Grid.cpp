@@ -1,12 +1,12 @@
 #include <Grid/Grid.hpp>
 
-Grid::Grid(const GridData& gridData)
+Grid::Grid(const GridData_2& gridData)
 {
 	this->dimension = gridData.dimension;
 	buildVertices(gridData);
 }
 
-void Grid::buildVertices(const GridData& gridData)
+void Grid::buildVertices(const GridData_2& gridData)
 {
 	const unsigned numberOfVertices = gridData.coordinates.rows();
 	this->vertices.reserve(numberOfVertices);

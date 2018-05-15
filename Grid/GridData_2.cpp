@@ -1,7 +1,7 @@
-#include <Grid/GridData.hpp>
+#include <Grid/GridData_2.hpp>
 #include <stdexcept>
 
-void GridData::readCoordinates(CGNSFile& cgnsFile)
+void GridData_2::readCoordinates(CGNSFile& cgnsFile)
 {
 	this->coordinates.resize(cgnsFile.numberOfVertices,Eigen::NoChange);
 	std::vector<double> coordinatesX = cgnsFile.readCoordinate("CoordinateX");
@@ -15,7 +15,7 @@ void GridData::readCoordinates(CGNSFile& cgnsFile)
 	return;
 }
 
-void GridData::readElementConnectivity(CGNSFile& cgnsFile)
+void GridData_2::readElementConnectivity(CGNSFile& cgnsFile)
 {
 	this->quadrangle = cgnsFile.readElementsDefinition<4,cgns::QUAD_4>();
 	this->triangle = cgnsFile.readElementsDefinition<3,cgns::TRI_3>();
@@ -23,13 +23,13 @@ void GridData::readElementConnectivity(CGNSFile& cgnsFile)
 	return;
 }
 
-void GridData::readBoundaryDefinition(CGNSFile& cgnsFile)
+void GridData_2::readBoundaryDefinition(CGNSFile& cgnsFile)
 {
 	this->boundary = cgnsFile.readBoundaries();
 	return;
 }
 
-GridData::GridData(CGNSFile& cgnsFile)
+GridData_2::GridData_2(CGNSFile& cgnsFile)
 {
 	this->dimension = cgnsFile.physicalDimension;
 	this->readCoordinates(cgnsFile);
@@ -38,7 +38,7 @@ GridData::GridData(CGNSFile& cgnsFile)
 	return;
 }
 
-BoundaryDefinition& GridData::getBoundaryDefinition(const std::string& boundaryName)
+BoundaryDefinition& GridData_2::getBoundaryDefinition(const std::string& boundaryName)
 {
 	for(auto& boundary: this->boundary)
 		if(std::string(boundary.name)==boundaryName) return boundary;

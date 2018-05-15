@@ -1,6 +1,6 @@
 #include <Grid/Grid2D.hpp>
 
-Grid2D::Grid2D(const GridData& gridData)
+Grid2D::Grid2D(const GridData_2& gridData)
 	: Grid(gridData)
 {
 	if(gridData.dimension==2)
@@ -13,7 +13,7 @@ Grid2D::Grid2D(const GridData& gridData)
 	}
 }
 
-void Grid2D::buildLinesOn2DGrid(const GridData& gridData)
+void Grid2D::buildLinesOn2DGrid(const GridData_2& gridData)
 {
 	constexpr unsigned numberOfVerticesPerLine = 2;
 	const unsigned numberOfLines = gridData.line.size();
@@ -32,7 +32,7 @@ void Grid2D::buildLinesOn2DGrid(const GridData& gridData)
 	return;
 }
 
-void Grid2D::buildTrianglesOn2DGrid(const GridData& gridData)
+void Grid2D::buildTrianglesOn2DGrid(const GridData_2& gridData)
 {
 	constexpr unsigned numberOfVerticesPerTriangle = 3;
 	const unsigned numberOfTriangles = gridData.triangle.size();
@@ -51,7 +51,7 @@ void Grid2D::buildTrianglesOn2DGrid(const GridData& gridData)
 	return;
 }
 
-void Grid2D::buildQuadranglesOn2DGrid(const GridData& gridData)
+void Grid2D::buildQuadranglesOn2DGrid(const GridData_2& gridData)
 {
 	constexpr unsigned numberOfVerticesPerQuadrangle = 4;
 	const unsigned numberOfQuadrangles = gridData.quadrangle.size();
