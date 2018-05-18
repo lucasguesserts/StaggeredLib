@@ -59,11 +59,7 @@ int main()
 	unsigned timeStep = 0;
 	double error;
 	const std::string scalarFieldName = "Temperature";
-
 	CgnsWriter cgnsWriter(cgnsResultFileName, "CellCenter");
-
-
-
 	do
 	{
 		std::cout << "\ttime step: " << timeStep << std::endl;
