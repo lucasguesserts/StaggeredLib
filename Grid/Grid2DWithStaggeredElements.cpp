@@ -2,16 +2,6 @@
 #include <array>
 #include <stdexcept>
 
-Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData_2& gridData)
-	: Grid2DVerticesWithNeighborElements(gridData)
-{
-	this->createStaggeredElements();
-	this->createFaces();
-	this->setVerticesNeighborStaggeredElements();
-	this->setStaggeredTrianglesAndQuadrangles();
-	this->createBoundaries(gridData);
-}
-
 Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const std::string& fileName)
 	: Grid2DVerticesWithNeighborElements(fileName)
 {
@@ -182,26 +172,6 @@ std::vector<StaggeredElement2D*> Grid2DWithStaggeredElements::findStaggeredTrian
 	for(auto lineIndex: boundary.facetsOnBoundary)
 	{
 		Line& line = this->findLine(static_cast<unsigned>(lineIndex));
-		boundaryStaggeredTriangles.push_back( this->findStaggeredTriangle(line) );
-	}
-	return boundaryStaggeredTriangles;
-}
-
-void Grid2DWithStaggeredElements::createBoundaries(const GridData_2& gridData)
-{
-	for(const BoundaryDefinition& boundaryDefinition: gridData.boundary)
-		this->boundary[boundaryDefinition.name].staggeredTriangle = this->findStaggeredTrianglesInBoundaryDefinition(boundaryDefinition);
-	return;
-}
-
-std::vector<StaggeredElement2D*> Grid2DWithStaggeredElements::findStaggeredTrianglesInBoundaryDefinition(const BoundaryDefinition& boundaryDefinition)
-{
-	const std::vector<unsigned>& lineIndices = boundaryDefinition.elementsIndexList;
-	std::vector<StaggeredElement2D*> boundaryStaggeredTriangles;
-	boundaryStaggeredTriangles.reserve(lineIndices.size());
-	for(unsigned lineIndex: lineIndices)
-	{
-		Line& line = this->findLine(lineIndex);
 		boundaryStaggeredTriangles.push_back( this->findStaggeredTriangle(line) );
 	}
 	return boundaryStaggeredTriangles;

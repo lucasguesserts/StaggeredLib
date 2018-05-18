@@ -1,12 +1,6 @@
 #include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 #include <GeometricEntity/Vertex.hpp>
 
-Grid2DVerticesWithNeighborElements::Grid2DVerticesWithNeighborElements(const GridData_2& gridData)
-	: Grid2D(gridData)
-{
-	this->setVerticesNeighborElements();
-}
-
 Grid2DVerticesWithNeighborElements::Grid2DVerticesWithNeighborElements(const std::string& fileName)
 	: Grid2D(fileName)
 {

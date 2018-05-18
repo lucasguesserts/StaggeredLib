@@ -1,8 +1,6 @@
 - Implement some way to do not allocate VertexCollection
   vertices dinamically. The sizes are know at compilation
   time, so it's possible to optimize the code.
-- Add GridBuilder::build2D verification to know if the
-  input gridData is 2D or 3D.
 - At TestCase "Grid read 2D", section "triangular elements
   centroid", add handles test or implement an
     bool operator==(Vertex,Vertex)

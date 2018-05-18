@@ -2,11 +2,9 @@
 
 #include <Utils/Test.hpp>
 #include <Utils/EigenTest.hpp>
-#include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
-#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>

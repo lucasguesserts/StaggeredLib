@@ -1,7 +1,6 @@
 #include <vector>
 #include <string>
 #include <Eigen/Core>
-#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>

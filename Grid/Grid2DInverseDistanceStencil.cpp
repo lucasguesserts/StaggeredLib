@@ -1,10 +1,6 @@
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <array>
 
-Grid2DInverseDistanceStencil::Grid2DInverseDistanceStencil(const GridData_2& gridData)
-	: Grid2DWithStaggeredElements(gridData)
-{}
-
 Grid2DInverseDistanceStencil::Grid2DInverseDistanceStencil(const std::string& fileName)
 	: Grid2DWithStaggeredElements(fileName)
 {}

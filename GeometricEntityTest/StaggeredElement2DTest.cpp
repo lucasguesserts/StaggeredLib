@@ -6,7 +6,6 @@
 #include <GeometricEntity/Element.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
 
-#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2D.hpp>
 
 TestCase("Staggered element constructor", "[StaggeredElement2D]")

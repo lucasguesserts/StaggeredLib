@@ -3,8 +3,6 @@
 #include <vector>
 #include <string>
 
-#include <CGNSFile/CGNSFile.hpp>
-
 #include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>

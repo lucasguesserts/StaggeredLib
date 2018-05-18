@@ -3,12 +3,9 @@
 #include <vector>
 #include <string>
 
-#include <CGNSFile/CGNSFile.hpp>
-
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
 
-#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 
 TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWithNeighborElements]")

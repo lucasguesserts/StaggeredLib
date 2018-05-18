@@ -3,9 +3,6 @@
 #include <vector>
 #include <string>
 
-#include <CGNSFile/ElementDefinition.hpp>
-#include <CGNSFile/CGNSFile.hpp>
-
 #include <GeometricEntity/Test.hpp>
 #include <GeometricEntity/Vertex.hpp>
 #include <GeometricEntity/Element.hpp>
@@ -211,38 +208,6 @@ TestCase("Grid2DWithStaggeredElements build", "[Grid2DWithStaggeredElements]")
 	{
 		std::vector<StaggeredElement2D*> staggeredQuadrangles = { &grid.staggeredElements[2] };
 		check(grid.staggeredQuadrangles==staggeredQuadrangles);
-	}
-}
-
-TestCase("Find staggered triangles in a boundary definition - version 2", "[Grid2DWithStaggeredElements]")
-{
-	const std::string cgnsGridFileName = gridDirectory + "CGNSFile_boundary_read_test.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	Grid2DWithStaggeredElements grid(cgnsGridFileName);
-	section("bottom")
-	{
-		std::string boundaryName = "bottom boundary";
-		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[0], grid.staggeredTriangles[2]};
-		check(staggeredTraingles==grid.findStaggeredTrianglesInBoundaryDefinition(gridData.getBoundaryDefinition(boundaryName)));
-	}
-	section("top")
-	{
-		std::string boundaryName = "top boundary";
-		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[4], grid.staggeredTriangles[7]};
-		check(staggeredTraingles==grid.findStaggeredTrianglesInBoundaryDefinition(gridData.getBoundaryDefinition(boundaryName)));
-	}
-	section("west")
-	{
-		std::string boundaryName = "west boundary";
-		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[1], grid.staggeredTriangles[5]};
-		check(staggeredTraingles==grid.findStaggeredTrianglesInBoundaryDefinition(gridData.getBoundaryDefinition(boundaryName)));
-	}
-	section("east")
-	{
-		std::string boundaryName = "east boundary";
-		std::vector<StaggeredElement2D*> staggeredTraingles = { grid.staggeredTriangles[3], grid.staggeredTriangles[6]};
-		check(staggeredTraingles==grid.findStaggeredTrianglesInBoundaryDefinition(gridData.getBoundaryDefinition(boundaryName)));
 	}
 }
 

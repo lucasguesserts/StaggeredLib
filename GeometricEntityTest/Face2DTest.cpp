@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <CGNSFile/CGNSFile.hpp>
 #include <GeometricEntity/Face2D.hpp>
-#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2D.hpp>
 
 TestCase("Face2D constructor", "[Face2D]")

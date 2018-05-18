@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 
-#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DVerticesWithNeighborElements.hpp>
 #include <GeometricEntity/StaggeredElement2D.hpp>
 #include <GeometricEntity/Face2D.hpp>
@@ -13,7 +12,6 @@
 class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 {
 	public:
-		Grid2DWithStaggeredElements(const GridData_2& gridData);
 		Grid2DWithStaggeredElements(const std::string& fileName);
 		std::vector<StaggeredElement2D> staggeredElements;
 		std::vector<StaggeredElement2D*> staggeredQuadrangles;
@@ -30,8 +28,6 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		void organizeStaggeredElementsForFace(Element* element, Vertex* adjacentVertex, StaggeredElement2D*& back, StaggeredElement2D*& front);
 		void setStaggeredTrianglesAndQuadrangles(void);
 
-		void createBoundaries(const GridData_2& gridData);
-		std::vector<StaggeredElement2D*> findStaggeredTrianglesInBoundaryDefinition(const BoundaryDefinition& boundaryDefinition);
 		Line& findLine(unsigned lineIndex);
 		StaggeredElement2D* findStaggeredTriangle(const Line& line);
 

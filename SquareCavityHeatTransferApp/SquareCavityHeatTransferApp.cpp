@@ -5,10 +5,8 @@
 #include <iostream>
 #include <cmath>
 
-#include <CGNSFile/CGNSFile.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
-#include <Grid/GridData_2.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/Boundary.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
