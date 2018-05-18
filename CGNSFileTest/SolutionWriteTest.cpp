@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <algorithm>
 #include <boost/filesystem.hpp>
 #include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
 #include <CgnsInterface/CgnsWriter.hpp>
@@ -10,7 +11,6 @@
 
 TestCase("CGNS file structure - steady solution","[CGNSFile]")
 {
-	// create temporary file
 	const std::string fileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
 	const std::string tempFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS_temp.cgns";
 	boost::filesystem::copy_file(fileName, tempFileName, boost::filesystem::copy_option::overwrite_if_exists);
@@ -32,56 +32,51 @@ TestCase("CGNS file structure - steady solution","[CGNSFile]")
 
 TestCase("CGNS file structure - transient solution","[CGNSFile]")
 {
-	// create temporary file
 	const std::string fileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
-	boost::filesystem::path filePath(fileName);
 	const std::string tempFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS_transient.cgns";
-	boost::filesystem::path tempFilePath(tempFileName);
-	if(boost::filesystem::exists(tempFilePath))
-		boost::filesystem::remove(tempFilePath);
-	boost::filesystem::copy(filePath, tempFilePath);
-	require(boost::filesystem::exists(tempFilePath));
+	boost::filesystem::copy_file(fileName, tempFileName, boost::filesystem::copy_option::overwrite_if_exists);
 
-	CGNSFile cgnsFile(tempFileName);
 	constexpr double deltaT = 2;
 	constexpr unsigned numberOfTimeSteps = 30;
 	constexpr unsigned numberOfElements = 6;
 	const std::string scalarFieldName = "Temperature";
-	// write transient field
-	Eigen::VectorXd transientSolution;
-	transientSolution.resize(numberOfElements);
-	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
-	{
-		transientSolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
-		transientSolution *= timeStep;
-		cgnsFile.writeTransientScalarField(scalarFieldName,timeStep,transientSolution);
-	}
-	Eigen::VectorXd timeInstants;
-	timeInstants.resize(numberOfTimeSteps);
+
+	std::vector<double> timeInstants(numberOfTimeSteps, 0.0);
 	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
 		timeInstants[timeStep] = timeStep*deltaT;
-	cgnsFile.writeTransientInformation(scalarFieldName,timeInstants);
-	section("read transient solution")
+
+	// Create transient field
+	std::vector<std::vector<double>> transientSolution(30, {0.0, 1.0, 3.0, 2.0, 5.0, 4.0});
 	{
+		std::unique_ptr<CgnsWriter> cgnsWriter = std::make_unique<CgnsWriter>(tempFileName, "CellCenter");
 		for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
 		{
-			Eigen::VectorXd readTransientScalarField = cgnsFile.readTransientScalarField(scalarFieldName,timeStep);
-			transientSolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
-			transientSolution *= timeStep;
-			check(readTransientScalarField==transientSolution);
+			std::transform(transientSolution[timeStep].begin(), transientSolution[timeStep].end(), transientSolution[timeStep].begin(), [&timeStep](const double& x){return timeStep*x;});
+			cgnsWriter->writeTimeStep(timeInstants[timeStep]);
+			cgnsWriter->writeTransientField(transientSolution[timeStep], scalarFieldName);
+		}
+	}
+
+	section("read transient solution")
+	{
+		CgnsReader2D cgnsReader(tempFileName);
+		for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
+		{
+			std::vector<double> readTransientScalarField = cgnsReader.readField(static_cast<int>(timeStep+1), scalarFieldName);
+			check(readTransientScalarField==transientSolution[timeStep]);
 		}
 	}
 	section("read number of time steps")
 	{
-		const unsigned readNumberOfTimeSteps = cgnsFile.readNumberOfTimeSteps();
+		CgnsReader2D cgnsReader(tempFileName);
+		const unsigned readNumberOfTimeSteps = static_cast<unsigned>( cgnsReader.readNumberOfTimeSteps() );
 		check(readNumberOfTimeSteps==numberOfTimeSteps);
 	}
 	section("read time steps")
 	{
-		Eigen::VectorXd allReadTimeInstants = cgnsFile.readAllTimeInstants();
+		CgnsReader2D cgnsReader(tempFileName);
+		std::vector<double> allReadTimeInstants = cgnsReader.readTimeInstants();
 		check(allReadTimeInstants==timeInstants);
 	}
-	// TODO: add exceptions and create failures tests
-	boost::filesystem::remove(tempFilePath);
-	checkFalse(boost::filesystem::exists(tempFilePath));
+	boost::filesystem::remove_all(tempFileName);
 }
