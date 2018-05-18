@@ -12,14 +12,20 @@ struct Grid2D: public Grid
 {
 	public:
 		Grid2D(const GridData_2& gridData);
+		Grid2D(const std::string& fileName);
 
 		std::vector<Quadrangle> quadrangles;
 		std::vector<Triangle> triangles;
 		std::vector<Line> lines;
 	private:
-		void buildLinesOn2DGrid(const GridData_2& gridData);
-		void buildTrianglesOn2DGrid(const GridData_2& gridData);
-		void buildQuadranglesOn2DGrid(const GridData_2& gridData);
+		void buildLinesOn2DGrid(void);
+		void buildTrianglesOn2DGrid(void);
+		void buildQuadranglesOn2DGrid(void);
+
+		void buildLinesOn2DGrid_2(const GridData_2& gridData);
+		void buildTrianglesOn2DGrid_2(const GridData_2& gridData);
+		void buildQuadranglesOn2DGrid_2(const GridData_2& gridData);
+
 		void assignElementsPointers(void);
 };
 
