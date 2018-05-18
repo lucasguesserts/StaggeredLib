@@ -16,9 +16,7 @@
 TestCase("staggered elements with the same vertices", "[Grid2DWithStaggeredElements]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	Grid2DWithStaggeredElements grid(gridData);
+	Grid2DWithStaggeredElements grid(cgnsGridFileName);
 	std::vector<StaggeredElement2D> staggeredElements = {
 		{14, grid.vertices[0], grid.elements[1], grid.vertices[1]},
 		{14, grid.vertices[0], grid.elements[1], grid.vertices[1]}, //true

@@ -12,6 +12,16 @@ Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const GridData_2& gridD
 	this->createBoundaries(gridData);
 }
 
+Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const std::string& fileName)
+	: Grid2DVerticesWithNeighborElements(fileName)
+{
+	this->createStaggeredElements();
+	this->createFaces();
+	this->setVerticesNeighborStaggeredElements();
+	this->setStaggeredTrianglesAndQuadrangles();
+	this->createBoundaries();
+}
+
 void Grid2DWithStaggeredElements::createStaggeredElements(void)
 {
 	// TODO: separate in several functions
@@ -149,6 +159,32 @@ void Grid2DWithStaggeredElements::setStaggeredTrianglesAndQuadrangles(void)
 			this->staggeredQuadrangles.push_back(&staggeredElement);
 	}
 	return;
+}
+
+void Grid2DWithStaggeredElements::createBoundaries(void)
+{
+	for(auto& boundary: this->cgnsReader->gridData->boundaries)
+	{
+		if(boundary.facetsOnBoundary.empty())
+			throw std::runtime_error(std::string(__FUNCTION__) +
+			                        std::string(": facets on boundary '") +
+									boundary.name +
+									std::string("' empty. Boundaries cannot be built with vertices."));
+		this->boundary[boundary.name].staggeredTriangle = this->findStaggeredTrianglesInBoundary(boundary);
+	}
+	return;
+}
+
+std::vector<StaggeredElement2D*> Grid2DWithStaggeredElements::findStaggeredTrianglesInBoundary(const BoundaryData& boundary)
+{
+	std::vector<StaggeredElement2D*> boundaryStaggeredTriangles;
+	boundaryStaggeredTriangles.reserve(boundary.facetsOnBoundary.size());
+	for(auto lineIndex: boundary.facetsOnBoundary)
+	{
+		Line& line = this->findLine(static_cast<unsigned>(lineIndex));
+		boundaryStaggeredTriangles.push_back( this->findStaggeredTriangle(line) );
+	}
+	return boundaryStaggeredTriangles;
 }
 
 void Grid2DWithStaggeredElements::createBoundaries(const GridData_2& gridData)
