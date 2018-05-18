@@ -22,7 +22,7 @@ include_directories ("${CMAKE_SOURCE_DIR}")
 include_directories ("${CMAKE_SOURCE_DIR}/Eigen")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/findsCMake/")
-set(CGNS_DIR "$ENV{HOME}/Libraries/cgns")
+
 find_package (CGNS REQUIRED)
 if (CGNS_FOUND)
     include_directories (${CGNS_INCLUDE_DIR})
@@ -33,7 +33,7 @@ if (Boost_FOUND)
 	include_directories (${Boost_INCLUDE_DIRS})
 endif ()
 
-set (MSHtoCGNS_DIR "$ENV{HOME}/Libraries/MSHtoCGNS/${CMAKE_BUILD_TYPE}/Static")
+message ("MSHtoCGNS_DIR: " ${MSHtoCGNS_DIR})
 find_package (MSHtoCGNS REQUIRED)
 if (MSHtoCGNS_FOUND)
 	include_directories (${MSHtoCGNS_INCLUDE_DIR})

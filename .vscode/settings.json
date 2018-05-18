@@ -1,0 +1,7 @@
+{
+	"cmake.configureSettings": {
+		"BOOST_ROOT": "/home/guesser/Libraries/boost-1.67.0",
+		"CGNS_DIR": "/home/guesser/Libraries/cgns",
+		"MSHtoCGNS_DIR": "/home/guesser/Libraries/MSHtoCGNS-0.9.0/Debug/Static"
+	},
+}
