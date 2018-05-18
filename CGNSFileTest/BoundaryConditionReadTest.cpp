@@ -4,6 +4,8 @@
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/CGNSFile.hpp>
 
+const std::string gridDirectory = GRID_DIRECTORY;
+
 TestCase("cgns transform indices from CGNS to my structure", "[CGNSFile]")
 {
 	const std::vector<unsigned> indices = {2, 8, 21};

@@ -9,6 +9,8 @@
 
 #include <CGNSFile/CGNSFile.hpp>
 
+const std::string gridDirectory = GRID_DIRECTORY;
+
 TestCase("CGNS file structure - steady solution","[CGNSFile]")
 {
 	const std::string fileName = gridDirectory + "GridReaderTest_CGNS.cgns";

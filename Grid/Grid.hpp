@@ -8,6 +8,8 @@
 #include <GeometricEntity/Vertex.hpp>
 #include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
 
+const std::string gridDirectory = GRID_DIRECTORY;
+
 struct Grid
 {
 	public:

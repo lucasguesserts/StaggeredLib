@@ -11,8 +11,6 @@ namespace cgns
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/BoundaryDefinition.hpp>
 
-const std::string gridDirectory = GRID_DIRECTORY;
-
 class CGNSFile
 {
 	public:

@@ -5,6 +5,8 @@
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/CGNSFile.hpp>
 
+const std::string gridDirectory = GRID_DIRECTORY;
+
 TestCase("CGNS file structure basic - coordinates and element connectivity", "[CGNSFile]")
 {
 	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";

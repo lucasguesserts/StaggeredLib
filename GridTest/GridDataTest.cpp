@@ -7,6 +7,8 @@
 #include <CGNSFile/CGNSFile.hpp>
 #include <Grid/GridData_2.hpp>
 
+const std::string gridDirectory = GRID_DIRECTORY;
+
 TestCase("Grid data structure", "[Grid][GridData_2][ElementDefinition]")
 {
 	const unsigned numberOfVertices = 7;
