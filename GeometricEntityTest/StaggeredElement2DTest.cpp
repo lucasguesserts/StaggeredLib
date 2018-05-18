@@ -12,9 +12,7 @@
 TestCase("Staggered element constructor", "[StaggeredElement2D]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	Grid2D grid(gridData);
+	Grid2D grid(cgnsGridFileName);
 	constexpr unsigned index = 14;
 	Vertex &v0 = grid.vertices[0];
 	Vertex &v1 = grid.vertices[3];

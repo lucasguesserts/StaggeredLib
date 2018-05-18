@@ -12,9 +12,7 @@
 TestCase("Face2D constructor", "[Face2D]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	Grid2D grid(gridData);
+	Grid2D grid(cgnsGridFileName);
 	constexpr unsigned index = 12;
 	constexpr unsigned localIndex = 53;
 	StaggeredElement2D staggeredTriangle(7,grid.vertices[1],grid.elements[0], grid.vertices[0]);
