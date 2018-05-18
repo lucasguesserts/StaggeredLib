@@ -19,9 +19,7 @@
 TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDistanceStencil]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	Grid2DInverseDistanceStencil grid(gridData);
+	Grid2DInverseDistanceStencil grid(cgnsGridFileName);
 	auto scalarStencilTest = [&grid](const unsigned vertexIndex, ScalarStencil& correctScalarStencil) -> void
 		{
 			ScalarStencil scalarStencilToTest = grid.computeScalarStencil(grid.vertices[vertexIndex]);

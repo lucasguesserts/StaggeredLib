@@ -13,6 +13,7 @@ class Grid2DInverseDistanceStencil: public Grid2DWithStaggeredElements
 {
 	public:
 		Grid2DInverseDistanceStencil(const GridData_2& gridData);
+		Grid2DInverseDistanceStencil(const std::string& fileName);
 		ScalarStencil computeScalarStencil(Vertex& vertex);
 		std::vector<ScalarStencil> computeScalarStencilOnVertices(void);
 		std::vector<ScalarStencil> computeScalarStencilOnVerticesUsingStaggeredElements(void);

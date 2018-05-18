@@ -5,6 +5,10 @@ Grid2DInverseDistanceStencil::Grid2DInverseDistanceStencil(const GridData_2& gri
 	: Grid2DWithStaggeredElements(gridData)
 {}
 
+Grid2DInverseDistanceStencil::Grid2DInverseDistanceStencil(const std::string& fileName)
+	: Grid2DWithStaggeredElements(fileName)
+{}
+
 ScalarStencil Grid2DInverseDistanceStencil::computeScalarStencil(Vertex& vertex)
 {
 	ScalarStencil vertexScalarStencil;
