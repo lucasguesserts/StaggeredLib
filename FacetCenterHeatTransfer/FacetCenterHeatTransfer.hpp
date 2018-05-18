@@ -9,7 +9,7 @@
 class FacetCenterHeatTransfer
 {
 	public:
-		FacetCenterHeatTransfer(const GridData_2& gridData);
+		FacetCenterHeatTransfer(const std::string& fileName);
 
 		void addDiffusiveTerm(void);
 		void applyBoundaryConditions(void);

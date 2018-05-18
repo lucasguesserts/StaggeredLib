@@ -2,8 +2,8 @@
 #include <Eigen/Dense>
 #include <stdexcept>
 
-FacetCenterHeatTransfer::FacetCenterHeatTransfer(const GridData_2& gridData)
-	: grid2D(gridData)
+FacetCenterHeatTransfer::FacetCenterHeatTransfer(const std::string& fileName)
+	: grid2D(fileName)
 {
 	this->initializeLinearSystem();
 	this->initializeScalarStencilOnVertices();
