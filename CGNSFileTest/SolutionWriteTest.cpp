@@ -1,7 +1,10 @@
 #include <Utils/Test.hpp>
 #include <vector>
 #include <string>
+#include <memory>
 #include <boost/filesystem.hpp>
+#include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
+#include <CgnsInterface/CgnsWriter.hpp>
 
 #include <CGNSFile/CGNSFile.hpp>
 
@@ -9,30 +12,22 @@ TestCase("CGNS file structure - steady solution","[CGNSFile]")
 {
 	// create temporary file
 	const std::string fileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
-	boost::filesystem::path filePath(fileName);
 	const std::string tempFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS_temp.cgns";
-	boost::filesystem::path tempFilePath(tempFileName);
-	if(boost::filesystem::exists(tempFilePath))
-		boost::filesystem::remove(tempFilePath);
-	boost::filesystem::copy(filePath, tempFilePath);
-	require(boost::filesystem::exists(tempFilePath));
-
-	CGNSFile cgnsFile(tempFileName);
-	constexpr unsigned numberOfElements = 6;
+	boost::filesystem::copy_file(fileName, tempFileName, boost::filesystem::copy_option::overwrite_if_exists);
 	const std::string solutionName = "steady solution";
 	const std::string scalarFieldName = "Temperature";
-	section("write and read")
+	std::vector<double> steadySolution = {0.0, 1.0, 3.0, 2.0, 5.0, 4.0};
+	std::vector<double> readSolution;
 	{
-		Eigen::VectorXd steadySolution;
-		steadySolution.resize(numberOfElements);
-		steadySolution << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
-		cgnsFile.writeSteadyScalarField(solutionName,scalarFieldName,steadySolution);
-		Eigen::VectorXd readSolution = cgnsFile.readSteadyScalarField(solutionName,scalarFieldName);
-		check(readSolution==steadySolution);
+		std::unique_ptr<CgnsWriter> cgnsWriter = std::make_unique<CgnsWriter>(tempFileName, "CellCenter");
+		cgnsWriter->writePermanentField(solutionName, scalarFieldName, steadySolution);
 	}
-	// TODO: add exceptions and create failures tests
-	boost::filesystem::remove(tempFilePath);
-	checkFalse(boost::filesystem::exists(tempFilePath));
+	{
+		std::unique_ptr<CgnsReader2D> cgnsReader = std::make_unique<CgnsReader2D>(tempFileName);
+		readSolution = cgnsReader->readField(solutionName, scalarFieldName);
+	}
+	check(readSolution==steadySolution);
+	boost::filesystem::remove_all(tempFileName);
 }
 
 TestCase("CGNS file structure - transient solution","[CGNSFile]")
