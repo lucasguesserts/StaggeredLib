@@ -7,6 +7,12 @@ Grid2DVerticesWithNeighborElements::Grid2DVerticesWithNeighborElements(const Gri
 	this->setVerticesNeighborElements();
 }
 
+Grid2DVerticesWithNeighborElements::Grid2DVerticesWithNeighborElements(const std::string& fileName)
+	: Grid2D(fileName)
+{
+	this->setVerticesNeighborElements();
+}
+
 void Grid2DVerticesWithNeighborElements::setVerticesNeighborElements(void)
 {
 	const unsigned numberOfVertices = this->vertices.size();

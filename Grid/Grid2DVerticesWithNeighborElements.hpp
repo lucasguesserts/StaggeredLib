@@ -10,6 +10,7 @@ class Grid2DVerticesWithNeighborElements: public Grid2D
 {
 	public:
 		Grid2DVerticesWithNeighborElements(const GridData_2& gridData);
+		Grid2DVerticesWithNeighborElements(const std::string& fileName);
 
 		std::vector<std::vector<Element*>> verticesNeighborElements;
 	private:
