@@ -14,7 +14,7 @@ TestCase("cgns transform indices from CGNS to my structure", "[CGNSFile]")
 
 TestCase("cgns read boundary elements list", "[CGNSFile]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	constexpr cgns::cgsize_t numberOfElements = 2;
 	constexpr unsigned boundaryIndex = 2;
@@ -24,7 +24,7 @@ TestCase("cgns read boundary elements list", "[CGNSFile]")
 
 TestCase("cgns read boundary", "[CGNSFile][BoundaryDefinition]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	std::vector<BoundaryDefinition> boundaryVector = cgnsFile.readBoundaries();
 	constexpr int numberOfBoundaries = 4;

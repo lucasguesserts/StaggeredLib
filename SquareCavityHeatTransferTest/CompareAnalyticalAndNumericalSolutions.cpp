@@ -20,7 +20,7 @@
 
 TestCase("Compare numerical and analytical solution - mixed elements", "[SquareCavityHeatTransfer]")
 {
-	const std::string directory = CGNSFile::gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest/");
+	const std::string directory = gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest/");
 	const std::vector<std::string> meshFiles = {
 		directory + "5.cgns",
 		directory + "10.cgns",
@@ -110,7 +110,7 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 
 TestCase("Compare numerical and analytical solution - cartesian elements", "[SquareCavityHeatTransfer]")
 {
-	const std::string directory = CGNSFile::gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest_cartesian/");
+	const std::string directory = gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest_cartesian/");
 	const std::vector<std::string> meshFiles = {
 		directory + "5.cgns",
 		directory + "10.cgns",

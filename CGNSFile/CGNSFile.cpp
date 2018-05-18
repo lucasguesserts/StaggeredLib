@@ -5,8 +5,6 @@
 #define NAME_LENGTH 200
 #define FUNCTION_ERROR_MESSAGE std::string("CGNSFile::") + std::string(__FUNCTION__) + std::string(": ")
 
-const std::string CGNSFile::gridDirectory = GRID_DIRECTORY;
-
 CGNSFile::CGNSFile(const std::string cgnsFileName)
 {
 	this->openFile(cgnsFileName);

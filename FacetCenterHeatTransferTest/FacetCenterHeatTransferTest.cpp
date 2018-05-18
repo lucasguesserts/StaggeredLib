@@ -6,7 +6,7 @@
 
 TestCase("Facet center method - gradient matrices", "[FacetCenterHeatTransfer]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
 	FacetCenterHeatTransfer problem(cgnsGridFileName);
 	section("triangle 0")
 	{
@@ -36,7 +36,7 @@ TestCase("Facet center method - gradient matrices", "[FacetCenterHeatTransfer]")
 
 TestCase("Facet center method - scalar stencil on element vertices", "[FacetCenterHeatTransfer]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
 	FacetCenterHeatTransfer problem(cgnsGridFileName);
 	section("triangle 0")
 	{
@@ -70,7 +70,7 @@ TestCase("Facet center method - scalar stencil on element vertices", "[FacetCent
 
 TestCase("Facet center method - gradient on faces", "[FacetCenterHeatTransfer]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
 	FacetCenterHeatTransfer problem(cgnsGridFileName);
 	std::array<double,3> auxuliarValue = {0.36939806252/2.0, 0.26120387496/2.0, 0.5/2.0};
 	section("triangle 1")
@@ -101,7 +101,7 @@ TestCase("Facet center method - gradient on faces", "[FacetCenterHeatTransfer]")
 
 TestCase("Facet center method - linear system assembly for diffusive term", "[FacetCenterHeatTransfer]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
 	FacetCenterHeatTransfer problem(cgnsGridFileName);
 	const unsigned numberOfStaggeredElements = problem.grid2D.staggeredElements.size();
 	section("diffusion scalar stencil on faces")
@@ -144,7 +144,7 @@ TestCase("Facet center method - linear system assembly for diffusive term", "[Fa
 
 TestCase("Facet center method - apply boundary conditions", "[FacetCenterHeatTransfer]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
 	FacetCenterHeatTransfer problem(cgnsGridFileName);
 	const unsigned numberOfStaggeredElements = problem.grid2D.staggeredElements.size();
 	problem.linearSystem.matrix = Eigen::MatrixXd::Random(numberOfStaggeredElements,numberOfStaggeredElements);

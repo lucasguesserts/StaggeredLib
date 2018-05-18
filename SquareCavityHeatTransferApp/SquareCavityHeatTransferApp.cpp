@@ -18,8 +18,8 @@
 
 int main()
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "heatDiffusion_25_25.cgns";
-	const std::string cgnsResultFileName = CGNSFile::gridDirectory + "result_heatDiffusion_25_25.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "heatDiffusion_25_25.cgns";
+	const std::string cgnsResultFileName = gridDirectory + "result_heatDiffusion_25_25.cgns";
 	boost::filesystem::copy_file(cgnsGridFileName, cgnsResultFileName, boost::filesystem::copy_option::overwrite_if_exists);
 
 	SquareCavityHeatTransfer problem(cgnsResultFileName);

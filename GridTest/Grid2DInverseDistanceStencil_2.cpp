@@ -18,7 +18,7 @@
 
 TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDistanceStencil]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";
 	Grid2DInverseDistanceStencil grid(cgnsGridFileName);
 	auto scalarStencilTest = [&grid](const unsigned vertexIndex, ScalarStencil& correctScalarStencil) -> void
 		{
@@ -100,7 +100,7 @@ TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDista
 
 TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistanceStencil]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";
 	Grid2DInverseDistanceStencil grid(cgnsGridFileName);
 	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
 		{ {0,1.0} },
@@ -119,7 +119,7 @@ TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistan
 
 TestCase("Compute ScalarStencil based on staggered elements for all vertices", "[Grid2DInverseDistanceStencil]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
 	Grid2DInverseDistanceStencil grid(cgnsGridFileName);
 	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
 		{ {0,0.36939806252}, {2,0.26120387496}, {4,0.36939806252} },
@@ -171,7 +171,7 @@ TestCase("Grid2DInverseDistanceStencil compute vector stencil","[Grid2DInverseDi
 
 TestCase("Grid2DInverseDistanceStencil compute gradient using StaggeredQuadrangle","[Grid2DInverseDistanceStencil][StaggeredQuadrangle]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
 	Grid2DInverseDistanceStencil grid(cgnsGridFileName);
 	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVertices();
 	VectorStencil correctVectorStencil = { { 0, {0.75,-0.75,0.0} }, { 1, {-0.75,0.75,0.0} } };

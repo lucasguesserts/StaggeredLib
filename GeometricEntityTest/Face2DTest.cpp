@@ -11,7 +11,7 @@
 
 TestCase("Face2D constructor", "[Face2D]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";
 	Grid2D grid(cgnsGridFileName);
 	constexpr unsigned index = 12;
 	constexpr unsigned localIndex = 53;

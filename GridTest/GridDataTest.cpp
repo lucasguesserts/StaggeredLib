@@ -81,7 +81,7 @@ TestCase("Grid data structure", "[Grid][GridData_2][ElementDefinition]")
 
 TestCase("grid reader from CGNS", "[GridData_2][CGNS]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData_2 gridData(cgnsFile);
 	section("dimension")
@@ -155,7 +155,7 @@ TestCase("grid reader from CGNS", "[GridData_2][CGNS]")
 
 TestCase("GridData_2 boundaries", "[GridData_2]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "CGNSFile_boundary_read_test.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "CGNSFile_boundary_read_test.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	GridData_2 gridData(cgnsFile);
 	section("bottom boundary")

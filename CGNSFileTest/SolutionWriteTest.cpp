@@ -11,8 +11,8 @@
 
 TestCase("CGNS file structure - steady solution","[CGNSFile]")
 {
-	const std::string fileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
-	const std::string tempFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS_temp.cgns";
+	const std::string fileName = gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string tempFileName = gridDirectory + "GridReaderTest_CGNS_temp.cgns";
 	boost::filesystem::copy_file(fileName, tempFileName, boost::filesystem::copy_option::overwrite_if_exists);
 	const std::string solutionName = "steady solution";
 	const std::string scalarFieldName = "Temperature";
@@ -32,8 +32,8 @@ TestCase("CGNS file structure - steady solution","[CGNSFile]")
 
 TestCase("CGNS file structure - transient solution","[CGNSFile]")
 {
-	const std::string fileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
-	const std::string tempFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS_transient.cgns";
+	const std::string fileName = gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string tempFileName = gridDirectory + "GridReaderTest_CGNS_transient.cgns";
 	boost::filesystem::copy_file(fileName, tempFileName, boost::filesystem::copy_option::overwrite_if_exists);
 
 	constexpr double deltaT = 2;

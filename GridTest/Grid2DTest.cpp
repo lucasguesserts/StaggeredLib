@@ -11,7 +11,7 @@
 
 TestCase("Grid 2D build", "[Grid][Grid2D]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";
 	Grid2D grid2D(cgnsGridFileName);
 	section("vertices")
 	{

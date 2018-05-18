@@ -28,7 +28,7 @@ TestCase("Grid structure", "[Grid]")
 
 TestCase("Grid constructor", "[Grid]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";
 	Grid grid(cgnsGridFileName);
 	section("vertices")
 	{

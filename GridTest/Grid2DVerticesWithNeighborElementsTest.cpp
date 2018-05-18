@@ -13,7 +13,7 @@
 
 TestCase("Grid that define vertex with neighbors elements", "[Grid2DVerticesWithNeighborElements]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";
 	Grid2DVerticesWithNeighborElements grid(cgnsGridFileName);
 	section("Vertex 3 neighborhood")
 	{

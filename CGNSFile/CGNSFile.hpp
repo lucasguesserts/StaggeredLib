@@ -11,6 +11,8 @@ namespace cgns
 #include <CGNSFile/ElementDefinition.hpp>
 #include <CGNSFile/BoundaryDefinition.hpp>
 
+const std::string gridDirectory = GRID_DIRECTORY;
+
 class CGNSFile
 {
 	public:
@@ -33,7 +35,6 @@ class CGNSFile
 		static std::vector<unsigned> transformCGNSIndices(const std::vector<cgns::cgsize_t>& elementsCGNSIndex);
 		BoundaryDefinition readBoundaryDefinition(const unsigned boundaryIndex);
 
-		static const std::string gridDirectory;
 		int cellDimension, physicalDimension; // read in base
 		unsigned numberOfVertices, numberOfElements; // read in zone
 	private:

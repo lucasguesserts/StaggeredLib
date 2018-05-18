@@ -7,7 +7,7 @@
 
 TestCase("CGNS file structure basic - coordinates and element connectivity", "[CGNSFile]")
 {
-	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string cgnsGridFileName = gridDirectory + "GridReaderTest_CGNS.cgns";
 	CGNSFile cgnsFile(cgnsGridFileName);
 	section("read coordinates X")
 	{
