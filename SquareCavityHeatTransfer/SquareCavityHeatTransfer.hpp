@@ -9,7 +9,7 @@
 class SquareCavityHeatTransfer
 {
 	public:
-		SquareCavityHeatTransfer(const GridData_2& gridData);
+		SquareCavityHeatTransfer(const std::string& fileName);
 		void addAccumulationTerm(void);
 		void addDiffusiveTerm(void);
 		void addDiffusiveTerm(StaggeredElement2D& staggeredQuadrangle);

@@ -30,9 +30,7 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 	for(auto& cgnsFileName: meshFiles)
 	{
 		std::cout << "File: " << cgnsFileName << std::endl;
-		CGNSFile cgnsFile(cgnsFileName);
-		GridData_2 gridData(cgnsFile);
-		SquareCavityHeatTransfer problem(gridData);
+		SquareCavityHeatTransfer problem(cgnsFileName);
 		problem.rho = 1;
 		problem.cp = 1;
 		problem.k = 1;
@@ -122,9 +120,7 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 	for(auto& cgnsFileName: meshFiles)
 	{
 		std::cout << "File: " << cgnsFileName << std::endl;
-		CGNSFile cgnsFile(cgnsFileName);
-		GridData_2 gridData(cgnsFile);
-		SquareCavityHeatTransfer problem(gridData);
+		SquareCavityHeatTransfer problem(cgnsFileName);
 		problem.rho = 1;
 		problem.cp = 1;
 		problem.k = 1;

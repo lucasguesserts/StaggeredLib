@@ -15,9 +15,7 @@
 TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	SquareCavityHeatTransfer problem(gridData);
+	SquareCavityHeatTransfer problem(cgnsGridFileName);
 	const unsigned numberOfElements = problem.grid2D.elements.size();
 	problem.rho = 2;
 	problem.cp = 3;
@@ -98,9 +96,7 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 TestCase("Apply dirichlet boundary condition - all boundaries", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	SquareCavityHeatTransfer problem(gridData);
+	SquareCavityHeatTransfer problem(cgnsGridFileName);
 	const unsigned numberOfElements = problem.grid2D.elements.size();
 	problem.rho = 2;
 	problem.cp = 3;
@@ -147,9 +143,7 @@ TestCase("Apply dirichlet boundary condition - all boundaries", "[SquareCavityHe
 TestCase("Complete heat transfer with dirichlet boundary conditions", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	SquareCavityHeatTransfer problem(gridData);
+	SquareCavityHeatTransfer problem(cgnsGridFileName);
 	const unsigned numberOfElements = problem.grid2D.elements.size();
 	problem.rho = 2;
 	problem.cp = 3;

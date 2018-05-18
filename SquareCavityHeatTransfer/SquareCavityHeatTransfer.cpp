@@ -2,8 +2,8 @@
 #include <cmath>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 
-SquareCavityHeatTransfer::SquareCavityHeatTransfer(const GridData_2& gridData)
-	: grid2D(gridData)
+SquareCavityHeatTransfer::SquareCavityHeatTransfer(const std::string& fileName)
+	: grid2D(fileName)
 {
 	this->initializeLinearSystem();
 	this->initializeTemperatureVectors();

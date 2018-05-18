@@ -1,4 +1,5 @@
 #include <array>
+#include <vector>
 #include <boost/filesystem.hpp>
 #include <stdexcept>
 #include <iostream>
@@ -13,22 +14,15 @@
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>
+#include <CgnsInterface/CgnsWriter.hpp>
 
 int main()
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "heatDiffusion_25_25.cgns";
 	const std::string cgnsResultFileName = CGNSFile::gridDirectory + "result_heatDiffusion_25_25.cgns";
-	boost::filesystem::path filePath(cgnsGridFileName);
-	boost::filesystem::path resultFilePath(cgnsResultFileName);
-	if(boost::filesystem::exists(resultFilePath))
-		boost::filesystem::remove(resultFilePath);
-	if(!boost::filesystem::exists(filePath))
-		throw std::runtime_error(std::string("File '") + cgnsGridFileName + std::string("' does not exist!"));
-	boost::filesystem::copy(filePath, resultFilePath);
+	boost::filesystem::copy_file(cgnsGridFileName, cgnsResultFileName, boost::filesystem::copy_option::overwrite_if_exists);
 
-	CGNSFile cgnsFile(cgnsResultFileName);
-	GridData_2 gridData(cgnsFile);
-	SquareCavityHeatTransfer problem(gridData);
+	SquareCavityHeatTransfer problem(cgnsResultFileName);
 	problem.rho = 1;
 	problem.cp = 1;
 	problem.k = 1;
@@ -67,22 +61,25 @@ int main()
 	unsigned timeStep = 0;
 	double error;
 	const std::string scalarFieldName = "Temperature";
+
+	CgnsWriter cgnsWriter(cgnsResultFileName, "CellCenter");
+
+
+
 	do
 	{
 		std::cout << "\ttime step: " << timeStep << std::endl;
 		problem.oldTemperature = problem.temperature;
-		cgnsFile.writeTransientScalarField(scalarFieldName,timeStep,problem.oldTemperature);
+
+		cgnsWriter.writeTimeStep(timeStep * problem.timeInterval);
+		cgnsWriter.writeTransientField(
+			std::vector<double>(problem.oldTemperature.data(), problem.oldTemperature.data()+problem.oldTemperature.size()),
+			scalarFieldName);
 		problem.temperature = problem.nextTimeStep();
 		error = (problem.temperature - problem.oldTemperature).norm();
 		++timeStep;
 		std::cout << "\t\terror = " << error << std::endl;
 	} while(error > tolerance);
-	const unsigned numberOfTimeSteps = timeStep;
-	Eigen::VectorXd timeInstants;
-	timeInstants.resize(numberOfTimeSteps);
-	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
-		timeInstants[timeStep] = timeStep * problem.timeInterval;
-	cgnsFile.writeTransientInformation(scalarFieldName,timeInstants);
 
 	return 0;
 }
