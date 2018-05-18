@@ -101,9 +101,7 @@ TestCase("Compute ScalarStencil in grid, vertex by vertex", "[Grid2DInverseDista
 TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistanceStencil]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "GridReaderTest_CGNS.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	Grid2DInverseDistanceStencil grid(gridData);
+	Grid2DInverseDistanceStencil grid(cgnsGridFileName);
 	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
 		{ {0,1.0} },
 		{ {0,0.5}, {1,0.5} },
@@ -122,9 +120,7 @@ TestCase("Compute ScalarStencil for all vertices in grid", "[Grid2DInverseDistan
 TestCase("Compute ScalarStencil based on staggered elements for all vertices", "[Grid2DInverseDistanceStencil]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	Grid2DInverseDistanceStencil grid(gridData);
+	Grid2DInverseDistanceStencil grid(cgnsGridFileName);
 	std::vector<ScalarStencil> correctScalarStencilOnVertices = {
 		{ {0,0.36939806252}, {2,0.26120387496}, {4,0.36939806252} },
 		{ {0,0.5},           {1,0.5} },
@@ -176,9 +172,7 @@ TestCase("Grid2DInverseDistanceStencil compute vector stencil","[Grid2DInverseDi
 TestCase("Grid2DInverseDistanceStencil compute gradient using StaggeredQuadrangle","[Grid2DInverseDistanceStencil][StaggeredQuadrangle]")
 {
 	const std::string cgnsGridFileName = CGNSFile::gridDirectory + "two_triangles.cgns";
-	CGNSFile cgnsFile(cgnsGridFileName);
-	GridData_2 gridData(cgnsFile);
-	Grid2DInverseDistanceStencil grid(gridData);
+	Grid2DInverseDistanceStencil grid(cgnsGridFileName);
 	std::vector<ScalarStencil> scalarStencilOnVertices = grid.computeScalarStencilOnVertices();
 	VectorStencil correctVectorStencil = { { 0, {0.75,-0.75,0.0} }, { 1, {-0.75,0.75,0.0} } };
 	VectorStencil vectorStencilOnStaggeredQuadrangle = grid.computeVectorStencilOnQuadrangle(*grid.staggeredQuadrangles[0], scalarStencilOnVertices);
