@@ -5,6 +5,9 @@
 #include <Grid/Grid2DWithStaggeredElements.hpp>
 #include <CgnsInterface/CgnsCreator/CgnsCreator2D.hpp>
 
+#include <iostream>
+#define debug std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
 class Grid2DWithStaggeredElementsExport
 {
 	public:
@@ -13,6 +16,9 @@ class Grid2DWithStaggeredElementsExport
 		static void exportCoordinates(const Grid2DWithStaggeredElements& grid, GridDataShared gridData);
 		static void exportStaggeredTriangles(const Grid2DWithStaggeredElements& grid, GridDataShared gridData);
 		static void exportStaggeredQuadrangles(const Grid2DWithStaggeredElements& grid, GridDataShared gridData);
+		static void exportRegions(GridDataShared gridData);
+		static void exportQuadrangleRegion(GridDataShared gridData);
+		static void exportTriangleRegion(GridDataShared gridData);
 		static void exportLines(const Grid2DWithStaggeredElements& grid, GridDataShared gridData);
 };
 
