@@ -9,8 +9,6 @@ Grid::Grid(const std::string& fileName)
 
 void Grid::readCgnsFile(const std::string& fileName)
 {
-	if(!CgnsReader::isCgnsFile(fileName))
-		throw std::runtime_error("The file '" + fileName + "' is not a valid cgns file.");
 	cgnsReader = std::make_unique<CgnsReader2D>(fileName);
 	return;
 }

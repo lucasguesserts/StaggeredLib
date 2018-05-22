@@ -65,7 +65,7 @@ int main()
 		std::cout << "\ttime step: " << timeStep << std::endl;
 		problem.oldTemperature = problem.temperature;
 
-		cgnsWriter.writeTimeStep(timeStep * problem.timeInterval);
+		cgnsWriter.writeTransientSolution(timeStep * problem.timeInterval);
 		cgnsWriter.writeTransientField(
 			std::vector<double>(problem.oldTemperature.data(), problem.oldTemperature.data()+problem.oldTemperature.size()),
 			scalarFieldName);

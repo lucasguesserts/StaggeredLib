@@ -33,7 +33,6 @@ if (Boost_FOUND)
 	include_directories (${Boost_INCLUDE_DIRS})
 endif ()
 
-message ("MSHtoCGNS_DIR: " ${MSHtoCGNS_DIR})
 find_package (MSHtoCGNS REQUIRED)
 if (MSHtoCGNS_FOUND)
 	include_directories (${MSHtoCGNS_INCLUDE_DIR})
