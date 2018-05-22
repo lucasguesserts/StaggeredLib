@@ -7,7 +7,6 @@ void Grid2DWithStaggeredElementsExport::cgns(const std::string& fileName, const 
 	Grid2DWithStaggeredElementsExport::exportCoordinates(grid, gridData);
 	Grid2DWithStaggeredElementsExport::exportStaggeredTriangles(grid, gridData);
 	Grid2DWithStaggeredElementsExport::exportStaggeredQuadrangles(grid, gridData);
-	Grid2DWithStaggeredElementsExport::exportLines(grid, gridData);
 	Grid2DWithStaggeredElementsExport::exportRegions(gridData);
 	CgnsCreator2D cgnsCreator(gridData, fileName);
 	return;
@@ -71,7 +70,6 @@ void Grid2DWithStaggeredElementsExport::exportRegions(GridDataShared gridData)
 {
 	Grid2DWithStaggeredElementsExport::exportQuadrangleRegion(gridData);
 	Grid2DWithStaggeredElementsExport::exportTriangleRegion(gridData);
-	Grid2DWithStaggeredElementsExport::exportLineRegion(gridData);
 }
 
 void Grid2DWithStaggeredElementsExport::exportTriangleRegion(GridDataShared gridData)
@@ -97,35 +95,6 @@ void Grid2DWithStaggeredElementsExport::exportQuadrangleRegion(GridDataShared gr
 	for(unsigned count=0 ; count<numberOfQuadrangles ; ++count)
 	{
 		region.elementsOnRegion[count] = gridData->quadrangleConnectivity[count].back();
-	}
-	gridData->regions.emplace_back(std::move(region));
-	return;
-}
-
-void Grid2DWithStaggeredElementsExport::exportLines(const Grid2DWithStaggeredElements& grid, GridDataShared gridData)
-{
-	gridData->lineConnectivity.resize(grid.lines.size());
-	unsigned index = 0u;
-	for(auto& line: grid.lines)
-	{
-		auto& connectivity = gridData->lineConnectivity[index];
-		connectivity[0] = line.vertices[0]->getIndex();
-		connectivity[1] = line.vertices[1]->getIndex();
-		connectivity[2] = line.getIndex();
-		++index;
-	}
-	return;
-}
-
-void Grid2DWithStaggeredElementsExport::exportLineRegion(GridDataShared gridData)
-{
-	const unsigned numberOfLines = gridData->lineConnectivity.size();
-	RegionData region;
-	region.elementsOnRegion.resize(numberOfLines);
-	region.name = "lines";
-	for(unsigned count=0 ; count<numberOfLines ; ++count)
-	{
-		region.elementsOnRegion[count] = gridData->lineConnectivity[count].back();
 	}
 	gridData->regions.emplace_back(std::move(region));
 	return;

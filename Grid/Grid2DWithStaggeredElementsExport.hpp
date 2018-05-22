@@ -19,8 +19,6 @@ class Grid2DWithStaggeredElementsExport
 		static void exportRegions(GridDataShared gridData);
 		static void exportQuadrangleRegion(GridDataShared gridData);
 		static void exportTriangleRegion(GridDataShared gridData);
-		static void exportLines(const Grid2DWithStaggeredElements& grid, GridDataShared gridData);
-		static void exportLineRegion(GridDataShared gridData);
 };
 
 #endif
