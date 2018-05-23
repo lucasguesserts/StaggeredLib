@@ -20,6 +20,8 @@ class Grid2DWithStaggeredElements: public Grid2DVerticesWithNeighborElements
 		std::vector<Face2D> faces;
 		std::map<std::string,Boundary> boundary;
 
+		double getStaggeredCharacteristicLength(void);
+
 		void createStaggeredElements(void);
 		void createFaces(void);
 		std::tuple<bool,unsigned> findStaggeredElement(const StaggeredElement2D& staggeredElement);

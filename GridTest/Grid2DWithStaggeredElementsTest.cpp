@@ -209,6 +209,11 @@ TestCase("Grid2DWithStaggeredElements build", "[Grid2DWithStaggeredElements]")
 		std::vector<StaggeredElement2D*> staggeredQuadrangles = { &grid.staggeredElements[2] };
 		check(grid.staggeredQuadrangles==staggeredQuadrangles);
 	}
+	section("staggered mesh characteristic length")
+	{
+		const double characteristicLength = 0.894427190999916;
+		check(grid.getStaggeredCharacteristicLength()==Approx(characteristicLength));
+	}
 }
 
 TestCase("Find line - version 2", "[Grid2DWithStaggeredElements]")

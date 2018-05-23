@@ -12,6 +12,16 @@ Grid2DWithStaggeredElements::Grid2DWithStaggeredElements(const std::string& file
 	this->createBoundaries();
 }
 
+double Grid2DWithStaggeredElements::getStaggeredCharacteristicLength(void)
+{
+	double area = 0.0;
+	for(auto staggeredElement: this->staggeredElements)
+		area += staggeredElement.getVolume();
+	area /= this->staggeredElements.size();
+	area = std::sqrt(area);
+	return area;
+}
+
 void Grid2DWithStaggeredElements::createStaggeredElements(void)
 {
 	// TODO: separate in several functions
