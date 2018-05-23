@@ -79,3 +79,8 @@ bool RateOfConvergence::isQuadratic(void)
 {
 	return this->order >= 2.0;
 }
+
+bool RateOfConvergence::diverge(void)
+{
+	return this->order <= 0.0;
+}

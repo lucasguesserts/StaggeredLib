@@ -10,6 +10,7 @@ class RateOfConvergence
 		bool converge(void);
 		bool isLinear(void);
 		bool isQuadratic(void);
+		bool diverge(void);
 
 		bool isAnalytical; // if some error is less than 1E-13
 		double order;

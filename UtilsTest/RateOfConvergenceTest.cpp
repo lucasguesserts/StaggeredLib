@@ -50,4 +50,5 @@ TestCase("Divergent rate of convergence", "[RateOfConvergence]")
 	checkFalse(rateOfConvergence.isAnalytical);
 	checkFalse(rateOfConvergence.isLinear());
 	checkFalse(rateOfConvergence.converge());
+	check(rateOfConvergence.diverge());
 }
