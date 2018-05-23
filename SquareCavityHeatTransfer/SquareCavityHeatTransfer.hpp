@@ -14,7 +14,8 @@ class SquareCavityHeatTransfer
 		void addDiffusiveTerm(void);
 		void addDiffusiveTerm(StaggeredElement2D& staggeredQuadrangle);
 
-		static Eigen::VectorXd computeAnalyticalSolution(const Eigen::Matrix<double,Eigen::Dynamic,3> coordinates);
+		static Eigen::VectorXd computeAnalyticalSolution(const Eigen::Matrix<double,Eigen::Dynamic,3>& coordinates);
+		Eigen::VectorXd computeAnalyticalSolution(void);
 
 		double rho, cp, k;
 		double timeInterval, timeImplicitCoefficient;

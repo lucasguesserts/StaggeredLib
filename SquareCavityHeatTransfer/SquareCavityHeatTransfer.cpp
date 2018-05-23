@@ -62,7 +62,7 @@ void SquareCavityHeatTransfer::addAccumulationTerm(void)
 	return;
 }
 
-Eigen::VectorXd SquareCavityHeatTransfer::computeAnalyticalSolution(const Eigen::Matrix<double,Eigen::Dynamic,3> coordinates)
+Eigen::VectorXd SquareCavityHeatTransfer::computeAnalyticalSolution(const Eigen::Matrix<double,Eigen::Dynamic,3>& coordinates)
 {
 	const unsigned numberOfPoints = coordinates.rows();
 	double x, y;
@@ -74,6 +74,20 @@ Eigen::VectorXd SquareCavityHeatTransfer::computeAnalyticalSolution(const Eigen:
 		solution[positionIndex] = std::sin(M_PI*x) * std::sinh(M_PI*y) / std::sinh(M_PI);
 	}
 	return solution;
+}
+
+Eigen::VectorXd SquareCavityHeatTransfer::computeAnalyticalSolution(void)
+{
+	Eigen::Matrix<double,Eigen::Dynamic,3> elementsCentroid;
+	elementsCentroid.resize(this->grid2D.elements.size(), Eigen::NoChange);
+	for(auto element: this->grid2D.elements)
+	{
+		Eigen::Vector3d centroid = element->getCentroid();
+		elementsCentroid(element->getIndex(),0) = centroid(0);
+		elementsCentroid(element->getIndex(),1) = centroid(1);
+		elementsCentroid(element->getIndex(),2) = centroid(2);
+	}
+	return SquareCavityHeatTransfer::computeAnalyticalSolution(elementsCentroid);
 }
 
 void SquareCavityHeatTransfer::addDiffusiveTerm(void)

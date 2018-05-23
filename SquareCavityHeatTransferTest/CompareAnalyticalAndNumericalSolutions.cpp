@@ -55,18 +55,8 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 		} while(error > tolerance);
 		Eigen::VectorXd numericalSolution = problem.temperature;
 
-		// Analytical
-		Eigen::Matrix<double,Eigen::Dynamic,3> elementsCentroid;
-		elementsCentroid.resize(problem.grid2D.elements.size(), Eigen::NoChange);
-		for(auto element: problem.grid2D.elements)
-		{
-			Eigen::Vector3d centroid = element->getCentroid();
-			elementsCentroid(element->getIndex(),0) = centroid(0);
-			elementsCentroid(element->getIndex(),1) = centroid(1);
-			elementsCentroid(element->getIndex(),2) = centroid(2);
-		}
-		Eigen::VectorXd analyticalSolution = SquareCavityHeatTransfer::computeAnalyticalSolution(elementsCentroid);
-
+		// error
+		Eigen::VectorXd analyticalSolution = problem.computeAnalyticalSolution();
 		error = (numericalSolution - analyticalSolution).lpNorm<Eigen::Infinity>();
 		numericalError.push_back(error);
 		characteristicLength.push_back(problem.grid2D.getCharacteristicLength());
@@ -114,18 +104,8 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 		} while(error > tolerance);
 		Eigen::VectorXd numericalSolution = problem.temperature;
 
-		// Analytical
-		Eigen::Matrix<double,Eigen::Dynamic,3> elementsCentroid;
-		elementsCentroid.resize(problem.grid2D.elements.size(), Eigen::NoChange);
-		for(auto element: problem.grid2D.elements)
-		{
-			Eigen::Vector3d centroid = element->getCentroid();
-			elementsCentroid(element->getIndex(),0) = centroid(0);
-			elementsCentroid(element->getIndex(),1) = centroid(1);
-			elementsCentroid(element->getIndex(),2) = centroid(2);
-		}
-		Eigen::VectorXd analyticalSolution = SquareCavityHeatTransfer::computeAnalyticalSolution(elementsCentroid);
-
+		// error
+		Eigen::VectorXd analyticalSolution = problem.computeAnalyticalSolution();
 		error = (numericalSolution - analyticalSolution).lpNorm<Eigen::Infinity>();
 		numericalError.push_back(error);
 		characteristicLength.push_back(problem.grid2D.getCharacteristicLength());
