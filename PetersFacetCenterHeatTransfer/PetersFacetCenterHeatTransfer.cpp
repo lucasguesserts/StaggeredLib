@@ -29,6 +29,22 @@ void PetersFacetCenterHeatTransfer::initializeScalarStencilOnVertices(void)
 
 void PetersFacetCenterHeatTransfer::initializeScalarStencilOnElements(void)
 {
+	this->scalarStencilOnElements.resize(this->grid2D.elements.size());
+	auto addScalarStencil = [this](StaggeredElement2D* staggeredElement, Element* element) -> void
+	{
+		const unsigned elementIndex = element->getIndex();
+		const unsigned staggeredElementIndex = staggeredElement->getIndex();
+		const double weight = 1.0 / static_cast<double>(element->vertices.size());
+		this->scalarStencilOnElements[elementIndex] = this->scalarStencilOnElements[elementIndex] +
+		                                              ScalarStencil{{staggeredElementIndex, weight}};
+	};
+	for(auto& staggeredElement: this->grid2D.staggeredQuadrangles)
+	{
+		addScalarStencil(staggeredElement, staggeredElement->elements[0]);
+		addScalarStencil(staggeredElement, staggeredElement->elements[1]);
+	}
+	for(auto& staggeredElement: this->grid2D.staggeredTriangles)
+		addScalarStencil(staggeredElement, staggeredElement->elements[0]);
 	return;
 }
 
