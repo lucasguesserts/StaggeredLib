@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <functional>
 #include <Eigen/Core>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
@@ -24,6 +25,7 @@ class SquareCavityHeatTransfer
 		std::vector<ScalarStencil> scalarStencilOnVertices;
 		std::vector<DirichletBoundaryCondition> dirichletBoundaries;
 
+		void insertDirichletBoundaryCondition(const std::string& boundaryName, const std::function<double(Eigen::Vector3d)> prescribedValueFunction);
 		void applyBoundaryConditions(void);
 		void applyBoundaryCondition(DirichletBoundaryCondition& dirichlet);
 		void applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredElement2D& staggeredTriangle, const double prescribedValue);

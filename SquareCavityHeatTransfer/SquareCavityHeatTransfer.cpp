@@ -32,6 +32,17 @@ void SquareCavityHeatTransfer::initializeScalarStencilOnVertices(void)
 	this->scalarStencilOnVertices = this->grid2D.computeScalarStencilOnVertices();
 }
 
+void SquareCavityHeatTransfer::insertDirichletBoundaryCondition(const std::string& boundaryName, const std::function<double(Eigen::Vector3d)> prescribedValueFunction)
+{
+	DirichletBoundaryCondition dirichlet;
+	dirichlet.staggeredTriangle = this->grid2D.boundary[boundaryName].staggeredTriangle;
+	dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+	for(unsigned count=0 ; count<dirichlet.staggeredTriangle.size() ; ++count)
+		dirichlet.prescribedValue[count] = prescribedValueFunction(dirichlet.staggeredTriangle[count]->getCentroid());
+	this->dirichletBoundaries.emplace_back(std::move(dirichlet));
+	return;
+}
+
 void SquareCavityHeatTransfer::addAccumulationTerm(void)
 {
 	for(Element* element: this->grid2D.elements)

@@ -10,6 +10,21 @@
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>
 
+TestCase("Insert dirichlet boundary condition to square cavity heat transfer", "[SquareCavityHeatTransfer]")
+{
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
+	SquareCavityHeatTransfer problem(cgnsGridFileName);
+	section("bottom")
+	{
+		std::string boundaryName = "bottom boundary";
+		auto dirichletFunction = [](Eigen::Vector3d centroid) -> double { return centroid.x()+3; };
+		problem.insertDirichletBoundaryCondition(boundaryName, dirichletFunction);
+		check(problem.dirichletBoundaries[0].staggeredTriangle.size()==1);
+		check(problem.dirichletBoundaries[0].staggeredTriangle[0]==problem.grid2D.staggeredTriangles[0]);
+		check(problem.dirichletBoundaries[0].prescribedValue[0]==4.0);
+	}
+}
+
 TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
