@@ -4,10 +4,10 @@
 #include <cmath>
 #include <boost/filesystem.hpp>
 #include <stdexcept>
-#include <iostream>
 
 #include <Utils/Test.hpp>
 #include <Utils/EigenTest.hpp>
+#include <Utils/RateOfConvergence.hpp>
 #include <Stencil/ScalarStencil.hpp>
 #include <Stencil/VectorStencil.hpp>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
@@ -24,17 +24,16 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 		directory + "10.cgns",
 		directory + "15.cgns"
 	};
-	std::vector<double> numericalError;
+	std::vector<double> numericalError, characteristicLength;
 	for(auto& cgnsFileName: meshFiles)
 	{
-		std::cout << "File: " << cgnsFileName << std::endl;
 		SquareCavityHeatTransfer problem(cgnsFileName);
 		problem.rho = 1;
 		problem.cp = 1;
 		problem.k = 1;
 		problem.timeImplicitCoefficient = 1.0;
 		problem.timeInterval = 1000;
-		for(unsigned i=0 ; i<problem.oldTemperature.size() ; ++i)
+		for(unsigned i=0 ; i<problem.temperature.size() ; ++i)
 			problem.temperature[i] = 0.0;
 		problem.insertDirichletBoundaryCondition("bottom boundary",0.0);
 		problem.insertDirichletBoundaryCondition("east boundary",0.0);
@@ -49,12 +48,10 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 		constexpr double tolerance = 1.0e-8;
 		do
 		{
-			std::cout << "\ttime step: " << iteration << std::endl;
 			problem.oldTemperature = problem.temperature;
 			problem.temperature = problem.nextTimeStep();
-			error = (problem.temperature - problem.oldTemperature).norm();
+			error = (problem.temperature - problem.oldTemperature).lpNorm<Eigen::Infinity>();
 			++iteration;
-			std::cout << "\t\terror = " << error << std::endl;
 		} while(error > tolerance);
 		Eigen::VectorXd numericalSolution = problem.temperature;
 
@@ -70,15 +67,13 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 		}
 		Eigen::VectorXd analyticalSolution = SquareCavityHeatTransfer::computeAnalyticalSolution(elementsCentroid);
 
-		error = (numericalSolution - analyticalSolution).norm() / numericalSolution.size();
+		error = (numericalSolution - analyticalSolution).lpNorm<Eigen::Infinity>();
 		numericalError.push_back(error);
+		characteristicLength.push_back(problem.grid2D.getCharacteristicLength());
 	}
-	for(unsigned i=0 ; i<(numericalError.size()-1) ; ++i)
-	{
-		std::cout << "NumericalError[" << i << "] = " << numericalError[i] << std::endl;
-		check(numericalError[i+1]<numericalError[i]);
-	}
-		std::cout << "NumericalError[" << (numericalError.size()-1) << "] = " << numericalError[(numericalError.size()-1)] << std::endl;
+	RateOfConvergence rateOfConvergence(numericalError,characteristicLength);
+	check(rateOfConvergence.converge());
+	check(rateOfConvergence.order>0.5);
 }
 
 TestCase("Compare numerical and analytical solution - cartesian elements", "[SquareCavityHeatTransfer]")
@@ -89,10 +84,9 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 		directory + "10.cgns",
 		directory + "15.cgns"
 	};
-	std::vector<double> numericalError;
+	std::vector<double> numericalError, characteristicLength;
 	for(auto& cgnsFileName: meshFiles)
 	{
-		std::cout << "File: " << cgnsFileName << std::endl;
 		SquareCavityHeatTransfer problem(cgnsFileName);
 		problem.rho = 1;
 		problem.cp = 1;
@@ -114,12 +108,9 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 		constexpr double tolerance = 1.0e-8;
 		do
 		{
-			std::cout << "\ttime step: " << iteration << std::endl;
 			problem.oldTemperature = problem.temperature;
 			problem.temperature = problem.nextTimeStep();
-			error = (problem.temperature - problem.oldTemperature).norm();
-			++iteration;
-			std::cout << "\t\terror = " << error << std::endl;
+			error = (problem.temperature - problem.oldTemperature).lpNorm<Eigen::Infinity>();
 		} while(error > tolerance);
 		Eigen::VectorXd numericalSolution = problem.temperature;
 
@@ -135,13 +126,10 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 		}
 		Eigen::VectorXd analyticalSolution = SquareCavityHeatTransfer::computeAnalyticalSolution(elementsCentroid);
 
-		error = (numericalSolution - analyticalSolution).norm();
+		error = (numericalSolution - analyticalSolution).lpNorm<Eigen::Infinity>();
 		numericalError.push_back(error);
+		characteristicLength.push_back(problem.grid2D.getCharacteristicLength());
 	}
-	for(unsigned i=0 ; i<(numericalError.size()-1) ; ++i)
-	{
-		std::cout << "NumericalError[" << i << "] = " << numericalError[i] << std::endl;
-		check(numericalError[i+1]<numericalError[i]);
-	}
-		std::cout << "NumericalError[" << (numericalError.size()-1) << "] = " << numericalError[(numericalError.size()-1)] << std::endl;
+	RateOfConvergence rateOfConvergence(numericalError,characteristicLength);
+	check(rateOfConvergence.isLinear());
 }
