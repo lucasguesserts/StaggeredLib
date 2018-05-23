@@ -34,39 +34,14 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 		problem.k = 1;
 		problem.timeImplicitCoefficient = 1.0;
 		problem.timeInterval = 1000;
-		DirichletBoundaryCondition dirichlet;
 		for(unsigned i=0 ; i<problem.oldTemperature.size() ; ++i)
 			problem.temperature[i] = 0.0;
-		std::string boundaryName;
-			boundaryName = "bottom boundary";
-			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-			for(auto& entry: dirichlet.prescribedValue)
-				entry = 0.0;
-			problem.dirichletBoundaries.push_back(dirichlet);
-			boundaryName = "east boundary";
-			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-			for(auto& entry: dirichlet.prescribedValue)
-				entry = 0.0;
-			problem.dirichletBoundaries.push_back(dirichlet);
-			boundaryName = "top boundary";
-			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-			for(unsigned i=0 ; i<dirichlet.staggeredTriangle.size() ; ++i)
-			{
-				Eigen::Vector3d centroid = dirichlet.staggeredTriangle[i]->getCentroid();
-				const double x = centroid.coeff(0);
-				const double y = centroid.coeff(1);
-				dirichlet.prescribedValue[i] = std::sin(M_PI*x) * std::sinh(M_PI*y) / std::sinh(M_PI);
-			}
-			problem.dirichletBoundaries.push_back(dirichlet);
-			boundaryName = "west boundary";
-			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-			for(auto& entry: dirichlet.prescribedValue)
-				entry = 0.0;
-			problem.dirichletBoundaries.push_back(dirichlet);
+		problem.insertDirichletBoundaryCondition("bottom boundary",0.0);
+		problem.insertDirichletBoundaryCondition("east boundary",0.0);
+		problem.insertDirichletBoundaryCondition("west boundary",0.0);
+		problem.insertDirichletBoundaryCondition("top boundary",
+			[](Eigen::Vector3d centroid) -> double
+			{ return std::sin(M_PI*centroid.x()) * std::sinh(M_PI*centroid.y()) / std::sinh(M_PI); });
 
 		// Steady numerical solution
 		unsigned iteration = 0;
@@ -124,39 +99,14 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 		problem.k = 1;
 		problem.timeImplicitCoefficient = 1.0;
 		problem.timeInterval = 1000;
-		DirichletBoundaryCondition dirichlet;
 		for(unsigned i=0 ; i<problem.oldTemperature.size() ; ++i)
 			problem.temperature[i] = 0.0;
-		std::string boundaryName;
-			boundaryName = "bottom boundary";
-			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-			for(auto& entry: dirichlet.prescribedValue)
-				entry = 0.0;
-			problem.dirichletBoundaries.push_back(dirichlet);
-			boundaryName = "east boundary";
-			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-			for(auto& entry: dirichlet.prescribedValue)
-				entry = 0.0;
-			problem.dirichletBoundaries.push_back(dirichlet);
-			boundaryName = "top boundary";
-			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-			for(unsigned i=0 ; i<dirichlet.staggeredTriangle.size() ; ++i)
-			{
-				Eigen::Vector3d centroid = dirichlet.staggeredTriangle[i]->getCentroid();
-				const double x = centroid.coeff(0);
-				const double y = centroid.coeff(1);
-				dirichlet.prescribedValue[i] = std::sin(M_PI*x) * std::sinh(M_PI*y) / std::sinh(M_PI);
-			}
-			problem.dirichletBoundaries.push_back(dirichlet);
-			boundaryName = "west boundary";
-			dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-			dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-			for(auto& entry: dirichlet.prescribedValue)
-				entry = 0.0;
-			problem.dirichletBoundaries.push_back(dirichlet);
+		problem.insertDirichletBoundaryCondition("bottom boundary",0.0);
+		problem.insertDirichletBoundaryCondition("east boundary",0.0);
+		problem.insertDirichletBoundaryCondition("west boundary",0.0);
+		problem.insertDirichletBoundaryCondition("top boundary",
+			[](Eigen::Vector3d centroid) -> double
+			{ return std::sin(M_PI*centroid.x()) * std::sinh(M_PI*centroid.y()) / std::sinh(M_PI); });
 
 		// Steady numerical solution
 		unsigned iteration = 0;

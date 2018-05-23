@@ -26,34 +26,12 @@ int main()
 	problem.k = 1;
 	problem.timeImplicitCoefficient = 1.0;
 	problem.timeInterval = 1.0/pow(2,8);
-	DirichletBoundaryCondition dirichlet;
 	for(unsigned i=0 ; i<problem.oldTemperature.size() ; ++i)
 		problem.temperature[i] = 0.0;
-	std::string boundaryName;
-		boundaryName = "bottom boundary";
-		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-		for(auto& entry: dirichlet.prescribedValue)
-			entry = 0.0;
-		problem.dirichletBoundaries.push_back(dirichlet);
-		boundaryName = "east boundary";
-		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-		for(auto& entry: dirichlet.prescribedValue)
-			entry = 0.0;
-		problem.dirichletBoundaries.push_back(dirichlet);
-		boundaryName = "top boundary";
-		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-		for(auto& entry: dirichlet.prescribedValue)
-			entry = 1.0;
-		problem.dirichletBoundaries.push_back(dirichlet);
-		boundaryName = "west boundary";
-		dirichlet.staggeredTriangle = problem.grid2D.boundary[boundaryName].staggeredTriangle;
-		dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
-		for(auto& entry: dirichlet.prescribedValue)
-			entry = 0.0;
-		problem.dirichletBoundaries.push_back(dirichlet);
+	problem.insertDirichletBoundaryCondition("bottom boundary",0.0);
+	problem.insertDirichletBoundaryCondition("east boundary",0.0);
+	problem.insertDirichletBoundaryCondition("west boundary",0.0);
+	problem.insertDirichletBoundaryCondition("top boundary",1.0);
 
 	double tolerance = 1e-3;
 	unsigned timeStep = 0;
