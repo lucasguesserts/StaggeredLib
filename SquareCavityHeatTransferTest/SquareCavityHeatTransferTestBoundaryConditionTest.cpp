@@ -14,7 +14,7 @@ TestCase("Insert dirichlet boundary condition to square cavity heat transfer", "
 {
 	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
 	SquareCavityHeatTransfer problem(cgnsGridFileName);
-	section("bottom")
+	section("bottom - using lambda expression")
 	{
 		std::string boundaryName = "bottom boundary";
 		auto dirichletFunction = [](Eigen::Vector3d centroid) -> double { return centroid.x()+3; };
@@ -22,6 +22,15 @@ TestCase("Insert dirichlet boundary condition to square cavity heat transfer", "
 		check(problem.dirichletBoundaries[0].staggeredTriangle.size()==1);
 		check(problem.dirichletBoundaries[0].staggeredTriangle[0]==problem.grid2D.staggeredTriangles[0]);
 		check(problem.dirichletBoundaries[0].prescribedValue[0]==4.0);
+	}
+	section("top - using prescribed value")
+	{
+		std::string boundaryName = "top boundary";
+		constexpr double prescribedValue = 8.1;
+		problem.insertDirichletBoundaryCondition(boundaryName, prescribedValue);
+		check(problem.dirichletBoundaries[0].staggeredTriangle.size()==1);
+		check(problem.dirichletBoundaries[0].staggeredTriangle[0]==problem.grid2D.staggeredTriangles[2]);
+		check(problem.dirichletBoundaries[0].prescribedValue[0]==prescribedValue);
 	}
 }
 

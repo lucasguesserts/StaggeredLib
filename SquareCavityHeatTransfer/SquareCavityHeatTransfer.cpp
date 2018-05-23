@@ -43,6 +43,13 @@ void SquareCavityHeatTransfer::insertDirichletBoundaryCondition(const std::strin
 	return;
 }
 
+void SquareCavityHeatTransfer::insertDirichletBoundaryCondition(const std::string& boundaryName, const double prescribedValue)
+{
+	auto dirichletFunction = [prescribedValue](Eigen::Vector3d) -> double { return prescribedValue; };
+	this->insertDirichletBoundaryCondition(boundaryName, dirichletFunction);
+	return;
+}
+
 void SquareCavityHeatTransfer::addAccumulationTerm(void)
 {
 	for(Element* element: this->grid2D.elements)

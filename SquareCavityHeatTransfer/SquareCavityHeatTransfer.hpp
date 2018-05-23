@@ -26,6 +26,7 @@ class SquareCavityHeatTransfer
 		std::vector<DirichletBoundaryCondition> dirichletBoundaries;
 
 		void insertDirichletBoundaryCondition(const std::string& boundaryName, const std::function<double(Eigen::Vector3d)> prescribedValueFunction);
+		void insertDirichletBoundaryCondition(const std::string& boundaryName, const double prescribedValue);
 		void applyBoundaryConditions(void);
 		void applyBoundaryCondition(DirichletBoundaryCondition& dirichlet);
 		void applyDirichletBoundaryConditionInStaggeredTriangle(StaggeredElement2D& staggeredTriangle, const double prescribedValue);
