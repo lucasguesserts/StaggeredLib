@@ -136,4 +136,9 @@ TestCase("Grid 2D build", "[Grid][Grid2D]")
 			check(grid2D.elements[1]->vertices[3]==&(grid2D.vertices[4]));
 		}
 	}
+	section("characteristic length")
+	{
+		const double characteristicLength = 1.22474487139159;
+		check(grid2D.getCharacteristicLength()==Approx(characteristicLength));
+	}
 }

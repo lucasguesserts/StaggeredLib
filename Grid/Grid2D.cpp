@@ -1,4 +1,5 @@
 #include <Grid/Grid2D.hpp>
+#include <cmath>
 
 Grid2D::Grid2D(const std::string& fileName)
 	: Grid(fileName)
@@ -9,6 +10,16 @@ Grid2D::Grid2D(const std::string& fileName)
 		this->buildQuadranglesOn2DGrid();
 		this->assignElementsPointers();
 	return;
+}
+
+double Grid2D::getCharacteristicLength(void)
+{
+	double area = 0.0;
+	for(auto element: this->elements)
+		area += element->getVolume();
+	area /= this->elements.size();
+	area = std::sqrt(area);
+	return area;
 }
 
 void Grid2D::buildLinesOn2DGrid(void)

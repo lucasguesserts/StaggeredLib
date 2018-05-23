@@ -15,6 +15,8 @@ struct Grid2D: public Grid
 		std::vector<Quadrangle> quadrangles;
 		std::vector<Triangle> triangles;
 		std::vector<Line> lines;
+
+		double getCharacteristicLength(void);
 	private:
 		void buildLinesOn2DGrid(void);
 		void buildTrianglesOn2DGrid(void);
