@@ -19,18 +19,27 @@
 #include <PetersFacetCenterHeatTransfer/PetersFacetCenterHeatTransfer.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
+#include <Grid/Grid2DWithStaggeredElementsExport.hpp>
+#include <CgnsInterface/CgnsWriter.hpp>
 
 TestCase("Facet center method - compare numerical and analytical solution", "[PetersFacetCenterHeatTransfer]")
 {
-	const std::string directory = gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest_cartesian/");
+	const std::string directory = gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest/");
 	const std::vector<std::string> meshFiles = {
 		directory + "5.cgns",
 		directory + "10.cgns",
 		directory + "15.cgns"
 	};
+	const std::vector<std::string> resultFiles = {
+		directory + "result_5.cgns",
+		directory + "result_10.cgns",
+		directory + "result_15.cgns"
+	};
 	std::vector<double> numericalError, characteristicLength;
-	for(auto& cgnsFileName: meshFiles)
+	for(unsigned count=0 ; count<meshFiles.size() ; ++count)
 	{
+		std::string cgnsFileName = meshFiles[count];
+		std::string resultFileName = resultFiles[count];
 		PetersFacetCenterHeatTransfer problem(cgnsFileName);
 
 		problem.insertDirichletBoundaryCondition("bottom boundary",0.0);
@@ -62,6 +71,6 @@ TestCase("Facet center method - compare numerical and analytical solution", "[Pe
 		characteristicLength.push_back(problem.grid2D.getStaggeredCharacteristicLength());
 	}
 	RateOfConvergence rateOfConvergence(numericalError,characteristicLength);
-	// check(rateOfConvergence.converge());
-	// check(rateOfConvergence.order>0.5);
+	check(rateOfConvergence.converge());
+	check(rateOfConvergence.order>0.1);
 }

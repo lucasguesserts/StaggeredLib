@@ -54,9 +54,15 @@ void PetersFacetCenterHeatTransfer::initializeGradientOnFaces(void)
 	this->gradientOnFaces.resize(numberOfFaces);
 	for(Face2D& face: this->grid2D.faces)
 	{
-		Eigen::MatrixXd gradientMatrix = this->computeGradientMatrix(face);
-		std::vector<ScalarStencil> scalarStencilOnElementVertices = this->getScalarStencilOnElementVertices(face);
-		this->gradientOnFaces[face.getIndex()] = gradientMatrix * scalarStencilOnElementVertices;
+		Eigen::Vector3d frontBackDifferencePosition = face.forwardStaggeredElement->getCentroid() - face.backwardStaggeredElement->getCentroid();
+		ScalarStencil frontBackDifferenceScalarStencil = ScalarStencil{
+			                                             	{face.forwardStaggeredElement->getIndex(), +1.0},
+			                                             	{face.backwardStaggeredElement->getIndex(), -1.0}};
+		Eigen::Vector3d vertexElementDifferencePosition = *(face.adjacentVertex) - face.parentElement->getCentroid();
+		ScalarStencil vertexElementDifferenceScalarStencil = this->scalarStencilOnVertices[face.adjacentVertex->getIndex()] +
+		                                                     (-1) * this->scalarStencilOnElements[face.parentElement->getIndex()];
+		this->gradientOnFaces[face.getIndex()] = ((1 / frontBackDifferencePosition.squaredNorm()) * frontBackDifferenceScalarStencil) * frontBackDifferencePosition +
+		                                         ((1 / vertexElementDifferencePosition.squaredNorm()) * vertexElementDifferenceScalarStencil) * vertexElementDifferencePosition;
 	}
 	return;
 }
