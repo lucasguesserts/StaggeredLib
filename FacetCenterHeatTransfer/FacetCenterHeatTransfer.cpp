@@ -39,6 +39,24 @@ void FacetCenterHeatTransfer::initializeGradientOnFaces(void)
 	return;
 }
 
+void FacetCenterHeatTransfer::insertDirichletBoundaryCondition(const std::string& boundaryName, const std::function<double(Eigen::Vector3d)> prescribedValueFunction)
+{
+	DirichletBoundaryCondition dirichlet;
+	dirichlet.staggeredTriangle = this->grid2D.boundary[boundaryName].staggeredTriangle;
+	dirichlet.prescribedValue.resize(dirichlet.staggeredTriangle.size());
+	for(unsigned count=0 ; count<dirichlet.staggeredTriangle.size() ; ++count)
+		dirichlet.prescribedValue[count] = prescribedValueFunction(dirichlet.staggeredTriangle[count]->getCentroid());
+	this->dirichletBoundaries.emplace_back(std::move(dirichlet));
+	return;
+}
+
+void FacetCenterHeatTransfer::insertDirichletBoundaryCondition(const std::string& boundaryName, const double prescribedValue)
+{
+	auto dirichletFunction = [prescribedValue](Eigen::Vector3d) -> double { return prescribedValue; };
+	this->insertDirichletBoundaryCondition(boundaryName, dirichletFunction);
+	return;
+}
+
 Eigen::MatrixXd FacetCenterHeatTransfer::computeGradientMatrix(Face2D& face)
 {
 	const Eigen::Vector3d faceLocalCoordinates = face.parentElement->getFaceLocalCoordinates(face.localIndex);

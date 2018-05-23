@@ -13,6 +13,9 @@ class FacetCenterHeatTransfer
 		void addDiffusiveTerm(void);
 		void applyBoundaryConditions(void);
 
+		void insertDirichletBoundaryCondition(const std::string& boundaryName, const std::function<double(Eigen::Vector3d)> prescribedValueFunction);
+		void insertDirichletBoundaryCondition(const std::string& boundaryName, const double prescribedValue);
+
 		Grid2DInverseDistanceStencil grid2D;
 		EigenLinearSystem linearSystem;
 		Eigen::VectorXd temperature;
