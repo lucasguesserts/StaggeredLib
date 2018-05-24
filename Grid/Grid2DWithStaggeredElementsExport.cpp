@@ -7,7 +7,7 @@ void Grid2DWithStaggeredElementsExport::cgns(const std::string& fileName, const 
 	Grid2DWithStaggeredElementsExport::exportCoordinates(grid, gridData);
 	Grid2DWithStaggeredElementsExport::exportStaggeredTriangles(grid, gridData);
 	Grid2DWithStaggeredElementsExport::exportStaggeredQuadrangles(grid, gridData);
-	Grid2DWithStaggeredElementsExport::exportRegions(gridData);
+	Grid2DWithStaggeredElementsExport::exportRegion(grid, gridData);
 	CgnsCreator2D cgnsCreator(gridData, fileName);
 	return;
 }
@@ -66,36 +66,14 @@ void Grid2DWithStaggeredElementsExport::exportStaggeredQuadrangles(const Grid2DW
 	return;
 }
 
-void Grid2DWithStaggeredElementsExport::exportRegions(GridDataShared gridData)
+void Grid2DWithStaggeredElementsExport::exportRegion(const Grid2DWithStaggeredElements& grid, GridDataShared gridData)
 {
-	Grid2DWithStaggeredElementsExport::exportQuadrangleRegion(gridData);
-	Grid2DWithStaggeredElementsExport::exportTriangleRegion(gridData);
-}
-
-void Grid2DWithStaggeredElementsExport::exportTriangleRegion(GridDataShared gridData)
-{
-	const unsigned numberOfTriangles = gridData->triangleConnectivity.size();
+	const unsigned numberOfStaggeredElements = grid.staggeredElements.size();
 	RegionData region;
-	region.elementsOnRegion.resize(numberOfTriangles);
-	region.name = "triangles";
-	for(unsigned count=0 ; count<numberOfTriangles ; ++count)
-	{
-		region.elementsOnRegion[count] = gridData->triangleConnectivity[count].back();
-	}
-	gridData->regions.emplace_back(std::move(region));
-	return;
-}
-
-void Grid2DWithStaggeredElementsExport::exportQuadrangleRegion(GridDataShared gridData)
-{
-	const unsigned numberOfQuadrangles = gridData->quadrangleConnectivity.size();
-	RegionData region;
-	region.elementsOnRegion.resize(numberOfQuadrangles);
-	region.name = "quadrangles";
-	for(unsigned count=0 ; count<numberOfQuadrangles ; ++count)
-	{
-		region.elementsOnRegion[count] = gridData->quadrangleConnectivity[count].back();
-	}
+	region.name = "elements";
+	region.elementsOnRegion.resize(numberOfStaggeredElements);
+	for(unsigned count=0 ; count<numberOfStaggeredElements ; ++count)
+		region.elementsOnRegion[count] = grid.staggeredElements[count].getIndex();
 	gridData->regions.emplace_back(std::move(region));
 	return;
 }
