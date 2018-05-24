@@ -69,6 +69,12 @@ TestCase("Facet center method - compare numerical and analytical solution", "[Pe
 		double error = (numericalSolution - analyticalSolution).lpNorm<Eigen::Infinity>();
 		numericalError.push_back(error);
 		characteristicLength.push_back(problem.grid2D.getStaggeredCharacteristicLength());
+
+		// Export
+		Grid2DWithStaggeredElementsExport::cgns(resultFileName, problem.grid2D);
+		CgnsWriter cgnsWriter(resultFileName, "CellCenter");
+		cgnsWriter.writePermanentSolution("steadySolution");
+		cgnsWriter.writePermanentField("Temperature", std::vector<double>(&numericalSolution[0], &numericalSolution[0] + numericalSolution.size()));
 	}
 	RateOfConvergence rateOfConvergence(numericalError,characteristicLength);
 	check(rateOfConvergence.converge());
