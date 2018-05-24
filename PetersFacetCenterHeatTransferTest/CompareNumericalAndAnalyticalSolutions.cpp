@@ -21,19 +21,23 @@
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <Grid/Grid2DWithStaggeredElementsExport.hpp>
 #include <CgnsInterface/CgnsWriter.hpp>
+#include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
 
 TestCase("Facet center method - compare numerical and analytical solution", "[PetersFacetCenterHeatTransfer]")
 {
 	const std::string directory = gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest/");
+	const std::string outputDirectory = gridDirectory + std::string("output/");
 	const std::vector<std::string> meshFiles = {
+		directory + "3.cgns",
 		directory + "5.cgns",
 		directory + "10.cgns",
 		directory + "15.cgns"
 	};
 	const std::vector<std::string> resultFiles = {
-		directory + "result_5.cgns",
-		directory + "result_10.cgns",
-		directory + "result_15.cgns"
+		outputDirectory + "facet_center_with_peters_gradient_3.cgns",
+		outputDirectory + "facet_center_with_peters_gradient_5.cgns",
+		outputDirectory + "facet_center_with_peters_gradient_10.cgns",
+		outputDirectory + "facet_center_with_peters_gradient_15.cgns"
 	};
 	std::vector<double> numericalError, characteristicLength;
 	for(unsigned count=0 ; count<meshFiles.size() ; ++count)
@@ -66,7 +70,8 @@ TestCase("Facet center method - compare numerical and analytical solution", "[Pe
 		}
 		Eigen::VectorXd analyticalSolution = SquareCavityHeatTransfer::computeAnalyticalSolution(staggeredElementsCentroid);
 
-		double error = (numericalSolution - analyticalSolution).lpNorm<Eigen::Infinity>();
+		Eigen::VectorXd difference = numericalSolution - analyticalSolution;
+		double error = difference.lpNorm<Eigen::Infinity>();
 		numericalError.push_back(error);
 		characteristicLength.push_back(problem.grid2D.getStaggeredCharacteristicLength());
 
@@ -74,9 +79,11 @@ TestCase("Facet center method - compare numerical and analytical solution", "[Pe
 		Grid2DWithStaggeredElementsExport::cgns(resultFileName, problem.grid2D);
 		CgnsWriter cgnsWriter(resultFileName, "CellCenter");
 		cgnsWriter.writePermanentSolution("steadySolution");
-		cgnsWriter.writePermanentField("Temperature", std::vector<double>(&numericalSolution[0], &numericalSolution[0] + numericalSolution.size()));
+		cgnsWriter.writePermanentField("Numerical_Temperature", std::vector<double>(&numericalSolution[0], &numericalSolution[0] + numericalSolution.size()));
+		cgnsWriter.writePermanentField("Analytical_Temperature", std::vector<double>(&analyticalSolution[0], &analyticalSolution[0] + analyticalSolution.size()));
+		cgnsWriter.writePermanentField("error", std::vector<double>(&difference[0], &difference[0] + difference.size()));
 	}
 	RateOfConvergence rateOfConvergence(numericalError,characteristicLength);
 	check(rateOfConvergence.converge());
-	check(rateOfConvergence.order>0.1);
+	check(rateOfConvergence.order>0.2);
 }
