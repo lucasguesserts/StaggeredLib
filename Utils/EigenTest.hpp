@@ -2,6 +2,7 @@
 #define EIGEN_TEST_HPP
 
 #include <Eigen/Core>
+#include <Eigen/Sparse>
 #include <utility>
 
 #include <Utils/String.hpp>
@@ -10,6 +11,7 @@
 bool operator==(const Eigen::Vector3d& lhs, const Eigen::Vector3d& rhs);
 bool operator==(const Eigen::VectorXd& lhs, const Eigen::VectorXd& rhs);
 bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs);
+bool operator==(const Eigen::SparseMatrix<double>& lhs, const Eigen::SparseMatrix<double>& rhs);
 
 std::string eigenVector3dToString(const Eigen::Vector3d& vector);
 namespace Catch
@@ -45,6 +47,18 @@ namespace Catch {
 		static std::string convert( Eigen::MatrixXd const& matrix )
 		{
 			return eigenMatrixToString(matrix);
+		}
+	};
+}
+
+std::string eigenSparseMatrixToString(const Eigen::SparseMatrix<double>& matrix);
+namespace Catch {
+	template<>
+	struct StringMaker<Eigen::SparseMatrix<double>>
+	{
+		static std::string convert(Eigen::SparseMatrix<double> const& matrix )
+		{
+			return eigenSparseMatrixToString(matrix);
 		}
 	};
 }

@@ -30,6 +30,28 @@ bool operator==(const Eigen::MatrixXd& lhs, const Eigen::MatrixXd& rhs)
 	return vality;
 }
 
+bool operator==(const Eigen::SparseMatrix<double>& lhs, const Eigen::SparseMatrix<double>& rhs)
+{
+	bool vality = true;
+	if ((lhs.rows()==rhs.rows()) && (lhs.cols()==rhs.cols()) && (lhs.nonZeros()==rhs.nonZeros()))
+	{
+		for (unsigned column=0; column<lhs.outerSize(); ++column)
+		{
+			Eigen::SparseMatrix<double>::InnerIterator lhsIterator(lhs,column);
+			Eigen::SparseMatrix<double>::InnerIterator rhsIterator(rhs,column);
+			for( ; lhsIterator && rhsIterator ; ++lhsIterator, ++rhsIterator)
+			{
+				vality = vality && lhsIterator.value()==Approx(rhsIterator.value());
+				vality = vality && lhsIterator.row()==Approx(rhsIterator.row());
+				vality = vality && lhsIterator.col()==Approx(rhsIterator.col());
+			}
+			if(!vality) break;
+		}
+	}
+	else
+		vality = false;
+	return vality;
+}
 
 std::string eigenVector3dToString(const Eigen::Vector3d& vector)
 {
@@ -83,5 +105,25 @@ std::string eigenMatrixToString(const Eigen::MatrixXd& matrix)
 		str += eigenMatrixRowToString(" ", matrix, row, ",\n");
 	row = matrix.rows()-1;
 		str += eigenMatrixRowToString(" ", matrix, row, "]");
+	return str;
+}
+
+std::string eigenSparseMatrixToString(const Eigen::SparseMatrix<double>& matrix)
+{
+	// format: { (row_0, column_0, value_0), (row_1, column_1, value_1), ..., (row_n, column_n, value_n) }
+	std::string str;
+	str += "{ ";
+	for (unsigned column=0; column<matrix.outerSize(); ++column)
+	{
+		for(Eigen::SparseMatrix<double>::InnerIterator it(matrix,column) ; it ; ++it)
+		{
+			str += "(";
+			str += std::to_string(it.row()) + ", ";
+			str += std::to_string(it.col()) + ", ";
+			str += doubleToString(it.value());
+			str += ")";
+		}
+	}
+	str += " }";
 	return str;
 }

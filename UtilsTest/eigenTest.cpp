@@ -100,7 +100,7 @@ TestCase("VectorXd operator==", "[eigen]")
 	}
 }
 
-TestCase("MatrixXd operator==", "eigen]")
+TestCase("MatrixXd operator==", "[eigen]")
 {
 	std::array<Eigen::MatrixXd,6> matrices;
 	matrices[0].resize(2,2); matrices[0] << 2.4, 1.0,
@@ -122,6 +122,37 @@ TestCase("MatrixXd operator==", "eigen]")
 		check(matrices[0]==matrices[2]);
 	}
 	section("false test")
+	{
+		checkFalse(matrices[0]==matrices[3]);
+		checkFalse(matrices[0]==matrices[4]);
+		checkFalse(matrices[0]==matrices[5]);
+	}
+}
+
+TestCase("Sparse matrix operator==", "[eigen]")
+{
+	std::vector< std::vector<Eigen::Triplet<double>> > triplets = {
+		{ {0, 0, 2.0}, {1, 1, 1.0} },
+		{ {0, 0, 2.0}, {1, 1, 1.0} },
+		{ {0, 0, 2.0000001}, {1, 1, 0.99999999} },
+		{ {0, 0, -2.0}, {1, 1, 1.0} },
+		{ {1, 0, 2.0}, {1, 1, 1.0} },
+		{ {0, 1, -2.0}, {1, 0, -1.0} }
+	};
+	std::vector< Eigen::SparseMatrix<double> > matrices;
+	for(auto& tripletVector: triplets)
+	{
+		Eigen::SparseMatrix<double> matrix(2,2);
+		matrix.setFromTriplets(tripletVector.begin(), tripletVector.end());
+		matrices.emplace_back(std::move(matrix));
+	}
+	section("true tests")
+	{
+		check(matrices[0]==matrices[0]);
+		check(matrices[0]==matrices[1]);
+		check(matrices[0]==matrices[2]);
+	}
+	section("false tests")
 	{
 		checkFalse(matrices[0]==matrices[3]);
 		checkFalse(matrices[0]==matrices[4]);
