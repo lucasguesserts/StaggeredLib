@@ -16,3 +16,23 @@ TestCase("Linear system build", "[Eigen][EigenSolver]")
 	Eigen::VectorXd linearSystemSolution = linearSystem.solve();
 	check(solution==linearSystemSolution);
 }
+
+TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLinearSystem]")
+{
+	const unsigned size = 3;
+	std::vector<ScalarStencil> scalarStencil = {
+		{{0, 0.6}, {1, 1.9}, {2, 7.6}},
+		{{2, 8.9}, {0, 5.2}, {1, 8.4}},
+		{{2, 3.7}, {1, 2.0}}
+	};
+	EigenLinearSystem linearSystem;
+	linearSystem.setSize(size);
+	linearSystem.matrix = Eigen::MatrixXd::Ones(size,size);
+	for(unsigned line=0 ; line<size ; ++line)
+		linearSystem.addScalarStencil(line,scalarStencil[line]);
+	Eigen::MatrixXd matrix = Eigen::MatrixXd::Zero(size,size);
+	matrix << 1+scalarStencil[0][0], 1+scalarStencil[0][1], 1+scalarStencil[0][2],
+	          1+scalarStencil[1][0], 1+scalarStencil[1][1], 1+scalarStencil[1][2],
+	          1+scalarStencil[2][0], 1+scalarStencil[2][1], 1+scalarStencil[2][2];
+	check(linearSystem.matrix==matrix);
+}
