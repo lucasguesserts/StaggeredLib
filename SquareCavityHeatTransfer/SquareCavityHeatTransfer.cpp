@@ -52,11 +52,28 @@ void SquareCavityHeatTransfer::insertDirichletBoundaryCondition(const std::strin
 
 void SquareCavityHeatTransfer::addAccumulationTerm(void)
 {
+	this->addAccumulationTermToMatrix();
+	this->addAccumulationTermToIndependent();
+	return;
+}
+
+void SquareCavityHeatTransfer::addAccumulationTermToMatrix(void)
+{
 	for(Element* element: this->grid2D.elements)
 	{
 		const unsigned elementIndex = element->getIndex();
 		const double elementVolume = element->getVolume();
 		this->linearSystem.matrix(elementIndex,elementIndex) += rho * cp * elementVolume;
+	}
+	return;
+}
+
+void SquareCavityHeatTransfer::addAccumulationTermToIndependent(void)
+{
+	for(Element* element: this->grid2D.elements)
+	{
+		const unsigned elementIndex = element->getIndex();
+		const double elementVolume = element->getVolume();
 		this->linearSystem.independent[elementIndex] += rho * cp * elementVolume * this->oldTemperature[elementIndex];
 	}
 	return;

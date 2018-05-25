@@ -34,6 +34,8 @@ class SquareCavityHeatTransfer
 
 		Eigen::VectorXd nextTimeStep(void);
 
+		void addAccumulationTermToMatrix(void);
+		void addAccumulationTermToIndependent(void);
 	private:
 		void initializeLinearSystem(void);
 		void initializeTemperatureVectors(void);
