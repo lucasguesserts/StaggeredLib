@@ -1,5 +1,4 @@
 #include <LinearSystem/EigenLinearSystem.hpp>
-#include <Eigen/LU>
 
 void EigenLinearSystem::setSize(const unsigned size)
 {
@@ -22,4 +21,15 @@ void EigenLinearSystem::addScalarStencil(const unsigned line, const ScalarStenci
 Eigen::VectorXd EigenLinearSystem::solve(void)
 {
 	return this->matrix.fullPivLu().solve(this->independent);
+}
+
+Eigen::VectorXd EigenLinearSystem::solveDecomposed(void)
+{
+	return this->luDecomposition.solve(this->independent);
+}
+
+void EigenLinearSystem::computeLU(void)
+{
+	this->luDecomposition.compute(this->matrix);
+	return;
 }

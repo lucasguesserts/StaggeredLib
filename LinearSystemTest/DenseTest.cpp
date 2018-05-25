@@ -1,3 +1,6 @@
+
+#include <chrono>
+
 #include <Utils/Test.hpp>
 #include <Utils/EigenTest.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>
@@ -35,4 +38,39 @@ TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLine
 	          1+scalarStencil[1][0], 1+scalarStencil[1][1], 1+scalarStencil[1][2],
 	          1+scalarStencil[2][0], 1+scalarStencil[2][1], 1+scalarStencil[2][2];
 	check(linearSystem.matrix==matrix);
+}
+
+TestCase("Compare wit and without lu decomposition", "[EigenLinearSystem]")
+{
+	constexpr unsigned numberOfTimesToRepeat = 20;
+	constexpr unsigned linearSystemSize = 3;
+	EigenLinearSystem linearSystem;
+	linearSystem.setSize(linearSystemSize);
+	linearSystem.matrix << 0.462026696884809, 0.289318074606471, 0.418654423757951,
+	                       0.111618554500326, 0.846885511973542, 0.805839771614926,
+	                       0.664857365801401, 0.240344399557209, 0.348561451918039;
+	linearSystem.independent << 0.263941635488370, 0.246987790661933, 0.706521526629329;
+	Eigen::VectorXd solution(linearSystemSize);
+	solution << 1.74452683050882, 3.77822561620858, -3.90581157526298;
+	// without lu decomposition
+	Eigen::VectorXd noDecomposeSolution;
+	auto noDecomposeStart = std::chrono::high_resolution_clock::now();
+	for(unsigned count=0 ; count<numberOfTimesToRepeat ; ++count)
+		noDecomposeSolution = linearSystem.matrix.fullPivLu().solve(linearSystem.independent);
+	auto noDecomposeEnd = std::chrono::high_resolution_clock::now();
+	double noDecomposeDuration = std::chrono::duration<double>(noDecomposeEnd-noDecomposeStart).count();
+	// with lu decomposition
+	Eigen::VectorXd decomposeSolution;
+	auto decomposeStart = std::chrono::high_resolution_clock::now();
+	linearSystem.computeLU();
+	for(unsigned count=0 ; count<numberOfTimesToRepeat ; ++count)
+		decomposeSolution = linearSystem.solveDecomposed();
+	auto decomposeEnd = std::chrono::high_resolution_clock::now();
+	double decomposeDuration = std::chrono::duration<double>(decomposeEnd-decomposeStart).count();
+	// check
+	require(noDecomposeSolution==solution);
+	require(decomposeSolution==solution);
+	check(decomposeDuration<noDecomposeDuration);
+	std::cout << "no decompose duration: " << noDecomposeDuration << std::endl;
+	std::cout << "decomposes duration  : " << decomposeDuration << std::endl;
 }
