@@ -24,6 +24,7 @@ class SquareCavityHeatTransfer
 		Eigen::VectorXd oldTemperature;
 		Eigen::VectorXd temperature;
 		std::vector<ScalarStencil> scalarStencilOnVertices;
+		std::vector<ScalarStencil> diffusiveTerm;
 		std::vector<DirichletBoundaryCondition> dirichletBoundaries;
 
 		void insertDirichletBoundaryCondition(const std::string& boundaryName, const std::function<double(Eigen::Vector3d)> prescribedValueFunction);
@@ -34,6 +35,7 @@ class SquareCavityHeatTransfer
 
 		Eigen::VectorXd nextTimeStep(void);
 
+		void initializeDiffusiveTerm(void);
 		void addAccumulationTermToMatrix(void);
 		void addAccumulationTermToIndependent(void);
 		void addDiffusiveTermToMatrix(void);
