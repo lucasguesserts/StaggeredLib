@@ -18,7 +18,8 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 	problem.oldTemperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 	const unsigned size = problem.linearSystem.independent.size();
 	problem.linearSystem.matrix += Eigen::MatrixXd::Ones(size,size);
-	problem.addAccumulationTerm();
+	problem.addAccumulationTermToMatrix();
+	problem.addAccumulationTermToIndependent();
 	problem.linearSystem.matrix -= Eigen::MatrixXd::Ones(size,size);
 	section("independent")
 	{
@@ -57,26 +58,6 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 	}
 }
 
-TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLinearSystem]")
-{
-	const unsigned size = 3;
-	std::vector<ScalarStencil> scalarStencil = {
-		{{0, 0.6}, {1, 1.9}, {2, 7.6}},
-		{{2, 8.9}, {0, 5.2}, {1, 8.4}},
-		{{2, 3.7}, {1, 2.0}}
-	};
-	EigenLinearSystem linearSystem;
-	linearSystem.setSize(size);
-	linearSystem.matrix = Eigen::MatrixXd::Ones(size,size);
-	for(unsigned line=0 ; line<size ; ++line)
-		linearSystem.addScalarStencil(line,scalarStencil[line]);
-	Eigen::MatrixXd matrix = Eigen::MatrixXd::Zero(size,size);
-	matrix << 1+scalarStencil[0][0], 1+scalarStencil[0][1], 1+scalarStencil[0][2],
-	          1+scalarStencil[1][0], 1+scalarStencil[1][1], 1+scalarStencil[1][2],
-	          1+scalarStencil[2][0], 1+scalarStencil[2][1], 1+scalarStencil[2][2];
-	check(linearSystem.matrix==matrix);
-}
-
 TestCase("Add diffusive term for one staggered quadrangle", "[SquareCavityHeatTransfer]")
 {
 	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
@@ -88,42 +69,22 @@ TestCase("Add diffusive term for one staggered quadrangle", "[SquareCavityHeatTr
 	problem.timeImplicitCoefficient = 0.7;
 	problem.timeInterval = 1.1;
 	problem.oldTemperature << 13, 17;
-	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-	problem.addAccumulationTerm();
-	problem.addDiffusiveTerm();
-	Eigen::MatrixXd(numberOfElements,numberOfElements);
-	matrix <<  23.55, -11.55,
-	          -11.55,  23.55;
-	Eigen::VectorXd independent(numberOfElements);
-	independent << 175.8, 184.2;
-	check(problem.linearSystem.matrix==matrix);
-	check(problem.linearSystem.independent==independent);
-}
-
-TestCase("Add diffusive term all staggered elements", "[SquareCavityHeatTransfer]")
-{
-	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
-	SquareCavityHeatTransfer problem(cgnsGridFileName);
-	const unsigned numberOfElements = problem.grid2D.elements.size();
-	problem.rho = 2;
-	problem.cp = 3;
-	problem.k = 5;
-	problem.timeImplicitCoefficient = 0.7;
-	problem.timeInterval = 1.1;
-	problem.oldTemperature << 13, 17;
-	// accumulation term
-	problem.addAccumulationTerm();
-	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-	matrix << 12.0, 0.00,
-	          0.00, 12.0;
-	check(problem.linearSystem.matrix==matrix);
-	// diffusive term
-	for(auto& staggeredQuadrangle: problem.grid2D.staggeredQuadrangles)
-		problem.addDiffusiveTerm(*staggeredQuadrangle);
-	Eigen::VectorXd independent(numberOfElements);
-	matrix << 23.55, -11.55,
-	          -11.55, 23.55;
-	independent << 175.8, 184.2;
-	check(problem.linearSystem.matrix==matrix);
-	check(problem.linearSystem.independent==independent);
+	section("matrix")
+	{
+		problem.addAccumulationTermToMatrix();
+		problem.addDiffusiveTermToMatrix();
+		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+		Eigen::MatrixXd(numberOfElements,numberOfElements);
+		matrix <<  23.55, -11.55,
+				-11.55,  23.55;
+		check(problem.linearSystem.matrix==matrix);
+	}
+	section("independent")
+	{
+		problem.addAccumulationTermToIndependent();
+		problem.addDiffusiveTermToIndependent();
+		Eigen::VectorXd independent(numberOfElements);
+		independent << 175.8, 184.2;
+		check(problem.linearSystem.independent==independent);
+	}
 }
