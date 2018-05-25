@@ -109,8 +109,8 @@ Eigen::VectorXd SquareCavityHeatTransfer::computeAnalyticalSolution(void)
 
 void SquareCavityHeatTransfer::addDiffusiveTerm(void)
 {
-	for(auto& staggeredQuadrangle: this->grid2D.staggeredQuadrangles)
-		addDiffusiveTerm(*staggeredQuadrangle);
+	this->addDiffusiveTermToMatrix();
+	this->addDiffusiveTermToIndependent();
 	return;
 }
 
@@ -127,6 +127,32 @@ void SquareCavityHeatTransfer::addDiffusiveTerm(StaggeredElement2D& staggeredQua
 	double independentDiffusiveTerm = (1-this->timeImplicitCoefficient) * diffusiveTerm * this->oldTemperature;
 	this->linearSystem.independent[backElementIndex] += independentDiffusiveTerm;
 	this->linearSystem.independent[frontElementIndex] += - independentDiffusiveTerm;
+	return;
+}
+
+void SquareCavityHeatTransfer::addDiffusiveTermToMatrix(void)
+{
+	for(auto& staggeredQuadrangle: this->grid2D.staggeredQuadrangles)
+	{
+		const unsigned frontElementIndex = staggeredQuadrangle->elements[0]->getIndex();
+		const unsigned backElementIndex = staggeredQuadrangle->elements[1]->getIndex();
+		ScalarStencil matrixDiffusiveTerm = this->timeImplicitCoefficient * this->computeDiffusiveTerm(*staggeredQuadrangle);
+		this->linearSystem.addScalarStencil(backElementIndex, (-1)*matrixDiffusiveTerm);
+		this->linearSystem.addScalarStencil(frontElementIndex, matrixDiffusiveTerm);
+	}
+	return;
+}
+
+void SquareCavityHeatTransfer::addDiffusiveTermToIndependent(void)
+{
+	for(auto& staggeredQuadrangle: this->grid2D.staggeredQuadrangles)
+	{
+		const unsigned frontElementIndex = staggeredQuadrangle->elements[0]->getIndex();
+		const unsigned backElementIndex = staggeredQuadrangle->elements[1]->getIndex();
+		double independentDiffusiveTerm = (1-this->timeImplicitCoefficient) * this->computeDiffusiveTerm(*staggeredQuadrangle) * this->oldTemperature;
+		this->linearSystem.independent[backElementIndex] += independentDiffusiveTerm;
+		this->linearSystem.independent[frontElementIndex] += - independentDiffusiveTerm;
+	}
 	return;
 }
 

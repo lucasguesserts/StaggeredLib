@@ -36,6 +36,8 @@ class SquareCavityHeatTransfer
 
 		void addAccumulationTermToMatrix(void);
 		void addAccumulationTermToIndependent(void);
+		void addDiffusiveTermToMatrix(void);
+		void addDiffusiveTermToIndependent(void);
 	private:
 		void initializeLinearSystem(void);
 		void initializeTemperatureVectors(void);
