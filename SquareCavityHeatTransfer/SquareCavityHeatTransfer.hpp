@@ -38,6 +38,12 @@ class SquareCavityHeatTransfer
 		void addAccumulationTermToIndependent(void);
 		void addDiffusiveTermToMatrix(void);
 		void addDiffusiveTermToIndependent(void);
+		void applyBoundaryConditionsToMatrix(void);
+		void applyBoundaryConditionToMatrix(DirichletBoundaryCondition& dirichlet);
+		void applyDirichletBoundaryConditionInStaggeredTriangleToMatrix(StaggeredElement2D& staggeredTriangle, const double prescribedValue);
+		void applyBoundaryConditionsToIndependent(void);
+		void applyBoundaryConditionToIndependent(DirichletBoundaryCondition& dirichlet);
+		void applyDirichletBoundaryConditionInStaggeredTriangleToIndependent(StaggeredElement2D& staggeredTriangle, const double prescribedValue);
 	private:
 		void initializeLinearSystem(void);
 		void initializeTemperatureVectors(void);

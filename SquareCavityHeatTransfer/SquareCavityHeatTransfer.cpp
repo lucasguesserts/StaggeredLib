@@ -165,8 +165,55 @@ ScalarStencil SquareCavityHeatTransfer::computeDiffusiveTerm(StaggeredElement2D&
 
 void SquareCavityHeatTransfer::applyBoundaryConditions(void)
 {
+	this->applyBoundaryConditionsToMatrix();
+	this->applyBoundaryConditionsToIndependent();
+	return;
+}
+
+void SquareCavityHeatTransfer::applyBoundaryConditionsToMatrix(void)
+{
 	for(auto& dirichlet: this->dirichletBoundaries)
-		this->applyBoundaryCondition(dirichlet);
+		this->applyBoundaryConditionToMatrix(dirichlet);
+	return;
+}
+
+void SquareCavityHeatTransfer::applyBoundaryConditionToMatrix(DirichletBoundaryCondition& dirichlet)
+{
+	for(unsigned i=0 ; i<dirichlet.staggeredTriangle.size() ; ++i)
+		this->applyDirichletBoundaryConditionInStaggeredTriangleToMatrix(*(dirichlet.staggeredTriangle[i]), dirichlet.prescribedValue[i]);
+}
+
+void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangleToMatrix(StaggeredElement2D& staggeredTriangle, const double prescribedValue)
+{
+	const unsigned elementIndex = staggeredTriangle.elements[0]->getIndex();
+	Eigen::Vector3d gradientVector = staggeredTriangle.getCentroid() - staggeredTriangle.elements[0]->getCentroid();
+	gradientVector = gradientVector / gradientVector.squaredNorm();
+	double coeff = - staggeredTriangle.getAreaVector().dot(gradientVector) * this->k * this->timeInterval;
+	this->linearSystem.matrix(elementIndex,elementIndex) += coeff * this->timeImplicitCoefficient;
+	return;
+}
+
+void SquareCavityHeatTransfer::applyBoundaryConditionsToIndependent(void)
+{
+	for(auto& dirichlet: this->dirichletBoundaries)
+		this->applyBoundaryConditionToIndependent(dirichlet);
+	return;
+}
+
+void SquareCavityHeatTransfer::applyBoundaryConditionToIndependent(DirichletBoundaryCondition& dirichlet)
+{
+	for(unsigned i=0 ; i<dirichlet.staggeredTriangle.size() ; ++i)
+		this->applyDirichletBoundaryConditionInStaggeredTriangleToIndependent(*(dirichlet.staggeredTriangle[i]), dirichlet.prescribedValue[i]);
+}
+
+void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangleToIndependent(StaggeredElement2D& staggeredTriangle, const double prescribedValue)
+{
+	const unsigned elementIndex = staggeredTriangle.elements[0]->getIndex();
+	Eigen::Vector3d gradientVector = staggeredTriangle.getCentroid() - staggeredTriangle.elements[0]->getCentroid();
+	gradientVector = gradientVector / gradientVector.squaredNorm();
+	double coeff = - staggeredTriangle.getAreaVector().dot(gradientVector) * this->k * this->timeInterval;
+	this->linearSystem.independent(elementIndex) -= coeff * (1 - this->timeImplicitCoefficient) * this->oldTemperature[elementIndex];
+	this->linearSystem.independent(elementIndex) += coeff * prescribedValue;
 	return;
 }
 
