@@ -13,11 +13,12 @@ class EigenSparseLinearSystem
 		EigenSparseLinearSystem(const unsigned size);
 		std::vector<Eigen::Triplet<double>> coefficients; // column major
 		Eigen::VectorXd independent;
+		Eigen::SparseMatrix<double> matrix;
+		Eigen::SparseLU<Eigen::SparseMatrix<double>> luDecomposition;
 
 		void addScalarStencil(const unsigned line, const ScalarStencil& scalarStencil);
+		void computeLU(void);
 		Eigen::VectorXd solve(void);
-	private:
-		Eigen::SparseMatrix<double> matrix;
 };
 
 #endif

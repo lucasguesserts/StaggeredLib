@@ -24,6 +24,7 @@ TestCase("Compare sparse and dense solvers", "[EigenSparseLinearSystem]")
 	buildSparseMatrix(sparseLinearSystem, numberOfPoints);
 	buildIndependent(sparseLinearSystem.independent, numberOfPoints, initialValue, finalValue);
 	auto sparseStart = std::chrono::high_resolution_clock::now();
+	sparseLinearSystem.computeLU();
 	auto sparseSolution = sparseLinearSystem.solve();
 	auto sparseEnd = std::chrono::high_resolution_clock::now();
 	double sparseDuration = std::chrono::duration<double>(sparseEnd-sparseStart).count();

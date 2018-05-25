@@ -40,7 +40,7 @@ TestCase("Add scalar stencil to eigen linear system", "[ScalarStencil][EigenLine
 	check(linearSystem.matrix==matrix);
 }
 
-TestCase("Compare wit and without lu decomposition", "[EigenLinearSystem]")
+TestCase("Compare with and without lu decomposition", "[EigenLinearSystem]")
 {
 	constexpr unsigned numberOfTimesToRepeat = 20;
 	constexpr unsigned linearSystemSize = 3;
