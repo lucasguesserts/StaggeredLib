@@ -50,56 +50,84 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		std::string boundaryName = "bottom boundary";
 		constexpr double prescribedValue = 19.0;
 		problem.insertDirichletBoundaryCondition(boundaryName,prescribedValue);
-		problem.applyBoundaryConditions();
-		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-		matrix << 9.24, 0.0,
-		          0.0 , 0.0;
-		Eigen::VectorXd independent(numberOfElements);
-		independent << 199.32, 0.0;
-		check(problem.linearSystem.matrix==matrix);
-		check(problem.linearSystem.independent==independent);
+		section("matrix")
+		{
+			problem.applyBoundaryConditionsToMatrix();
+			Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+			matrix << 9.24, 0.0,
+			          0.0 , 0.0;
+			check(problem.linearSystem.matrix==matrix);
+		}
+		section("independent")
+		{
+			problem.applyBoundaryConditionsToIndependent();
+			Eigen::VectorXd independent(numberOfElements);
+			independent << 199.32, 0.0;
+			check(problem.linearSystem.independent==independent);
+		}
 	}
 	section("east")
 	{
 		std::string boundaryName = "east boundary";
 		constexpr double prescribedValue = 23.0;
 		problem.insertDirichletBoundaryCondition(boundaryName,prescribedValue);
-		problem.applyBoundaryConditions();
-		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-		matrix << 9.24, 0.0,
-		          0.0 , 0.0;
-		Eigen::VectorXd independent(numberOfElements);
-		independent << 252.12, 0.0;
-		check(problem.linearSystem.matrix==matrix);
-		check(problem.linearSystem.independent==independent);
+		section("matrix")
+		{
+			problem.applyBoundaryConditionsToMatrix();
+			Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+			matrix << 9.24, 0.0,
+			          0.0 , 0.0;
+			check(problem.linearSystem.matrix==matrix);
+		}
+		section("independent")
+		{
+			problem.applyBoundaryConditionsToIndependent();
+			Eigen::VectorXd independent(numberOfElements);
+			independent << 252.12, 0.0;
+			check(problem.linearSystem.independent==independent);
+		}
 	}
 	section("west")
 	{
 		std::string boundaryName = "west boundary";
 		constexpr double prescribedValue = 31.0;
 		problem.insertDirichletBoundaryCondition(boundaryName,prescribedValue);
-		problem.applyBoundaryConditions();
-		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-		matrix << 0.0, 0.0,
-		          0.0, 9.24;
-		Eigen::VectorXd independent(numberOfElements);
-		independent << 0.0, 341.88;
-		check(problem.linearSystem.matrix==matrix);
-		check(problem.linearSystem.independent==independent);
+		section("matrix")
+		{
+			problem.applyBoundaryConditionsToMatrix();
+			Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+			matrix << 0.0, 0.0,
+			          0.0, 9.24;
+			check(problem.linearSystem.matrix==matrix);
+		}
+		section("independent")
+		{
+			problem.applyBoundaryConditionsToIndependent();
+			Eigen::VectorXd independent(numberOfElements);
+			independent << 0.0, 341.88;
+			check(problem.linearSystem.independent==independent);
+		}
 	}
 	section("top")
 	{
 		std::string boundaryName = "top boundary";
 		constexpr double prescribedValue = 29.0;
 		problem.insertDirichletBoundaryCondition(boundaryName,prescribedValue);
-		problem.applyBoundaryConditions();
-		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-		matrix << 0.0, 0.0,
-		          0.0, 9.24;
-		Eigen::VectorXd independent(numberOfElements);
-		independent << 0.0, 315.48;
-		check(problem.linearSystem.matrix==matrix);
-		check(problem.linearSystem.independent==independent);
+		section("matrix")
+		{
+			problem.applyBoundaryConditionsToMatrix();
+			Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+			matrix << 0.0, 0.0,
+			          0.0, 9.24;
+			check(problem.linearSystem.matrix==matrix);
+		}
+		section("independent")
+		{
+			problem.applyBoundaryConditionsToIndependent();
+			Eigen::VectorXd independent(numberOfElements);
+			independent << 0.0, 315.48;
+			check(problem.linearSystem.independent==independent);
+		}
 	}
 }
 
@@ -118,14 +146,21 @@ TestCase("Apply dirichlet boundary condition - all boundaries", "[SquareCavityHe
 	problem.insertDirichletBoundaryCondition("east boundary",23.0);
 	problem.insertDirichletBoundaryCondition("top boundary",29.0);
 	problem.insertDirichletBoundaryCondition("west boundary",31.0);
-	problem.applyBoundaryConditions();
-	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-	matrix << 18.48, 0.0,
-	          0.0  , 18.48;
-	Eigen::VectorXd independent(numberOfElements);
-	independent << 451.44, 657.36;
-	check(problem.linearSystem.matrix==matrix);
-	check(problem.linearSystem.independent==independent);
+	section("matrix")
+	{
+		problem.applyBoundaryConditionsToMatrix();
+		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+		matrix << 18.48, 0.0,
+				0.0  , 18.48;
+		check(problem.linearSystem.matrix==matrix);
+	}
+	section("independent")
+	{
+		problem.applyBoundaryConditionsToIndependent();
+		Eigen::VectorXd independent(numberOfElements);
+		independent << 451.44, 657.36;
+		check(problem.linearSystem.independent==independent);
+	}
 }
 
 TestCase("Complete heat transfer with dirichlet boundary conditions", "[SquareCavityHeatTransfer]")
@@ -139,20 +174,29 @@ TestCase("Complete heat transfer with dirichlet boundary conditions", "[SquareCa
 	problem.timeImplicitCoefficient = 0.7;
 	problem.timeInterval = 1.1;
 	problem.oldTemperature << 13, 17;
-	problem.addAccumulationTerm();
-	problem.addDiffusiveTerm();
 	DirichletBoundaryCondition dirichlet;
 	std::string boundaryName;
 	problem.insertDirichletBoundaryCondition("bottom boundary",19.0);
 	problem.insertDirichletBoundaryCondition("east boundary",23.0);
 	problem.insertDirichletBoundaryCondition("top boundary",29.0);
 	problem.insertDirichletBoundaryCondition("west boundary",31.0);
-	problem.applyBoundaryConditions();
-	Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-	matrix <<  42.03, -11.55,
-	          -11.55,  42.03;
-	Eigen::VectorXd independent(numberOfElements);
-	independent << 627.24, 841.56;
-	check(problem.linearSystem.matrix==matrix);
-	check(problem.linearSystem.independent==independent);
+	section("matrix")
+	{
+		problem.addAccumulationTermToMatrix();
+		problem.addDiffusiveTermToMatrix();
+		problem.applyBoundaryConditionsToMatrix();
+		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
+		matrix <<  42.03, -11.55,
+		          -11.55,  42.03;
+		check(problem.linearSystem.matrix==matrix);
+	}
+	section("independent")
+	{
+		problem.addAccumulationTermToIndependent();
+		problem.addDiffusiveTermToIndependent();
+		problem.applyBoundaryConditionsToIndependent();
+		Eigen::VectorXd independent(numberOfElements);
+		independent << 627.24, 841.56;
+		check(problem.linearSystem.independent==independent);
+	}
 }
