@@ -159,3 +159,17 @@ TestCase("Sparse matrix operator==", "[eigen]")
 		checkFalse(matrices[0]==matrices[5]);
 	}
 }
+
+TestCase("Build sparse matrix with repeated indices in triplet", "[eigen]")
+{
+	constexpr unsigned size = 2;
+	// matrix built without repeated indices
+	Eigen::SparseMatrix<double> matrix_no_repeated(size,size);
+	std::vector<Eigen::Triplet<double>> triplets_no_repeated = { {0, 0, 2.0}, {1, 1, 1.0} };
+	matrix_no_repeated.setFromTriplets(triplets_no_repeated.begin(), triplets_no_repeated.end());
+	// matrix built with repeated indices
+	Eigen::SparseMatrix<double> matrix_repeated(size,size);
+	std::vector<Eigen::Triplet<double>> triplets_repeated = { {0, 0, 3.0}, {0, 0, -1.0}, {1, 1, 1.0} };
+	matrix_repeated.setFromTriplets(triplets_repeated.begin(), triplets_repeated.end());
+	check(matrix_repeated==matrix_no_repeated);
+}
