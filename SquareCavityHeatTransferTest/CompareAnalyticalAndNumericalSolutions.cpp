@@ -46,6 +46,7 @@ TestCase("Compare numerical and analytical solution - mixed elements", "[SquareC
 		unsigned iteration = 0;
 		double error;
 		constexpr double tolerance = 1.0e-8;
+		problem.prepareMatrix();
 		do
 		{
 			problem.oldTemperature = problem.temperature;
@@ -96,6 +97,7 @@ TestCase("Compare numerical and analytical solution - cartesian elements", "[Squ
 		unsigned iteration = 0;
 		double error;
 		constexpr double tolerance = 1.0e-8;
+		problem.prepareMatrix();
 		do
 		{
 			problem.oldTemperature = problem.temperature;
