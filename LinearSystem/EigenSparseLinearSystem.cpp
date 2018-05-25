@@ -14,3 +14,11 @@ Eigen::VectorXd EigenSparseLinearSystem::solve(void)
 	solver.factorize(this->matrix);
 	return solver.solve(this->independent);
 }
+
+void EigenSparseLinearSystem::addScalarStencil(const unsigned line, const ScalarStencil& scalarStencil)
+{
+	this->coefficients.reserve(this->coefficients.size() + scalarStencil.size());
+	for(auto& keyValuePair: scalarStencil)
+		this->coefficients.emplace_back( Eigen::Triplet<double>(line, keyValuePair.first, keyValuePair.second) );
+	return;
+}

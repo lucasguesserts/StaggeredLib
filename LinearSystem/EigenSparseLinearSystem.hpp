@@ -5,6 +5,8 @@
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 
+#include <Stencil/ScalarStencil.hpp>
+
 class EigenSparseLinearSystem
 {
 	public:
@@ -12,6 +14,7 @@ class EigenSparseLinearSystem
 		std::vector<Eigen::Triplet<double>> coefficients; // column major
 		Eigen::VectorXd independent;
 
+		void addScalarStencil(const unsigned line, const ScalarStencil& scalarStencil);
 		Eigen::VectorXd solve(void);
 	private:
 		Eigen::SparseMatrix<double> matrix;
