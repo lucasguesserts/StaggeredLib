@@ -2,7 +2,7 @@
 #include <Eigen/Core>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
-#include <LinearSystem/EigenLinearSystem.hpp>
+#include <LinearSystem/EigenSparseLinearSystem.hpp>
 #include <Stencil/VectorStencil.hpp>
 
 class FacetCenterHeatTransfer
@@ -17,14 +17,13 @@ class FacetCenterHeatTransfer
 		void insertDirichletBoundaryCondition(const std::string& boundaryName, const double prescribedValue);
 
 		Grid2DInverseDistanceStencil grid2D;
-		EigenLinearSystem linearSystem;
+		EigenSparseLinearSystem linearSystem;
 		Eigen::VectorXd temperature;
 		std::vector<ScalarStencil> scalarStencilOnVertices;
 		std::vector<ScalarStencil> scalarStencilOnElements;
 		std::vector<VectorStencil> gradientOnFaces;
 		std::vector<DirichletBoundaryCondition> dirichletBoundaries;
 
-		Eigen::MatrixXd computeGradientMatrix(Face2D& face);
 		std::vector<ScalarStencil> getScalarStencilOnElementVertices(Face2D& face);
 
 	private:
@@ -32,6 +31,8 @@ class FacetCenterHeatTransfer
 		void initializeScalarStencilOnVertices(void);
 		void initializeScalarStencilOnElements(void);
 		void initializeGradientOnFaces(void);
+		void applyBoundaryConditionsToMatrix(void);
+		void applyBoundaryConditionsToIndependent(void);
 };
 
 VectorStencil operator*(Eigen::MatrixXd gradientMatrix, std::vector<ScalarStencil> scalarStencilOnElementVertices);

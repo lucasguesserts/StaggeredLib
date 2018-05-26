@@ -15,7 +15,7 @@ FacetCenterHeatTransfer::FacetCenterHeatTransfer(const std::string& fileName)
 void FacetCenterHeatTransfer::initializeLinearSystem(void)
 {
 	const unsigned numberOfStaggeredElements = this->grid2D.staggeredElements.size();
-	this->linearSystem.matrix = Eigen::MatrixXd::Zero(numberOfStaggeredElements,numberOfStaggeredElements);
+	this->linearSystem.matrix.resize(numberOfStaggeredElements,numberOfStaggeredElements);
 	this->linearSystem.independent = Eigen::VectorXd::Zero(numberOfStaggeredElements);
 	this->temperature = Eigen::VectorXd::Zero(numberOfStaggeredElements);
 	return;
@@ -85,12 +85,6 @@ void FacetCenterHeatTransfer::insertDirichletBoundaryCondition(const std::string
 	return;
 }
 
-Eigen::MatrixXd FacetCenterHeatTransfer::computeGradientMatrix(Face2D& face)
-{
-	const Eigen::Vector3d faceLocalCoordinates = face.parentElement->getFaceLocalCoordinates(face.localIndex);
-	return face.parentElement->getGradientMatrix2D(faceLocalCoordinates);
-}
-
 std::vector<ScalarStencil> FacetCenterHeatTransfer::getScalarStencilOnElementVertices(Face2D& face)
 {
 	std::vector<ScalarStencil> scalarStencilOnElementVertices;
@@ -112,18 +106,36 @@ void FacetCenterHeatTransfer::addDiffusiveTerm(void)
 
 void FacetCenterHeatTransfer::applyBoundaryConditions(void)
 {
+	this->applyBoundaryConditionsToMatrix();
+	this->applyBoundaryConditionsToIndependent();
+}
+
+void FacetCenterHeatTransfer::applyBoundaryConditionsToMatrix(void)
+{
 	for(auto& dirichlet: this->dirichletBoundaries)
 	{
 		for(unsigned localIndex=0 ; localIndex<dirichlet.staggeredTriangle.size() ; ++localIndex)
 		{
-			// TODO: separate into several functions.
-			auto staggeredTriangle = dirichlet.staggeredTriangle[localIndex];
+			auto& staggeredTriangle = dirichlet.staggeredTriangle[localIndex];
 			const unsigned row = staggeredTriangle->getIndex();
-			for(unsigned col=0 ; col<this->linearSystem.matrix.cols() ; ++col)
+			for(auto& triplet: this->linearSystem.coefficients)
 			{
-				this->linearSystem.matrix(row,col) = 0.0; // TODO:consider create a "clear line" function at LinearSystem.
+				if(triplet.row()==row)
+					triplet = Eigen::Triplet<double,unsigned>(triplet.row(), triplet.col(), 0.0);
 			}
-			this->linearSystem.matrix(row,row) = 1.0;
+			this->linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(row, row, 1.0));
+		}
+	}
+	return;
+}
+
+void FacetCenterHeatTransfer::applyBoundaryConditionsToIndependent(void)
+{
+	for(auto& dirichlet: this->dirichletBoundaries)
+	{
+		for(unsigned localIndex=0 ; localIndex<dirichlet.staggeredTriangle.size() ; ++localIndex)
+		{
+			const unsigned row = dirichlet.staggeredTriangle[localIndex]->getIndex();
 			this->linearSystem.independent(row) = dirichlet.prescribedValue[localIndex];
 		}
 	}

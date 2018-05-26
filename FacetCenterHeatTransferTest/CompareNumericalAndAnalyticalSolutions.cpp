@@ -56,6 +56,7 @@ TestCase("Facet center method - compare numerical and analytical solution - regu
 		// Steady numerical solution
 		problem.addDiffusiveTerm();
 		problem.applyBoundaryConditions();
+		problem.linearSystem.computeLU();
 		Eigen::VectorXd numericalSolution = problem.linearSystem.solve();
 
 		// Analytical
@@ -119,6 +120,7 @@ TestCase("Facet center method - compare numerical and analytical solution - irre
 		// Steady numerical solution
 		problem.addDiffusiveTerm();
 		problem.applyBoundaryConditions();
+		problem.linearSystem.computeLU();
 		Eigen::VectorXd numericalSolution = problem.linearSystem.solve();
 
 		// Analytical
