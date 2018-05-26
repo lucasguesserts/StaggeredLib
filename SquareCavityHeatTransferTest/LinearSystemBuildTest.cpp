@@ -17,10 +17,9 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 	problem.cp = 1;
 	problem.oldTemperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
 	const unsigned size = problem.linearSystem.independent.size();
-	problem.linearSystem.matrix += Eigen::MatrixXd::Ones(size,size);
 	problem.addAccumulationTermToMatrix();
+	problem.linearSystem.matrix.setFromTriplets(problem.linearSystem.coefficients.begin(),problem.linearSystem.coefficients.end());
 	problem.addAccumulationTermToIndependent();
-	problem.linearSystem.matrix -= Eigen::MatrixXd::Ones(size,size);
 	section("independent")
 	{
 		const unsigned numberOfElements = problem.grid2D.elements.size();
@@ -37,14 +36,16 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 	section("matrix")
 	{
 		const unsigned numberOfElements = problem.grid2D.elements.size();
-		Eigen::MatrixXd matrix;
-		matrix.resize(numberOfElements,numberOfElements);
-		matrix << 2.250, 0.000, 0.000, 0.000, 0.000, 0.000,
-		          0.000, 2.250, 0.000, 0.000, 0.000, 0.000,
-		          0.000, 0.000, 1.125, 0.000, 0.000, 0.000,
-		          0.000, 0.000, 0.000, 1.125, 0.000, 0.000,
-		          0.000, 0.000, 0.000, 0.000, 1.125, 0.000,
-		          0.000, 0.000, 0.000, 0.000, 0.000, 1.125;
+		Eigen::SparseMatrix<double> matrix(numberOfElements,numberOfElements);
+		std::vector< Eigen::Triplet<double,unsigned> > triplets = {
+			{ 0, 0, 2.250 },
+			{ 1, 1, 2.250 },
+			{ 2, 2, 1.125 },
+			{ 3, 3, 1.125 },
+			{ 4, 4, 1.125 },
+			{ 5, 5, 1.125 },
+		};
+		matrix.setFromTriplets(triplets.begin(), triplets.end());
 		check(problem.linearSystem.matrix==matrix);
 	}
 	section("solve")
@@ -53,6 +54,7 @@ TestCase("Add accumulation term", "[SquareCavityHeatTransfer]")
 		Eigen::VectorXd temperature;
 		temperature.resize(numberOfElements);
 		temperature << 0.0, 1.0, 3.0, 2.0, 5.0, 4.0;
+		problem.linearSystem.computeLU();
 		problem.temperature = problem.linearSystem.solve();
 		check(problem.temperature==temperature);
 	}
@@ -71,12 +73,15 @@ TestCase("Add diffusive term for one staggered quadrangle", "[SquareCavityHeatTr
 	problem.oldTemperature << 13, 17;
 	section("matrix")
 	{
-		problem.addAccumulationTermToMatrix();
-		problem.addDiffusiveTermToMatrix();
-		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
-		Eigen::MatrixXd(numberOfElements,numberOfElements);
-		matrix <<  23.55, -11.55,
-				-11.55,  23.55;
+		Eigen::SparseMatrix<double> matrix(numberOfElements,numberOfElements);
+		std::vector< Eigen::Triplet<double,unsigned> > triplets = {
+			{ 0, 0,  23.55 },
+			{ 0, 1, -11.55 },
+			{ 1, 0, -11.55 },
+			{ 1, 1,  23.55 }
+		};
+		matrix.setFromTriplets(triplets.begin(), triplets.end());
+		problem.prepareMatrix();
 		check(problem.linearSystem.matrix==matrix);
 	}
 	section("independent")

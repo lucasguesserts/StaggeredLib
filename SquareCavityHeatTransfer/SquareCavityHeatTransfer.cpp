@@ -15,7 +15,7 @@ SquareCavityHeatTransfer::SquareCavityHeatTransfer(const std::string& fileName)
 void SquareCavityHeatTransfer::initializeLinearSystem(void)
 {
 	const unsigned numberOfElements = this->grid2D.elements.size();
-	this->linearSystem.matrix = Eigen::MatrixXd::Zero(numberOfElements,numberOfElements);
+	this->linearSystem.matrix.resize(numberOfElements,numberOfElements);
 	this->linearSystem.independent = Eigen::VectorXd::Zero(numberOfElements);
 	return;
 }
@@ -65,7 +65,7 @@ void SquareCavityHeatTransfer::addAccumulationTermToMatrix(void)
 	{
 		const unsigned elementIndex = element->getIndex();
 		const double elementVolume = element->getVolume();
-		this->linearSystem.matrix(elementIndex,elementIndex) += rho * cp * elementVolume;
+		this->linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>{elementIndex, elementIndex, rho*cp*elementVolume});
 	}
 	return;
 }
@@ -161,7 +161,7 @@ void SquareCavityHeatTransfer::applyDirichletBoundaryConditionInStaggeredTriangl
 	Eigen::Vector3d gradientVector = staggeredTriangle.getCentroid() - staggeredTriangle.elements[0]->getCentroid();
 	gradientVector = gradientVector / gradientVector.squaredNorm();
 	double coeff = - staggeredTriangle.getAreaVector().dot(gradientVector) * this->k * this->timeInterval;
-	this->linearSystem.matrix(elementIndex,elementIndex) += coeff * this->timeImplicitCoefficient;
+	this->linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>{elementIndex, elementIndex, coeff * this->timeImplicitCoefficient});
 	return;
 }
 
@@ -203,5 +203,5 @@ Eigen::VectorXd SquareCavityHeatTransfer::nextTimeStep(void)
 	this->addAccumulationTermToIndependent();
 	this->addDiffusiveTermToIndependent();
 	this->applyBoundaryConditionsToIndependent();
-	return this->linearSystem.solveDecomposed();
+	return this->linearSystem.solve();
 }

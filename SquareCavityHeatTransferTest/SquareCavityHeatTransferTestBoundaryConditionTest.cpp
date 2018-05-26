@@ -53,10 +53,11 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		section("matrix")
 		{
 			problem.applyBoundaryConditionsToMatrix();
+			problem.linearSystem.computeLU();
 			Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 			matrix << 9.24, 0.0,
 			          0.0 , 0.0;
-			check(problem.linearSystem.matrix==matrix);
+			check(problem.linearSystem.matrix==Eigen::SparseMatrix<double>(matrix.sparseView()));
 		}
 		section("independent")
 		{
@@ -74,10 +75,11 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		section("matrix")
 		{
 			problem.applyBoundaryConditionsToMatrix();
+			problem.linearSystem.computeLU();
 			Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 			matrix << 9.24, 0.0,
 			          0.0 , 0.0;
-			check(problem.linearSystem.matrix==matrix);
+			check(problem.linearSystem.matrix==Eigen::SparseMatrix<double>(matrix.sparseView()));
 		}
 		section("independent")
 		{
@@ -95,10 +97,11 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		section("matrix")
 		{
 			problem.applyBoundaryConditionsToMatrix();
+			problem.linearSystem.computeLU();
 			Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 			matrix << 0.0, 0.0,
 			          0.0, 9.24;
-			check(problem.linearSystem.matrix==matrix);
+			check(problem.linearSystem.matrix==Eigen::SparseMatrix<double>(matrix.sparseView()));
 		}
 		section("independent")
 		{
@@ -116,10 +119,11 @@ TestCase("Apply dirichlet boundary condition one boundary at time", "[SquareCavi
 		section("matrix")
 		{
 			problem.applyBoundaryConditionsToMatrix();
+			problem.linearSystem.computeLU();
 			Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 			matrix << 0.0, 0.0,
 			          0.0, 9.24;
-			check(problem.linearSystem.matrix==matrix);
+			check(problem.linearSystem.matrix==Eigen::SparseMatrix<double>(matrix.sparseView()));
 		}
 		section("independent")
 		{
@@ -149,10 +153,11 @@ TestCase("Apply dirichlet boundary condition - all boundaries", "[SquareCavityHe
 	section("matrix")
 	{
 		problem.applyBoundaryConditionsToMatrix();
+		problem.linearSystem.computeLU();
 		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 		matrix << 18.48, 0.0,
 				0.0  , 18.48;
-		check(problem.linearSystem.matrix==matrix);
+		check(problem.linearSystem.matrix==Eigen::SparseMatrix<double>(matrix.sparseView()));
 	}
 	section("independent")
 	{
@@ -182,13 +187,11 @@ TestCase("Complete heat transfer with dirichlet boundary conditions", "[SquareCa
 	problem.insertDirichletBoundaryCondition("west boundary",31.0);
 	section("matrix")
 	{
-		problem.addAccumulationTermToMatrix();
-		problem.addDiffusiveTermToMatrix();
-		problem.applyBoundaryConditionsToMatrix();
+		problem.prepareMatrix();
 		Eigen::MatrixXd matrix(numberOfElements,numberOfElements);
 		matrix <<  42.03, -11.55,
 		          -11.55,  42.03;
-		check(problem.linearSystem.matrix==matrix);
+		check(problem.linearSystem.matrix==Eigen::SparseMatrix<double>(matrix.sparseView()));
 	}
 	section("independent")
 	{

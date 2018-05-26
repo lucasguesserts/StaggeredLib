@@ -4,7 +4,7 @@
 #include <Eigen/Core>
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
-#include <LinearSystem/EigenLinearSystem.hpp>
+#include <LinearSystem/EigenSparseLinearSystem.hpp>
 
 class SquareCavityHeatTransfer
 {
@@ -17,7 +17,7 @@ class SquareCavityHeatTransfer
 		double rho, cp, k;
 		double timeInterval, timeImplicitCoefficient;
 		Grid2DInverseDistanceStencil grid2D;
-		EigenLinearSystem linearSystem;
+		EigenSparseLinearSystem linearSystem;
 		Eigen::VectorXd oldTemperature;
 		Eigen::VectorXd temperature;
 		std::vector<ScalarStencil> scalarStencilOnVertices;
