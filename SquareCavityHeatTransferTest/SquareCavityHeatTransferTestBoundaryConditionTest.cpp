@@ -8,7 +8,6 @@
 #include <Grid/Boundary.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
-#include <LinearSystem/EigenLinearSystem.hpp>
 
 TestCase("Insert dirichlet boundary condition to square cavity heat transfer", "[SquareCavityHeatTransfer]")
 {

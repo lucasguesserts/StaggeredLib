@@ -14,7 +14,6 @@
 #include <Grid/Boundary.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
-#include <LinearSystem/EigenLinearSystem.hpp>
 
 TestCase("Compare numerical and analytical solution - mixed elements", "[SquareCavityHeatTransfer]")
 {

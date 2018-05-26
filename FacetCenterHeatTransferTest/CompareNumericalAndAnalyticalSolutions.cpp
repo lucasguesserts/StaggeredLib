@@ -17,7 +17,6 @@
 #include <Grid/Boundary.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
 #include <FacetCenterHeatTransfer/FacetCenterHeatTransfer.hpp>
-#include <LinearSystem/EigenLinearSystem.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <Grid/Grid2DWithStaggeredElementsExport.hpp>
 #include <CgnsInterface/CgnsWriter.hpp>
