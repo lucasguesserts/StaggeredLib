@@ -55,6 +55,7 @@ add_subdirectory(SquareCavityHeatTransfer)
 add_subdirectory(SquareCavityHeatTransferTest)
 add_subdirectory(FacetCenterHeatTransfer)
 add_subdirectory(FacetCenterHeatTransferTest)
+add_subdirectory(FacetCenterReport)
 
 message ("\n-- Project: ${PROJECT_NAME} ${VERSION}")
 message ("-- Build type: ${CMAKE_BUILD_TYPE}")
