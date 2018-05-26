@@ -24,14 +24,14 @@ auto buildSparseMatrix = [](EigenSparseLinearSystem& linearSystem, const unsigne
 	const double pos = 2.0;
 	const unsigned numberOfCoefficients = 1 + 3*(numberOfPoints-2) + 1;
 	linearSystem.coefficients.reserve(numberOfCoefficients);
-	linearSystem.coefficients.push_back(Eigen::Triplet<double>(0, 0, 1.0));
+	linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(0, 0, 1.0));
 	for(unsigned i=1 ; i<(numberOfPoints-1) ; ++i)
 	{
-		linearSystem.coefficients.push_back(Eigen::Triplet<double>(i, i-1, neg));
-		linearSystem.coefficients.push_back(Eigen::Triplet<double>(i, i, pos));
-		linearSystem.coefficients.push_back(Eigen::Triplet<double>(i, i+1, neg));
+		linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(i, i-1, neg));
+		linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(i, i, pos));
+		linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(i, i+1, neg));
 	}
-	linearSystem.coefficients.push_back(Eigen::Triplet<double>(numberOfPoints-1, numberOfPoints-1, 1.0));
+	linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(numberOfPoints-1, numberOfPoints-1, 1.0));
 	return;
 };
 

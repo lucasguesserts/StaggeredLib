@@ -10,8 +10,9 @@
 class EigenSparseLinearSystem
 {
 	public:
+		EigenSparseLinearSystem(void) = default;
 		EigenSparseLinearSystem(const unsigned size);
-		std::vector<Eigen::Triplet<double>> coefficients; // column major
+		std::vector<Eigen::Triplet<double,unsigned>> coefficients; // column major
 		Eigen::VectorXd independent;
 		Eigen::SparseMatrix<double> matrix;
 		Eigen::SparseLU<Eigen::SparseMatrix<double>> luDecomposition;

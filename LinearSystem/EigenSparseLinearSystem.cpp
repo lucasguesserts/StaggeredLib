@@ -9,7 +9,7 @@ void EigenSparseLinearSystem::addScalarStencil(const unsigned line, const Scalar
 {
 	this->coefficients.reserve(this->coefficients.size() + scalarStencil.size());
 	for(auto& keyValuePair: scalarStencil)
-		this->coefficients.emplace_back( Eigen::Triplet<double>(line, keyValuePair.first, keyValuePair.second) );
+		this->coefficients.emplace_back( Eigen::Triplet<double,unsigned>(line, keyValuePair.first, keyValuePair.second) );
 	return;
 }
 
