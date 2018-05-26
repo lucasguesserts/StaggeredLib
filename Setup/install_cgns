@@ -5,7 +5,7 @@
 BUILD_DIR="$HOME/.build_cgns"
 CGNS_DIR="$BUILD_DIR/cgns"
 INSTALL_DIR="$HOME/Libraries/cgns"
-GITHUB_LINK="https://github.com/felipegiacomelli/MSHtoCGNS.git"
+GITHUB_LINK="https://github.com/CGNS/CGNS.git"
 
 mkdir $BUILD_DIR
 git clone $GITHUB_LINK $CGNS_DIR
