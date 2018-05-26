@@ -1,8 +1,8 @@
-#include <PetersFacetCenterHeatTransfer/PetersFacetCenterHeatTransfer.hpp>
+#include <FacetCenterHeatTransfer/FacetCenterHeatTransfer.hpp>
 #include <Eigen/Dense>
 #include <stdexcept>
 
-PetersFacetCenterHeatTransfer::PetersFacetCenterHeatTransfer(const std::string& fileName)
+FacetCenterHeatTransfer::FacetCenterHeatTransfer(const std::string& fileName)
 	: grid2D(fileName)
 {
 	this->initializeLinearSystem();
@@ -12,7 +12,7 @@ PetersFacetCenterHeatTransfer::PetersFacetCenterHeatTransfer(const std::string& 
 	return;
 }
 
-void PetersFacetCenterHeatTransfer::initializeLinearSystem(void)
+void FacetCenterHeatTransfer::initializeLinearSystem(void)
 {
 	const unsigned numberOfStaggeredElements = this->grid2D.staggeredElements.size();
 	this->linearSystem.matrix = Eigen::MatrixXd::Zero(numberOfStaggeredElements,numberOfStaggeredElements);
@@ -21,13 +21,13 @@ void PetersFacetCenterHeatTransfer::initializeLinearSystem(void)
 	return;
 }
 
-void PetersFacetCenterHeatTransfer::initializeScalarStencilOnVertices(void)
+void FacetCenterHeatTransfer::initializeScalarStencilOnVertices(void)
 {
 	this->scalarStencilOnVertices = this->grid2D.computeScalarStencilOnVerticesUsingStaggeredElements();
 	return;
 }
 
-void PetersFacetCenterHeatTransfer::initializeScalarStencilOnElements(void)
+void FacetCenterHeatTransfer::initializeScalarStencilOnElements(void)
 {
 	this->scalarStencilOnElements.resize(this->grid2D.elements.size());
 	auto addScalarStencil = [this](StaggeredElement2D* staggeredElement, Element* element) -> void
@@ -48,7 +48,7 @@ void PetersFacetCenterHeatTransfer::initializeScalarStencilOnElements(void)
 	return;
 }
 
-void PetersFacetCenterHeatTransfer::initializeGradientOnFaces(void)
+void FacetCenterHeatTransfer::initializeGradientOnFaces(void)
 {
 	const unsigned numberOfFaces = this->grid2D.faces.size();
 	this->gradientOnFaces.resize(numberOfFaces);
@@ -67,7 +67,7 @@ void PetersFacetCenterHeatTransfer::initializeGradientOnFaces(void)
 	return;
 }
 
-void PetersFacetCenterHeatTransfer::insertDirichletBoundaryCondition(const std::string& boundaryName, const std::function<double(Eigen::Vector3d)> prescribedValueFunction)
+void FacetCenterHeatTransfer::insertDirichletBoundaryCondition(const std::string& boundaryName, const std::function<double(Eigen::Vector3d)> prescribedValueFunction)
 {
 	DirichletBoundaryCondition dirichlet;
 	dirichlet.staggeredTriangle = this->grid2D.boundary[boundaryName].staggeredTriangle;
@@ -78,20 +78,20 @@ void PetersFacetCenterHeatTransfer::insertDirichletBoundaryCondition(const std::
 	return;
 }
 
-void PetersFacetCenterHeatTransfer::insertDirichletBoundaryCondition(const std::string& boundaryName, const double prescribedValue)
+void FacetCenterHeatTransfer::insertDirichletBoundaryCondition(const std::string& boundaryName, const double prescribedValue)
 {
 	auto dirichletFunction = [prescribedValue](Eigen::Vector3d) -> double { return prescribedValue; };
 	this->insertDirichletBoundaryCondition(boundaryName, dirichletFunction);
 	return;
 }
 
-Eigen::MatrixXd PetersFacetCenterHeatTransfer::computeGradientMatrix(Face2D& face)
+Eigen::MatrixXd FacetCenterHeatTransfer::computeGradientMatrix(Face2D& face)
 {
 	const Eigen::Vector3d faceLocalCoordinates = face.parentElement->getFaceLocalCoordinates(face.localIndex);
 	return face.parentElement->getGradientMatrix2D(faceLocalCoordinates);
 }
 
-std::vector<ScalarStencil> PetersFacetCenterHeatTransfer::getScalarStencilOnElementVertices(Face2D& face)
+std::vector<ScalarStencil> FacetCenterHeatTransfer::getScalarStencilOnElementVertices(Face2D& face)
 {
 	std::vector<ScalarStencil> scalarStencilOnElementVertices;
 	for(auto vertex: face.parentElement->vertices)
@@ -99,7 +99,7 @@ std::vector<ScalarStencil> PetersFacetCenterHeatTransfer::getScalarStencilOnElem
 	return scalarStencilOnElementVertices;
 }
 
-void PetersFacetCenterHeatTransfer::addDiffusiveTerm(void)
+void FacetCenterHeatTransfer::addDiffusiveTerm(void)
 {
 	for(Face2D& face: this->grid2D.faces)
 	{
@@ -110,7 +110,7 @@ void PetersFacetCenterHeatTransfer::addDiffusiveTerm(void)
 	return;
 }
 
-void PetersFacetCenterHeatTransfer::applyBoundaryConditions(void)
+void FacetCenterHeatTransfer::applyBoundaryConditions(void)
 {
 	for(auto& dirichlet: this->dirichletBoundaries)
 	{
@@ -134,7 +134,7 @@ VectorStencil operator*(Eigen::MatrixXd gradientMatrix, std::vector<ScalarStenci
 {
 	VectorStencil result;
 	if(gradientMatrix.cols()!=static_cast<unsigned>(scalarStencilOnElementVertices.size()))
-		throw std::runtime_error("Class PetersFacetCenterHeatTransfer: gradientMatrix and scalarStencilOnElementVertices with incompatible sizes.");
+		throw std::runtime_error("Class FacetCenterHeatTransfer: gradientMatrix and scalarStencilOnElementVertices with incompatible sizes.");
 	const unsigned numberOfColumns = gradientMatrix.cols();
 	for(unsigned column=0 ; column<numberOfColumns ; ++column)
 	{

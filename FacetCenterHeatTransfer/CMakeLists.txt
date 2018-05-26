@@ -1,4 +1,4 @@
-project(PetersFacetCenterHeatTransfer)
+project(FacetCenterHeatTransfer)
 
 file (GLOB_RECURSE source_files ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 

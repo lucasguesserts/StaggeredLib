@@ -5,10 +5,10 @@
 #include <LinearSystem/EigenLinearSystem.hpp>
 #include <Stencil/VectorStencil.hpp>
 
-class PetersFacetCenterHeatTransfer
+class FacetCenterHeatTransfer
 {
 	public:
-		PetersFacetCenterHeatTransfer(const std::string& fileName);
+		FacetCenterHeatTransfer(const std::string& fileName);
 
 		void addDiffusiveTerm(void);
 		void applyBoundaryConditions(void);

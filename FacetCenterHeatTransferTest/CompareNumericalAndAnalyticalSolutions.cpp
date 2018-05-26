@@ -16,14 +16,14 @@
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Grid/Boundary.hpp>
 #include <Grid/DirichletBoundaryCondition.hpp>
-#include <PetersFacetCenterHeatTransfer/PetersFacetCenterHeatTransfer.hpp>
+#include <FacetCenterHeatTransfer/FacetCenterHeatTransfer.hpp>
 #include <LinearSystem/EigenLinearSystem.hpp>
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <Grid/Grid2DWithStaggeredElementsExport.hpp>
 #include <CgnsInterface/CgnsWriter.hpp>
 #include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
 
-TestCase("Facet center method - compare numerical and analytical solution - regular grids", "[PetersFacetCenterHeatTransfer]")
+TestCase("Facet center method - compare numerical and analytical solution - regular grids", "[FacetCenterHeatTransfer]")
 {
 	const std::string directory = gridDirectory + std::string("SquareCavityHeatTransfer_AnalyticalTest/");
 	const std::string outputDirectory = gridDirectory + std::string("output/");
@@ -34,17 +34,17 @@ TestCase("Facet center method - compare numerical and analytical solution - regu
 		directory + "15.cgns"
 	};
 	const std::vector<std::string> resultFiles = {
-		outputDirectory + "facet_center_with_peters_gradient_3.cgns",
-		outputDirectory + "facet_center_with_peters_gradient_5.cgns",
-		outputDirectory + "facet_center_with_peters_gradient_10.cgns",
-		outputDirectory + "facet_center_with_peters_gradient_15.cgns"
+		outputDirectory + "facet_center_3.cgns",
+		outputDirectory + "facet_center_5.cgns",
+		outputDirectory + "facet_center_10.cgns",
+		outputDirectory + "facet_center_15.cgns"
 	};
 	std::vector<double> numericalError, characteristicLength;
 	for(unsigned count=0 ; count<meshFiles.size() ; ++count)
 	{
 		std::string cgnsFileName = meshFiles[count];
 		std::string resultFileName = resultFiles[count];
-		PetersFacetCenterHeatTransfer problem(cgnsFileName);
+		FacetCenterHeatTransfer problem(cgnsFileName);
 
 		problem.insertDirichletBoundaryCondition("bottom boundary",0.0);
 		problem.insertDirichletBoundaryCondition("east boundary",0.0);
@@ -88,7 +88,7 @@ TestCase("Facet center method - compare numerical and analytical solution - regu
 	check(rateOfConvergence.order>0.2);
 }
 
-TestCase("Facet center method - compare numerical and analytical solution - irregular grids", "[PetersFacetCenterHeatTransfer]")
+TestCase("Facet center method - compare numerical and analytical solution - irregular grids", "[FacetCenterHeatTransfer]")
 {
 	const std::string directory = gridDirectory + std::string("gmsh/");
 	const std::string outputDirectory = gridDirectory + std::string("output/");
@@ -98,16 +98,16 @@ TestCase("Facet center method - compare numerical and analytical solution - irre
 		directory + "05.cgns"
 	};
 	const std::vector<std::string> resultFiles = {
-		outputDirectory + "facet_center_with_peters_gradient_gmsh_1.cgns",
-		outputDirectory + "facet_center_with_peters_gradient_gmsh_2.cgns",
-		outputDirectory + "facet_center_with_peters_gradient_gmsh_5.cgns"
+		outputDirectory + "facet_center_gmsh_1.cgns",
+		outputDirectory + "facet_center_gmsh_2.cgns",
+		outputDirectory + "facet_center_gmsh_5.cgns"
 	};
 	std::vector<double> numericalError, characteristicLength;
 	for(unsigned count=0 ; count<meshFiles.size() ; ++count)
 	{
 		std::string cgnsFileName = meshFiles[count];
 		std::string resultFileName = resultFiles[count];
-		PetersFacetCenterHeatTransfer problem(cgnsFileName);
+		FacetCenterHeatTransfer problem(cgnsFileName);
 
 		problem.insertDirichletBoundaryCondition("South",0.0);
 		problem.insertDirichletBoundaryCondition("East",0.0);
