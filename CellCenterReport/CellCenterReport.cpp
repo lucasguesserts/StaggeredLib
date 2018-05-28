@@ -19,13 +19,13 @@ const std::vector<std::string> cartesianFiles = {
 	"03.cgns",
 	"05.cgns",
 	"10.cgns",
-	"20.cgns",
-	"50.cgns"
+	"20.cgns"
 };
 const std::vector<std::string> unstructuredFiles = {
 	"01.cgns",
 	"02.cgns",
-	"03.cgns"
+	"03.cgns",
+	"04.cgns"
 };
 
 auto analiseConvergence = [](const std::string& directory, const std::vector<std::string>& fileNames) -> RateOfConvergence
