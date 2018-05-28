@@ -9,6 +9,7 @@
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <Grid/Grid2DWithStaggeredElementsExport.hpp>
 #include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
+#include <CgnsInterface/CgnsWriter.hpp>
 
 const std::string cartesianDirectory               = gridDirectory + std::string("cartesian/");
 const std::string cartesianTriangleDirectory       = gridDirectory + std::string("cartesian_triangle/");
@@ -60,10 +61,20 @@ auto analiseConvergence = [](const std::string& directory, const std::vector<std
 		}
 		Eigen::VectorXd analyticalSolution = SquareCavityHeatTransfer::computeAnalyticalSolution(staggeredElementsCentroid);
 
-		double error = (numericalSolution - analyticalSolution).lpNorm<Eigen::Infinity>();
+		Eigen::VectorXd difference = numericalSolution - analyticalSolution;
+		double error = difference.lpNorm<Eigen::Infinity>();
 		numericalError.push_back(error);
 		characteristicLength.push_back(problem.grid2D.getStaggeredCharacteristicLength());
 		std::cout << std::endl << "\t" << "erro: " << error << "  characteristic length:" << characteristicLength.back();
+
+		// Export
+		std::string resultFileName = directory + "result_" + fileName;
+		Grid2DWithStaggeredElementsExport::cgns(resultFileName, problem.grid2D);
+		CgnsWriter cgnsWriter(resultFileName, "CellCenter");
+		cgnsWriter.writePermanentSolution("steadySolution");
+		cgnsWriter.writePermanentField("Numerical_Temperature", std::vector<double>(&numericalSolution[0], &numericalSolution[0] + numericalSolution.size()));
+		cgnsWriter.writePermanentField("Analytical_Temperature", std::vector<double>(&analyticalSolution[0], &analyticalSolution[0] + analyticalSolution.size()));
+		cgnsWriter.writePermanentField("error", std::vector<double>(&difference[0], &difference[0] + difference.size()));
 	}
 	std::cout << std::endl;
 	return RateOfConvergence(numericalError,characteristicLength);
