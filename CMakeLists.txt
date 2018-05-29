@@ -57,6 +57,8 @@ add_subdirectory(CellCenterReport)
 add_subdirectory(FacetCenterHeatTransfer)
 add_subdirectory(FacetCenterHeatTransferTest)
 add_subdirectory(FacetCenterReport)
+add_subdirectory(Terzaghi)
+add_subdirectory(TerzaghiTest)
 
 message ("\n-- Project: ${PROJECT_NAME} ${VERSION}")
 message ("-- Build type: ${CMAKE_BUILD_TYPE}")
