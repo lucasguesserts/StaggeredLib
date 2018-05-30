@@ -14,7 +14,7 @@ class Terzaghi
 	public:
 		Terzaghi(const std::string& gridFile);
 
-		double viscosity, porosity, alpha, fluidCompressibility, solidCompressibility, permeability;
+		double fluidViscosity, porosity, alpha, fluidCompressibility, solidCompressibility, permeability;
 		double timeInterval, timeImplicitCoefficient;
 
 		Grid2DInverseDistanceStencil grid;
@@ -23,23 +23,31 @@ class Terzaghi
 
 		unsigned numberOfElements, numberOfStaggeredElements;
 		unsigned getPindex(Element* element);
+		unsigned getPindex(const unsigned elementIndex);
 		// unsigned getUindex(StaggeredElement2D* staggeredElement);
 		// unsigned getVindex(StaggeredElement2D* staggeredElement);
 		// unsigned getWindex(StaggeredElement2D* staggeredElement);
 
-		std::vector<ScalarStencil> pressureGradient;
-		std::vector<VectorStencil> displacementGradient;
+		std::vector<ScalarStencil> scalarStencilOnVertices; // auxiliar
+		std::vector<VectorStencil> pressureGradient; // stored on staggered quadrangles
+		std::vector<VectorStencil> displacementGradient; // stored on staggered elements faces
 
-		void insertPressureAccumulationTermToMatrix(void);
-		void insertPressureAccumulationTermToIndependent(void);
+		void insertPressureAccumulationTermInMatrix(void);
+		void insertPressureDiffusiveTermInMatrix(void);
+		void insertPressureAccumulationTermInIndependent(void);
 
-		// void initializePressureGradient(void);
+		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
+
 		// void initializeDisplacementGradient(void);
 
 		EigenSparseLinearSystem linearSystem;
 
-		// To tests
+		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);
+
+	private:
+		void initializeScalarStencilOnVertices(void);
+		void initializePressureGradient(void);
 };
 
 #endif

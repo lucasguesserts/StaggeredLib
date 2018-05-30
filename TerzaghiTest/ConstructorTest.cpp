@@ -15,8 +15,8 @@ TestCase("Terzaghi constructor test", "[Terzaghi]")
 	}
 	section("phisical quantities")
 	{
-		terzaghi.viscosity = 1E-5;
-		check(terzaghi.viscosity==1E-5);
+		terzaghi.fluidViscosity = 1E-5;
+		check(terzaghi.fluidViscosity==1E-5);
 	}
 }
 
@@ -32,7 +32,7 @@ TestCase("Pressure accumulation term")
 	constexpr double diagonalValue = 7.0;
 	section("matrix")
 	{
-		terzaghi.insertPressureAccumulationTermToMatrix();
+		terzaghi.insertPressureAccumulationTermInMatrix();
 		terzaghi.linearSystem.assemblyMatrix();
 		for(auto element: terzaghi.grid.elements)
 		{
@@ -44,11 +44,21 @@ TestCase("Pressure accumulation term")
 	{
 		constexpr double oldPressureValue = 2.0;
 		terzaghi.setOldPressure([oldPressureValue](Eigen::Vector3d) -> double {return oldPressureValue;});
-		terzaghi.insertPressureAccumulationTermToIndependent();
+		terzaghi.insertPressureAccumulationTermInIndependent();
 		for(auto element: terzaghi.grid.elements)
 		{
 			const unsigned index = terzaghi.getPindex(element);
 			check(terzaghi.linearSystem.independent[index]==(diagonalValue*oldPressureValue));
 		}
 	}
+}
+
+TestCase("Pressure diffusive term", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.permeability = 2.0;
+	terzaghi.fluidViscosity = 4.0;
+	terzaghi.timeImplicitCoefficient = 0.5;
+	terzaghi.timeInterval = 1.1;
 }
