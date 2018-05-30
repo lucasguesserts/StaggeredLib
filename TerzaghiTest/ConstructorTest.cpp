@@ -1,4 +1,5 @@
 #include <Utils/Test.hpp>
+#include <Utils/EigenTest.hpp>
 
 #include <Terzaghi/Terzaghi.hpp>
 
@@ -57,8 +58,23 @@ TestCase("Pressure diffusive term", "[Terzaghi]")
 {
 	const std::string gridFile = gridDirectory + "two_triangles.cgns";
 	Terzaghi terzaghi(gridFile);
-	terzaghi.permeability = 2.0;
+	const unsigned linearSystemSize = terzaghi.numberOfElements + 3 * terzaghi.numberOfStaggeredElements;
+	terzaghi.permeability = 20.0;
 	terzaghi.fluidViscosity = 4.0;
-	terzaghi.timeImplicitCoefficient = 0.5;
+	terzaghi.timeImplicitCoefficient = 0.7;
 	terzaghi.timeInterval = 1.1;
+	section("matrix")
+	{
+		Eigen::SparseMatrix<double> matrix(linearSystemSize,linearSystemSize);
+		std::vector< Eigen::Triplet<double,unsigned> > triplets = {
+			{ 0, 0,  11.55 },
+			{ 0, 1, -11.55 },
+			{ 1, 0, -11.55 },
+			{ 1, 1,  11.55 }
+		};
+		matrix.setFromTriplets(triplets.begin(), triplets.end());
+		terzaghi.insertPressureDiffusiveTermInMatrix();
+		terzaghi.linearSystem.assemblyMatrix();
+		check(terzaghi.linearSystem.matrix==matrix);
+	}
 }
