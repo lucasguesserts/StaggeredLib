@@ -14,7 +14,6 @@ Terzaghi::Terzaghi(const std::string& gridFile)
 	return;
 }
 
-
 void Terzaghi::initializeScalarStencilOnVertices(void)
 {
 	this->scalarStencilOnVertices = this->grid.computeScalarStencilOnVertices();
@@ -38,6 +37,30 @@ unsigned Terzaghi::getPindex(Element* element)
 unsigned Terzaghi::getPindex(const unsigned elementIndex)
 {
 	return elementIndex;
+}
+
+unsigned Terzaghi::getUindex(StaggeredElement2D* staggeredElement)
+{
+	return this->numberOfElements + staggeredElement->getIndex();
+}
+
+unsigned Terzaghi::getVindex(StaggeredElement2D* staggeredElement)
+{
+	return this->numberOfElements + this->numberOfStaggeredElements + staggeredElement->getIndex();
+}
+
+unsigned Terzaghi::getWindex(StaggeredElement2D* staggeredElement)
+{
+	return this->numberOfElements + (2 * this->numberOfStaggeredElements) + staggeredElement->getIndex();
+}
+
+Eigen::Vector3d Terzaghi::getDisplacementVector(StaggeredElement2D* staggeredElement)
+{
+	return Eigen::Vector3d(
+		this->oldSolution[this->getUindex(staggeredElement)],
+		this->oldSolution[this->getVindex(staggeredElement)],
+		this->oldSolution[this->getWindex(staggeredElement)]
+	);
 }
 
 void Terzaghi::insertPressureAccumulationTermInMatrix(void)
@@ -112,6 +135,25 @@ void Terzaghi::insertPressureAccumulationTermInIndependent(void)
 	return;
 }
 
+void Terzaghi::insertPressureVolumeDilatationTermInIndependent(void)
+{
+	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
+	{
+		double independentValue = this->alpha * (staggeredQuadrangle->getAreaVector().dot(this->getDisplacementVector(staggeredQuadrangle)));
+		const unsigned frontRow = getPindex(staggeredQuadrangle->elements[0]);
+		this->linearSystem.independent[frontRow] += - independentValue;
+		const unsigned backRow = getPindex(staggeredQuadrangle->elements[1]);
+		this->linearSystem.independent[backRow] += independentValue;
+	}
+	for(auto staggeredTriangle: this->grid.staggeredTriangles)
+	{
+		double independentValue = this->alpha * (staggeredTriangle->getAreaVector().dot(this->getDisplacementVector(staggeredTriangle)));
+		const unsigned frontRow = getPindex(staggeredTriangle->elements[0]);
+		this->linearSystem.independent[frontRow] += - independentValue;
+	}
+	return;
+}
+
 void Terzaghi::setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction)
 {
 	for(auto& element: this->grid.elements)
@@ -130,6 +172,23 @@ void Terzaghi::setOldPressure(const std::vector<double> oldPressureValues)
 	{
 		const unsigned index = getPindex( this->grid.elements[count] );
 		this->oldSolution[index] = oldPressureValues[count];
+	}
+	return;
+}
+
+void Terzaghi::setOldDisplacement(const std::vector<Eigen::Vector3d>& displacements)
+{
+	if(displacements.size()!=this->numberOfStaggeredElements)
+		throw std::runtime_error("Displacement old values size differ from grid number of staggered elements.");
+	for(unsigned count = 0 ; count<(this->grid.staggeredElements.size()) ; ++count)
+	{
+		StaggeredElement2D* staggeredElement = &(this->grid.staggeredElements[count]);
+		const unsigned uIndex = getUindex( staggeredElement );
+		const unsigned vIndex = getVindex( staggeredElement );
+		const unsigned wIndex = getWindex( staggeredElement );
+		this->oldSolution[uIndex] = displacements[count].x();
+		this->oldSolution[vIndex] = displacements[count].y();
+		this->oldSolution[wIndex] = displacements[count].z();
 	}
 	return;
 }

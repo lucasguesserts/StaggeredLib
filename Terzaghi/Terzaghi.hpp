@@ -3,6 +3,7 @@
 
 #include <Eigen/Core>
 #include <functional>
+#include <vector>
 
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Stencil/ScalarStencil.hpp>
@@ -24,9 +25,10 @@ class Terzaghi
 		unsigned numberOfElements, numberOfStaggeredElements;
 		unsigned getPindex(Element* element);
 		unsigned getPindex(const unsigned elementIndex);
-		// unsigned getUindex(StaggeredElement2D* staggeredElement);
-		// unsigned getVindex(StaggeredElement2D* staggeredElement);
-		// unsigned getWindex(StaggeredElement2D* staggeredElement);
+		unsigned getUindex(StaggeredElement2D* staggeredElement);
+		unsigned getVindex(StaggeredElement2D* staggeredElement);
+		unsigned getWindex(StaggeredElement2D* staggeredElement);
+		Eigen::Vector3d getDisplacementVector(StaggeredElement2D* staggeredElement);
 
 		std::vector<ScalarStencil> scalarStencilOnVertices; // auxiliar
 		std::vector<VectorStencil> pressureGradient; // stored on staggered quadrangles
@@ -36,6 +38,7 @@ class Terzaghi
 		void insertPressureDiffusiveTermInMatrix(void);
 		void insertPressureAccumulationTermInIndependent(void);
 		void insertPressureDiffusiveTermInIndependent(void);
+		void insertPressureVolumeDilatationTermInIndependent(void);
 
 		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
 		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
@@ -47,6 +50,7 @@ class Terzaghi
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);
 		void setOldPressure(const std::vector<double> oldPressureValues);
+		void setOldDisplacement(const std::vector<Eigen::Vector3d>& displacements);
 
 	private:
 		void initializeScalarStencilOnVertices(void);

@@ -91,3 +91,29 @@ TestCase("Pressure diffusive term", "[Terzaghi]")
 		}
 	}
 }
+
+TestCase("Volumetric dilatation in mass equation", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.alpha = 1.0;
+	section("independent")
+	{
+		std::vector<Eigen::Vector3d> displacements = {
+			{ 1.0,  3.0,  5.0},
+			{ 7.0, 11.0, 13.0},
+			{17.0, 19.0, 23.0},
+			{29.0, 31.0, 37.0},
+			{41.0, 43.0, 47.0},
+		};
+		terzaghi.setOldDisplacement(displacements);
+		terzaghi.insertPressureVolumeDilatationTermInIndependent();
+		std::vector<double> independentValues = {12.0, -24.0};
+		for(unsigned count=0 ; count<terzaghi.numberOfElements ; ++count)
+		{
+			auto element = terzaghi.grid.elements[count];
+			auto independentIndex = terzaghi.getPindex(element);
+			check(terzaghi.linearSystem.independent[independentIndex]==Approx(independentValues[count]));
+		}
+	}
+}
