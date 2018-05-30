@@ -20,6 +20,7 @@ class EigenSparseLinearSystem
 		Eigen::SparseLU<Eigen::SparseMatrix<double>> luDecomposition;
 
 		void addScalarStencil(const unsigned line, const ScalarStencil& scalarStencil);
+		void assemblyMatrix(void);
 		void computeLU(void);
 		Eigen::VectorXd solve(void);
 };

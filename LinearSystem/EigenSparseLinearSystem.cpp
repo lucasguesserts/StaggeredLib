@@ -13,10 +13,16 @@ void EigenSparseLinearSystem::addScalarStencil(const unsigned line, const Scalar
 	return;
 }
 
-void EigenSparseLinearSystem::computeLU(void)
+void EigenSparseLinearSystem::assemblyMatrix(void)
 {
 	this->matrix.setFromTriplets(this->coefficients.begin(), this->coefficients.end());
 	this->matrix.makeCompressed();
+	return;
+}
+
+void EigenSparseLinearSystem::computeLU(void)
+{
+	this->assemblyMatrix();
 	this->luDecomposition.analyzePattern(this->matrix);
 	this->luDecomposition.factorize(this->matrix);
 	return;

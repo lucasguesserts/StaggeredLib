@@ -23,7 +23,7 @@ class Terzaghi
 		Eigen::VectorXd completeSolution;
 
 		unsigned numberOfElements, numberOfStaggeredElements;
-		// unsigned getPindex(Element* element);
+		unsigned getPindex(Element* element);
 		// unsigned getUindex(StaggeredElement2D* staggeredElement);
 		// unsigned getVindex(StaggeredElement2D* staggeredElement);
 		// unsigned getWindex(StaggeredElement2D* staggeredElement);
@@ -31,7 +31,7 @@ class Terzaghi
 		std::vector<ScalarStencil> pressureGradient;
 		std::vector<VectorStencil> displacementGradient;
 
-		// void insertPressureAccumulationTerm(void);
+		void insertPressureAccumulationTermToMatrix(void);
 
 		// void initializePressureGradient(void);
 		// void initializeDisplacementGradient(void);

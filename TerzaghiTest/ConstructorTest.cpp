@@ -19,3 +19,22 @@ TestCase("Terzaghi constructor test", "[Terzaghi]")
 		check(terzaghi.viscosity==1E-5);
 	}
 }
+
+TestCase("Pressure accumulation term")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.porosity = 0.1;
+	terzaghi.alpha = 0.9;
+	terzaghi.fluidCompressibility = 3;
+	terzaghi.solidCompressibility = 4;
+	constexpr double volume = 2;
+	constexpr double diagonalValue = 7.0;
+	terzaghi.insertPressureAccumulationTermToMatrix();
+	terzaghi.linearSystem.assemblyMatrix();
+	for(auto element: terzaghi.grid.elements)
+	{
+		const unsigned index = terzaghi.getPindex(element);
+		check(terzaghi.linearSystem.matrix.coeff(index,index)==diagonalValue);
+	}
+}
