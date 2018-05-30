@@ -30,11 +30,25 @@ TestCase("Pressure accumulation term")
 	terzaghi.solidCompressibility = 4;
 	constexpr double volume = 2;
 	constexpr double diagonalValue = 7.0;
-	terzaghi.insertPressureAccumulationTermToMatrix();
-	terzaghi.linearSystem.assemblyMatrix();
-	for(auto element: terzaghi.grid.elements)
+	section("matrix")
 	{
-		const unsigned index = terzaghi.getPindex(element);
-		check(terzaghi.linearSystem.matrix.coeff(index,index)==diagonalValue);
+		terzaghi.insertPressureAccumulationTermToMatrix();
+		terzaghi.linearSystem.assemblyMatrix();
+		for(auto element: terzaghi.grid.elements)
+		{
+			const unsigned index = terzaghi.getPindex(element);
+			check(terzaghi.linearSystem.matrix.coeff(index,index)==diagonalValue);
+		}
+	}
+	section("independent")
+	{
+		constexpr double oldPressureValue = 2.0;
+		terzaghi.setOldPressure([oldPressureValue](Eigen::Vector3d) -> double {return oldPressureValue;});
+		terzaghi.insertPressureAccumulationTermToIndependent();
+		for(auto element: terzaghi.grid.elements)
+		{
+			const unsigned index = terzaghi.getPindex(element);
+			check(terzaghi.linearSystem.independent[index]==(diagonalValue*oldPressureValue));
+		}
 	}
 }

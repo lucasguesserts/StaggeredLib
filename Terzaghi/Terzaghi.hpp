@@ -2,6 +2,7 @@
 #define TERZAGHI_HPP
 
 #include <Eigen/Core>
+#include <functional>
 
 #include <Grid/Grid2DInverseDistanceStencil.hpp>
 #include <Stencil/ScalarStencil.hpp>
@@ -18,9 +19,7 @@ class Terzaghi
 
 		Grid2DInverseDistanceStencil grid;
 
-		Eigen::VectorXd pressure;
-		Eigen::VectorXd uDisplacement, vDisplacement, wDisplacement;
-		Eigen::VectorXd completeSolution;
+		Eigen::VectorXd oldSolution;
 
 		unsigned numberOfElements, numberOfStaggeredElements;
 		unsigned getPindex(Element* element);
@@ -32,11 +31,15 @@ class Terzaghi
 		std::vector<VectorStencil> displacementGradient;
 
 		void insertPressureAccumulationTermToMatrix(void);
+		void insertPressureAccumulationTermToIndependent(void);
 
 		// void initializePressureGradient(void);
 		// void initializeDisplacementGradient(void);
 
 		EigenSparseLinearSystem linearSystem;
+
+		// To tests
+		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);
 };
 
 #endif
