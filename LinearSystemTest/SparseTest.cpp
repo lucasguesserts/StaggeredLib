@@ -8,6 +8,16 @@
 
 #include <LinearSystemTest/FiniteDifferenceEnvironment.hpp>
 
+TestCase("sparse set size test", "[SparseLinearSystem]")
+{
+	EigenSparseLinearSystem linearSystem;
+	constexpr unsigned size = 7;
+	linearSystem.setSize(size);
+	check(linearSystem.matrix.rows()==size);
+	check(linearSystem.matrix.cols()==size);
+	check(linearSystem.matrix.nonZeros()==0);
+	check(linearSystem.independent.size()==size);
+}
 
 TestCase("Solving finite differences problem", "[EigenSparseLinearSystem]")
 {

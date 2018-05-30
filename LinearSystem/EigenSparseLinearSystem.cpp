@@ -26,3 +26,10 @@ Eigen::VectorXd EigenSparseLinearSystem::solve(void)
 {
 	return luDecomposition.solve(this->independent);
 }
+
+void EigenSparseLinearSystem::setSize(const unsigned size)
+{
+	this->matrix.resize(size,size);
+	this->independent = Eigen::VectorXd::Zero(size);
+	return;
+}
