@@ -77,4 +77,17 @@ TestCase("Pressure diffusive term", "[Terzaghi]")
 		terzaghi.linearSystem.assemblyMatrix();
 		check(terzaghi.linearSystem.matrix==matrix);
 	}
+	section("independent")
+	{
+		std::vector<double> oldPressureValues = {13.0, 17.0};
+		terzaghi.setOldPressure(oldPressureValues);
+		terzaghi.insertPressureDiffusiveTermInIndependent();
+		std::vector<double> independentValues = {19.8, -19.8};
+		for(unsigned count=0 ; count<terzaghi.numberOfElements ; ++count)
+		{
+			auto element = terzaghi.grid.elements[count];
+			auto independentIndex = terzaghi.getPindex(element);
+			check(terzaghi.linearSystem.independent[independentIndex]==Approx(independentValues[count]));
+		}
+	}
 }

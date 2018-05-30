@@ -35,8 +35,10 @@ class Terzaghi
 		void insertPressureAccumulationTermInMatrix(void);
 		void insertPressureDiffusiveTermInMatrix(void);
 		void insertPressureAccumulationTermInIndependent(void);
+		void insertPressureDiffusiveTermInIndependent(void);
 
 		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
+		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
 
 		// void initializeDisplacementGradient(void);
 
@@ -44,6 +46,7 @@ class Terzaghi
 
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);
+		void setOldPressure(const std::vector<double> oldPressureValues);
 
 	private:
 		void initializeScalarStencilOnVertices(void);

@@ -1,4 +1,5 @@
 #include <Terzaghi/Terzaghi.hpp>
+#include <stdexcept>
 
 Terzaghi::Terzaghi(const std::string& gridFile)
 	: grid(gridFile)
@@ -57,10 +58,38 @@ void Terzaghi::insertPressureDiffusiveTermInMatrix(void)
 		const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity *
 		                            this->timeImplicitCoefficient) * staggeredQuadrangle->getAreaVector();
 		ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredQuadrangle->getIndex()];
-		insertPressureScalarStencilInLinearSystem(staggeredQuadrangle->elements[0], pressureDiffusionOnFace); // front
-		insertPressureScalarStencilInLinearSystem(staggeredQuadrangle->elements[1], (-1)*pressureDiffusionOnFace); // back
+		this->insertPressureScalarStencilInLinearSystem(staggeredQuadrangle->elements[0], pressureDiffusionOnFace); // front
+		this->insertPressureScalarStencilInLinearSystem(staggeredQuadrangle->elements[1], (-1)*pressureDiffusionOnFace); // back
 	}
 	return;
+}
+
+void Terzaghi::insertPressureDiffusiveTermInIndependent(void)
+{
+	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
+	{
+		const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity *
+		                            (1 - this->timeImplicitCoefficient)) * staggeredQuadrangle->getAreaVector();
+		ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredQuadrangle->getIndex()];
+		double independentValue = recoverPressureValueFromScalarStencil(pressureDiffusionOnFace);
+		const unsigned frontRow = getPindex(staggeredQuadrangle->elements[0]);
+		this->linearSystem.independent[frontRow] += - independentValue;
+		const unsigned backRow = getPindex(staggeredQuadrangle->elements[1]);
+		this->linearSystem.independent[backRow] += independentValue;
+	}
+	return;
+}
+
+double Terzaghi::recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements)
+{
+	double value = 0.0;
+	for(auto& keyValuePair: scalarStencilOnElements)
+	{
+		const unsigned index = getPindex(keyValuePair.first);
+		const double weightValue = keyValuePair.second;
+		value += weightValue * this->oldSolution[index];
+	}
+	return value;
 }
 
 void Terzaghi::insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements)
@@ -89,6 +118,18 @@ void Terzaghi::setOldPressure(const std::function<double(Eigen::Vector3d)> oldPr
 	{
 		const unsigned index = getPindex(element);
 		this->oldSolution[index] = oldPressureFunction(element->getCentroid());
+	}
+	return;
+}
+
+void Terzaghi::setOldPressure(const std::vector<double> oldPressureValues)
+{
+	if(oldPressureValues.size()!=this->numberOfElements)
+		throw std::runtime_error("pressure old values size differ from grid number of elements.");
+	for(unsigned count = 0 ; count<(this->grid.elements.size()) ; ++count)
+	{
+		const unsigned index = getPindex( this->grid.elements[count] );
+		this->oldSolution[index] = oldPressureValues[count];
 	}
 	return;
 }
