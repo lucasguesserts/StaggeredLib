@@ -97,6 +97,34 @@ TestCase("Volumetric dilatation in mass equation", "[Terzaghi]")
 	const std::string gridFile = gridDirectory + "two_triangles.cgns";
 	Terzaghi terzaghi(gridFile);
 	terzaghi.alpha = 1.0;
+	section("matrix")
+	{
+		std::vector<Eigen::Triplet<double,unsigned>> triplets = {
+			{0,  2,  0.0},
+			{0,  7, -2.0},
+			{0, 12,  0.0},
+			{0,  3,  2.0},
+			{0,  8,  0.0},
+			{0, 13,  0.0},
+			{0,  4, -2.0},
+			{0,  9,  2.0},
+			{0, 14,  0.0},
+			{1,  4,  2.0},
+			{1,  9, -2.0},
+			{1, 14,  0.0},
+			{1,  5,  0.0},
+			{1, 10,  2.0},
+			{1, 15,  0.0},
+			{1,  6, -2.0},
+			{1,  1,  0.0},
+			{1, 16,  0.0},
+		};
+		Eigen::SparseMatrix<double> matrix(terzaghi.linearSystemSize,terzaghi.linearSystemSize);
+		matrix.setFromTriplets(triplets.cbegin(), triplets.cend());
+		terzaghi.insertPressureVolumeDilatationTermInMatrix();
+		terzaghi.linearSystem.assemblyMatrix();
+		check(terzaghi.linearSystem.matrix==matrix);
+	}
 	section("independent")
 	{
 		std::vector<Eigen::Vector3d> displacements = {

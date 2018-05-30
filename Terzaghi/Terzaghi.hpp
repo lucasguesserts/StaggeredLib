@@ -22,7 +22,7 @@ class Terzaghi
 
 		Eigen::VectorXd oldSolution;
 
-		unsigned numberOfElements, numberOfStaggeredElements;
+		unsigned numberOfElements, numberOfStaggeredElements, linearSystemSize;
 		unsigned getPindex(Element* element);
 		unsigned getPindex(const unsigned elementIndex);
 		unsigned getUindex(StaggeredElement2D* staggeredElement);
@@ -36,6 +36,7 @@ class Terzaghi
 
 		void insertPressureAccumulationTermInMatrix(void);
 		void insertPressureDiffusiveTermInMatrix(void);
+		void insertPressureVolumeDilatationTermInMatrix(void);
 		void insertPressureAccumulationTermInIndependent(void);
 		void insertPressureDiffusiveTermInIndependent(void);
 		void insertPressureVolumeDilatationTermInIndependent(void);

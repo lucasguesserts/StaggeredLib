@@ -6,9 +6,9 @@ Terzaghi::Terzaghi(const std::string& gridFile)
 {
 	this->numberOfElements = this->grid.elements.size();
 	this->numberOfStaggeredElements = this->grid.staggeredElements.size();
-	const unsigned linearSystemSize = this->numberOfElements + 3 * this->numberOfStaggeredElements;
-	this->linearSystem.setSize(linearSystemSize);
-	this->oldSolution.resize(linearSystemSize);
+	this->linearSystemSize = this->numberOfElements + 3 * this->numberOfStaggeredElements;
+	this->linearSystem.setSize(this->linearSystemSize);
+	this->oldSolution.resize(this->linearSystemSize);
 
 	this->initializePressureGradient();
 	return;
@@ -83,6 +83,35 @@ void Terzaghi::insertPressureDiffusiveTermInMatrix(void)
 		ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredQuadrangle->getIndex()];
 		this->insertPressureScalarStencilInLinearSystem(staggeredQuadrangle->elements[0], pressureDiffusionOnFace); // front
 		this->insertPressureScalarStencilInLinearSystem(staggeredQuadrangle->elements[1], (-1)*pressureDiffusionOnFace); // back
+	}
+	return;
+}
+
+void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
+{
+	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
+	{
+		auto& coefficients = this->linearSystem.coefficients;
+		coefficients.reserve(coefficients.size() + 6);
+		Eigen::Vector3d areaVector = this->alpha * staggeredQuadrangle->getAreaVector();
+		const unsigned frontRow = getPindex(staggeredQuadrangle->elements[0]);
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getUindex(staggeredQuadrangle), -areaVector.x()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getVindex(staggeredQuadrangle), -areaVector.y()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getWindex(staggeredQuadrangle), -areaVector.z()) );
+		const unsigned backRow = getPindex(staggeredQuadrangle->elements[1]);
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getUindex(staggeredQuadrangle), areaVector.x()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getVindex(staggeredQuadrangle), areaVector.y()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getWindex(staggeredQuadrangle), areaVector.z()) );
+	}
+	for(auto staggeredTriangle: this->grid.staggeredTriangles)
+	{
+		auto& coefficients = this->linearSystem.coefficients;
+		coefficients.reserve(coefficients.size() + 3);
+		Eigen::Vector3d areaVector = this->alpha * staggeredTriangle->getAreaVector();
+		const unsigned frontRow = getPindex(staggeredTriangle->elements[0]);
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getUindex(staggeredTriangle), -areaVector.x()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getVindex(staggeredTriangle), -areaVector.y()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getWindex(staggeredTriangle), -areaVector.z()) );
 	}
 	return;
 }
