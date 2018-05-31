@@ -4,13 +4,19 @@
 Terzaghi::Terzaghi(const std::string& gridFile)
 	: grid(gridFile)
 {
+	// Linear system
 	this->numberOfElements = this->grid.elements.size();
 	this->numberOfStaggeredElements = this->grid.staggeredElements.size();
 	this->linearSystemSize = this->numberOfElements + 3 * this->numberOfStaggeredElements;
 	this->linearSystem.setSize(this->linearSystemSize);
 	this->oldSolution.resize(this->linearSystemSize);
-
+	// Pressure
+	this->initializeScalarStencilOnVertices();
 	this->initializePressureGradient();
+	// Displacement
+	this->initializeDisplacementScalarStencilOnElements();
+	this->initializeDisplacementScalarStencilOnVertices();
+	this->initializeDisplacementGradient();
 	return;
 }
 
@@ -21,11 +27,55 @@ void Terzaghi::initializeScalarStencilOnVertices(void)
 
 void Terzaghi::initializePressureGradient(void)
 {
-	this->initializeScalarStencilOnVertices();
 	this->pressureGradient.resize(this->grid.staggeredElements.size());
 	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
 		this->pressureGradient[staggeredQuadrangle->getIndex()] =
 			this->grid.computeVectorStencilOnQuadrangle(*staggeredQuadrangle,this->scalarStencilOnVertices);
+	return;
+}
+
+void Terzaghi::initializeDisplacementScalarStencilOnElements(void)
+{
+	this->displacementScalarStencilOnElements.resize(this->grid.elements.size());
+	auto addScalarStencil = [this](StaggeredElement2D* staggeredElement, Element* element) -> void
+	{
+		const unsigned elementIndex = element->getIndex();
+		const unsigned staggeredElementIndex = staggeredElement->getIndex();
+		const double weight = 1.0 / static_cast<double>(element->vertices.size());
+		this->displacementScalarStencilOnElements[elementIndex] = this->displacementScalarStencilOnElements[elementIndex] +
+		                                              ScalarStencil{{staggeredElementIndex, weight}};
+	};
+	for(auto& staggeredElement: this->grid.staggeredQuadrangles)
+	{
+		addScalarStencil(staggeredElement, staggeredElement->elements[0]);
+		addScalarStencil(staggeredElement, staggeredElement->elements[1]);
+	}
+	for(auto& staggeredElement: this->grid.staggeredTriangles)
+		addScalarStencil(staggeredElement, staggeredElement->elements[0]);
+	return;
+}
+
+void Terzaghi::initializeDisplacementScalarStencilOnVertices(void)
+{
+	this->displacementScalarStencilOnVertices = this->grid.computeScalarStencilOnVerticesUsingStaggeredElements();
+}
+
+void Terzaghi::initializeDisplacementGradient(void)
+{
+	const unsigned numberOfFaces = this->grid.faces.size();
+	this->displacementGradient.resize(numberOfFaces);
+	for(Face2D& face: this->grid.faces)
+	{
+		Eigen::Vector3d frontBackDifferencePosition = face.forwardStaggeredElement->getCentroid() - face.backwardStaggeredElement->getCentroid();
+		ScalarStencil frontBackDifferenceScalarStencil = ScalarStencil{
+			                                             	{face.forwardStaggeredElement->getIndex(), +1.0},
+			                                             	{face.backwardStaggeredElement->getIndex(), -1.0}};
+		Eigen::Vector3d vertexElementDifferencePosition = *(face.adjacentVertex) - face.parentElement->getCentroid();
+		ScalarStencil vertexElementDifferenceScalarStencil = this->displacementScalarStencilOnVertices[face.adjacentVertex->getIndex()] +
+		                                                     (-1) * this->displacementScalarStencilOnElements[face.parentElement->getIndex()];
+		this->displacementGradient[face.getIndex()] = ((1 / frontBackDifferencePosition.squaredNorm()) * frontBackDifferenceScalarStencil) * frontBackDifferencePosition +
+		                                         ((1 / vertexElementDifferencePosition.squaredNorm()) * vertexElementDifferenceScalarStencil) * vertexElementDifferencePosition;
+	}
 	return;
 }
 

@@ -30,9 +30,13 @@ class Terzaghi
 		unsigned getWindex(StaggeredElement2D* staggeredElement);
 		Eigen::Vector3d getDisplacementVector(StaggeredElement2D* staggeredElement);
 
+		// pressure
 		std::vector<ScalarStencil> scalarStencilOnVertices; // auxiliar
 		std::vector<VectorStencil> pressureGradient; // stored on staggered quadrangles
-		std::vector<VectorStencil> displacementGradient; // stored on staggered elements faces
+		// displacement
+		std::vector<ScalarStencil> displacementScalarStencilOnElements;
+		std::vector<ScalarStencil> displacementScalarStencilOnVertices;
+		std::vector<VectorStencil> displacementGradient;
 
 		void insertPressureAccumulationTermInMatrix(void);
 		void insertPressureDiffusiveTermInMatrix(void);
@@ -54,8 +58,13 @@ class Terzaghi
 		void setOldDisplacement(const std::vector<Eigen::Vector3d>& displacements);
 
 	private:
+		// Pressure
 		void initializeScalarStencilOnVertices(void);
 		void initializePressureGradient(void);
+		// Displacement
+		void initializeDisplacementScalarStencilOnElements(void);
+		void initializeDisplacementScalarStencilOnVertices(void);
+		void initializeDisplacementGradient(void);
 };
 
 #endif
