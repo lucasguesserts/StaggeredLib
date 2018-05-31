@@ -10,6 +10,14 @@
 #include <Stencil/VectorStencil.hpp>
 #include <LinearSystem/EigenSparseLinearSystem.hpp>
 
+struct DisplacementIndex
+{
+	static constexpr unsigned U = 0u;
+	static constexpr unsigned V = 1u;
+	static constexpr unsigned W = 2u;
+	static constexpr unsigned numberOfComponents = 3u;
+};
+
 class Terzaghi
 {
 	public:
@@ -17,6 +25,7 @@ class Terzaghi
 
 		double fluidViscosity, porosity, alpha, fluidCompressibility, solidCompressibility, permeability;
 		double timeInterval, timeImplicitCoefficient;
+		double shearModulus, poissonCoefficient;
 
 		Grid2DInverseDistanceStencil grid;
 
@@ -41,6 +50,7 @@ class Terzaghi
 		void insertPressureAccumulationTermInMatrix(void);
 		void insertPressureDiffusiveTermInMatrix(void);
 		void insertPressureVolumeDilatationTermInMatrix(void);
+		void insertDisplacementTensionTermInMatrix(void);
 		void insertPressureAccumulationTermInIndependent(void);
 		void insertPressureDiffusiveTermInIndependent(void);
 		void insertPressureVolumeDilatationTermInIndependent(void);
@@ -48,7 +58,9 @@ class Terzaghi
 		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
 		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
 
-		// void initializeDisplacementGradient(void);
+		// Displacement auxiliar
+		Eigen::MatrixXd getPermutationMatrix(unsigned i, unsigned j);
+		Eigen::MatrixXd getMechanicalPropertiesMatrix(const unsigned i, const unsigned j);
 
 		EigenSparseLinearSystem linearSystem;
 

@@ -230,3 +230,71 @@ TestCase("Displacement gradient on faces", "[Terzaghi]")
 	};
 	check(terzaghi.displacementGradient==displacementGradient);
 }
+
+TestCase("Terzaghi mechanical properties matrix", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	constexpr unsigned matrixSize = 3;
+	terzaghi.shearModulus = 1;
+	terzaghi.poissonCoefficient = 0.25;
+	auto testMechanicalPropertiesMatrix = [&terzaghi](unsigned i, unsigned j, double me00, double me11, double me22) -> void
+	{
+		Eigen::MatrixXd mechanicalPropertiesMatrix(matrixSize,matrixSize);
+		mechanicalPropertiesMatrix << me00, 0.0,  0.0,
+                                      0.0,  me11, 0.0,
+                                      0.0,  0.0,  me22;
+		check(terzaghi.getMechanicalPropertiesMatrix(i,j)==mechanicalPropertiesMatrix);
+	};
+	section("u")
+	{
+		testMechanicalPropertiesMatrix(DisplacementIndex::U, DisplacementIndex::U, 3.0, 1.0, 1.0);
+		testMechanicalPropertiesMatrix(DisplacementIndex::U, DisplacementIndex::V, 1.0, 1.0, 0.0);
+		testMechanicalPropertiesMatrix(DisplacementIndex::U, DisplacementIndex::W, 1.0, 0.0, 1.0);
+	}
+	section("v")
+	{
+		testMechanicalPropertiesMatrix(DisplacementIndex::V, DisplacementIndex::U, 1.0, 1.0, 0.0);
+		testMechanicalPropertiesMatrix(DisplacementIndex::V, DisplacementIndex::V, 1.0, 3.0, 1.0);
+		testMechanicalPropertiesMatrix(DisplacementIndex::V, DisplacementIndex::W, 0.0, 1.0, 1.0);
+	}
+	section("w")
+	{
+		testMechanicalPropertiesMatrix(DisplacementIndex::W, DisplacementIndex::U, 1.0, 0.0, 1.0);
+		testMechanicalPropertiesMatrix(DisplacementIndex::W, DisplacementIndex::V, 0.0, 1.0, 1.0);
+		testMechanicalPropertiesMatrix(DisplacementIndex::W, DisplacementIndex::W, 1.0, 1.0, 3.0);
+	}
+}
+
+TestCase("Terzaghi permutation matrix", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	constexpr unsigned matrixSize = 3;
+	auto testPermutationMatrix = [&terzaghi](unsigned i, unsigned j, unsigned column_0, unsigned column_1, unsigned column_2) -> void
+	{
+		Eigen::MatrixXd permutationMatrix = Eigen::MatrixXd::Zero(matrixSize,matrixSize);
+		permutationMatrix(0,column_0) = 1.0;
+		permutationMatrix(1,column_1) = 1.0;
+		permutationMatrix(2,column_2) = 1.0;
+		check(terzaghi.getPermutationMatrix(i,j)==permutationMatrix);
+	};
+	section("u")
+	{
+		testPermutationMatrix(DisplacementIndex::U, DisplacementIndex::U, 0, 1, 2);
+		testPermutationMatrix(DisplacementIndex::U, DisplacementIndex::V, 1, 0, 2);
+		testPermutationMatrix(DisplacementIndex::U, DisplacementIndex::W, 2, 1, 0);
+	}
+	section("v")
+	{
+		testPermutationMatrix(DisplacementIndex::V, DisplacementIndex::U, 1, 0, 2);
+		testPermutationMatrix(DisplacementIndex::V, DisplacementIndex::V, 0, 1, 2);
+		testPermutationMatrix(DisplacementIndex::V, DisplacementIndex::W, 0, 2, 1);
+	}
+	section("w")
+	{
+		testPermutationMatrix(DisplacementIndex::W, DisplacementIndex::U, 2, 1, 0);
+		testPermutationMatrix(DisplacementIndex::W, DisplacementIndex::V, 0, 2, 1);
+		testPermutationMatrix(DisplacementIndex::W, DisplacementIndex::W, 0, 1, 2);
+	}
+}

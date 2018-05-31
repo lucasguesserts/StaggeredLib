@@ -233,6 +233,45 @@ void Terzaghi::insertPressureVolumeDilatationTermInIndependent(void)
 	return;
 }
 
+void Terzaghi::insertDisplacementTensionTermInMatrix(void)
+{
+	return;
+}
+
+Eigen::MatrixXd Terzaghi::getPermutationMatrix(unsigned i, unsigned j)
+{
+	constexpr unsigned matrixSize = 3;
+	Eigen::MatrixXd permutationMatrix = Eigen::MatrixXd::Zero(matrixSize,matrixSize);
+	if(i==j)
+		permutationMatrix = Eigen::MatrixXd::Identity(matrixSize,matrixSize);
+	else
+	{
+		const unsigned k = 3 - (i + j);
+		permutationMatrix(i,j) = 1;
+		permutationMatrix(j,i) = 1;
+		permutationMatrix(k,k) = 1;
+	}
+	return permutationMatrix;
+}
+
+Eigen::MatrixXd Terzaghi::getMechanicalPropertiesMatrix(const unsigned i, const unsigned j)
+{
+	constexpr unsigned matrixSize = 3;
+	Eigen::MatrixXd mechanicalPropertiesMatrix = Eigen::MatrixXd::Zero(matrixSize,matrixSize);
+	if(i==j)
+	{
+		for(unsigned k=0 ; k<matrixSize ; ++k)
+			mechanicalPropertiesMatrix(k,k) = this->shearModulus;
+		mechanicalPropertiesMatrix(i,i) *= 2 * (1 - this->poissonCoefficient) / (1 - 2*this->poissonCoefficient);
+	}
+	else
+	{
+		mechanicalPropertiesMatrix(i,i) = this->shearModulus;
+		mechanicalPropertiesMatrix(j,j) = 2 * this->shearModulus * this->poissonCoefficient / (1 - 2*this->poissonCoefficient);
+	}
+	return mechanicalPropertiesMatrix;
+}
+
 void Terzaghi::setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction)
 {
 	for(auto& element: this->grid.elements)
