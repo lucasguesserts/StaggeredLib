@@ -144,9 +144,9 @@ unsigned Terzaghi::getWindex(const unsigned staggeredElementIndex)
 Eigen::Vector3d Terzaghi::getDisplacementVector(StaggeredElement2D* staggeredElement)
 {
 	return Eigen::Vector3d(
-		this->oldSolution[this->getUindex(staggeredElement)],
-		this->oldSolution[this->getVindex(staggeredElement)],
-		this->oldSolution[this->getWindex(staggeredElement)]
+		this->oldSolution[this->transformIndex(Component::U,staggeredElement)],
+		this->oldSolution[this->transformIndex(Component::V,staggeredElement)],
+		this->oldSolution[this->transformIndex(Component::W,staggeredElement)]
 	);
 }
 
@@ -182,13 +182,13 @@ void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
 		coefficients.reserve(coefficients.size() + 6);
 		Eigen::Vector3d areaVector = this->alpha * staggeredQuadrangle->getAreaVector();
 		const unsigned frontRow = transformIndex(Component::P,staggeredQuadrangle->elements[0]);
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getUindex(staggeredQuadrangle), -areaVector.x()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getVindex(staggeredQuadrangle), -areaVector.y()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getWindex(staggeredQuadrangle), -areaVector.z()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::U,staggeredQuadrangle), -areaVector.x()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::V,staggeredQuadrangle), -areaVector.y()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::W,staggeredQuadrangle), -areaVector.z()) );
 		const unsigned backRow = transformIndex(Component::P,staggeredQuadrangle->elements[1]);
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getUindex(staggeredQuadrangle), areaVector.x()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getVindex(staggeredQuadrangle), areaVector.y()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getWindex(staggeredQuadrangle), areaVector.z()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, transformIndex(Component::U,staggeredQuadrangle), areaVector.x()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, transformIndex(Component::V,staggeredQuadrangle), areaVector.y()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, transformIndex(Component::W,staggeredQuadrangle), areaVector.z()) );
 	}
 	for(auto staggeredTriangle: this->grid.staggeredTriangles)
 	{
@@ -196,9 +196,9 @@ void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
 		coefficients.reserve(coefficients.size() + 3);
 		Eigen::Vector3d areaVector = this->alpha * staggeredTriangle->getAreaVector();
 		const unsigned frontRow = transformIndex(Component::P,staggeredTriangle->elements[0]);
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getUindex(staggeredTriangle), -areaVector.x()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getVindex(staggeredTriangle), -areaVector.y()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getWindex(staggeredTriangle), -areaVector.z()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::U,staggeredTriangle), -areaVector.x()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::V,staggeredTriangle), -areaVector.y()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::W,staggeredTriangle), -areaVector.z()) );
 	}
 	return;
 }
@@ -241,17 +241,17 @@ void Terzaghi::insertPressureGradientInMatrix(const unsigned forceComponent, Sta
 	switch(forceComponent)
 	{
 		case DisplacementIndex::U:
-			row = getUindex(staggeredQuadrangle);
+			row = transformIndex(Component::U,staggeredQuadrangle);
 			for(auto keyValuePair: pressureTerm)
 				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.x()));
 			break;
 		case DisplacementIndex::V:
-			row = getVindex(staggeredQuadrangle);
+			row = transformIndex(Component::V,staggeredQuadrangle);
 			for(auto keyValuePair: pressureTerm)
 				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.y()));
 			break;
 		case DisplacementIndex::W:
-			row = getWindex(staggeredQuadrangle);
+			row = transformIndex(Component::W,staggeredQuadrangle);
 			for(auto keyValuePair: pressureTerm)
 				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.z()));
 			break;
@@ -302,13 +302,13 @@ void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const unsigned f
 	switch(forceComponent)
 	{
 		case DisplacementIndex::U:
-			row = this->getUindex(staggeredElement);
+			row = this->transformIndex(Component::U,staggeredElement);
 			break;
 		case DisplacementIndex::V:
-			row = this->getVindex(staggeredElement);
+			row = this->transformIndex(Component::V,staggeredElement);
 			break;
 		case DisplacementIndex::W:
-			row = this->getWindex(staggeredElement);
+			row = this->transformIndex(Component::W,staggeredElement);
 			break;
 	}
 	this->linearSystem.coefficients.reserve(this->linearSystem.coefficients.size() + scalarStencilOnStaggeredElements.size());
@@ -318,13 +318,13 @@ void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const unsigned f
 		switch(displacementComponent)
 		{
 			case DisplacementIndex::U:
-				column = this->getUindex(keyValuePair.first);
+				column = this->transformIndex(Component::U,keyValuePair.first);
 				break;
 			case DisplacementIndex::V:
-				column = this->getVindex(keyValuePair.first);
+				column = this->transformIndex(Component::V,keyValuePair.first);
 				break;
 			case DisplacementIndex::W:
-				column = this->getWindex(keyValuePair.first);
+				column = this->transformIndex(Component::W,keyValuePair.first);
 				break;
 		}
 		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, column, keyValuePair.second) );
@@ -425,9 +425,9 @@ void Terzaghi::setOldDisplacement(const std::vector<Eigen::Vector3d>& displaceme
 	for(unsigned count = 0 ; count<(this->grid.staggeredElements.size()) ; ++count)
 	{
 		StaggeredElement2D* staggeredElement = &(this->grid.staggeredElements[count]);
-		const unsigned uIndex = getUindex( staggeredElement );
-		const unsigned vIndex = getVindex( staggeredElement );
-		const unsigned wIndex = getWindex( staggeredElement );
+		const unsigned uIndex = transformIndex(Component::U, staggeredElement );
+		const unsigned vIndex = transformIndex(Component::V, staggeredElement );
+		const unsigned wIndex = transformIndex(Component::W, staggeredElement );
 		this->oldSolution[uIndex] = displacements[count].x();
 		this->oldSolution[vIndex] = displacements[count].y();
 		this->oldSolution[wIndex] = displacements[count].z();
