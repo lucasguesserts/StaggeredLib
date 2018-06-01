@@ -79,6 +79,21 @@ void Terzaghi::initializeDisplacementGradient(void)
 	return;
 }
 
+unsigned Terzaghi::transformIndex(const unsigned component, const unsigned index)
+{
+	static auto transformToP = [](const unsigned index) -> unsigned
+		{ return index; };
+	static auto transformToU = [this](const unsigned index) -> unsigned
+		{ return this->numberOfElements + index; };
+	static auto transformToV = [this](const unsigned index) -> unsigned
+		{ return this->numberOfElements + this->numberOfStaggeredElements + index; };
+	static auto transformToW = [this](const unsigned index) -> unsigned
+		{ return this->numberOfElements + 2*(this->numberOfStaggeredElements) + index; };
+	static std::vector<std::function<unsigned(const unsigned)>> transform =
+		{ transformToP, transformToU, transformToV, transformToW } ;
+	return transform[component](index);
+}
+
 unsigned Terzaghi::getPindex(Element* element)
 {
 	return element->getIndex();

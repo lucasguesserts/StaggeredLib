@@ -4,22 +4,14 @@
 
 #include <Terzaghi/Terzaghi.hpp>
 
-TestCase("Terzaghi constructor test", "[Terzaghi]")
+TestCase("Terzaghi indices transformation", "[Terzaghi]")
 {
-	const std::string gridFile = gridDirectory + "GridReaderTest_CGNS.cgns";
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
 	Terzaghi terzaghi(gridFile);
-	section("sizes")
-	{
-		constexpr unsigned linearSystemSize = 48;
-		check(terzaghi.linearSystem.matrix.rows()==linearSystemSize);
-		check(terzaghi.linearSystem.matrix.cols()==linearSystemSize);
-		check(terzaghi.linearSystem.independent.size()==linearSystemSize);
-	}
-	section("phisical quantities")
-	{
-		terzaghi.fluidViscosity = 1E-5;
-		check(terzaghi.fluidViscosity==1E-5);
-	}
+	check(terzaghi.transformIndex(Component::P, 5)==5);
+	check(terzaghi.transformIndex(Component::U, 2)==4);
+	check(terzaghi.transformIndex(Component::V, 3)==10);
+	check(terzaghi.transformIndex(Component::W, 1)==13);
 }
 
 TestCase("Pressure accumulation term")
@@ -318,5 +310,5 @@ TestCase("Terzaghi insert displacement pressure gradient term in matrix ")
 	terzaghi.alpha = 1.0;
 	terzaghi.insertDisplacementPressureTermInMatrix();
 	terzaghi.linearSystem.assemblyMatrix();
-	std::cout << std::endl << "Linear system matrix" << std:: endl << terzaghi.linearSystem.matrix << std::endl;
+	// std::cout << std::endl << "Linear system matrix" << std:: endl << terzaghi.linearSystem.matrix << std::endl;
 }
