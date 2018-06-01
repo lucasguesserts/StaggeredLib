@@ -51,7 +51,7 @@ TestCase("Pressure accumulation term")
 		terzaghi.linearSystem.assemblyMatrix();
 		for(auto element: terzaghi.grid.elements)
 		{
-			const unsigned index = terzaghi.getPindex(element);
+			const unsigned index = terzaghi.transformIndex(Component::P,element);
 			check(terzaghi.linearSystem.matrix.coeff(index,index)==diagonalValue);
 		}
 	}
@@ -62,7 +62,7 @@ TestCase("Pressure accumulation term")
 		terzaghi.insertPressureAccumulationTermInIndependent();
 		for(auto element: terzaghi.grid.elements)
 		{
-			const unsigned index = terzaghi.getPindex(element);
+			const unsigned index = terzaghi.transformIndex(Component::P,element);
 			check(terzaghi.linearSystem.independent[index]==(diagonalValue*oldPressureValue));
 		}
 	}
@@ -100,7 +100,7 @@ TestCase("Pressure diffusive term", "[Terzaghi]")
 		for(unsigned count=0 ; count<terzaghi.numberOfElements ; ++count)
 		{
 			auto element = terzaghi.grid.elements[count];
-			auto independentIndex = terzaghi.getPindex(element);
+			auto independentIndex = terzaghi.transformIndex(Component::P,element);
 			check(terzaghi.linearSystem.independent[independentIndex]==Approx(independentValues[count]));
 		}
 	}
@@ -154,7 +154,7 @@ TestCase("Volumetric dilatation in mass equation", "[Terzaghi]")
 		for(unsigned count=0 ; count<terzaghi.numberOfElements ; ++count)
 		{
 			auto element = terzaghi.grid.elements[count];
-			auto independentIndex = terzaghi.getPindex(element);
+			auto independentIndex = terzaghi.transformIndex(Component::P,element);
 			check(terzaghi.linearSystem.independent[independentIndex]==Approx(independentValues[count]));
 		}
 	}

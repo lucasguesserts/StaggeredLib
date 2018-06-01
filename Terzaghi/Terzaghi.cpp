@@ -155,7 +155,7 @@ void Terzaghi::insertPressureAccumulationTermInMatrix(void)
 	const double compressibility = this->porosity * this->fluidCompressibility + (this->alpha - this->porosity) * this->solidCompressibility;
 	for(auto& element: this->grid.elements)
 	{
-		const unsigned index = this->getPindex(element);
+		const unsigned index = this->transformIndex(Component::P,element);
 		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(index, index, compressibility*element->getVolume()) );
 	}
 	return;
@@ -181,11 +181,11 @@ void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
 		auto& coefficients = this->linearSystem.coefficients;
 		coefficients.reserve(coefficients.size() + 6);
 		Eigen::Vector3d areaVector = this->alpha * staggeredQuadrangle->getAreaVector();
-		const unsigned frontRow = getPindex(staggeredQuadrangle->elements[0]);
+		const unsigned frontRow = transformIndex(Component::P,staggeredQuadrangle->elements[0]);
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getUindex(staggeredQuadrangle), -areaVector.x()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getVindex(staggeredQuadrangle), -areaVector.y()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getWindex(staggeredQuadrangle), -areaVector.z()) );
-		const unsigned backRow = getPindex(staggeredQuadrangle->elements[1]);
+		const unsigned backRow = transformIndex(Component::P,staggeredQuadrangle->elements[1]);
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getUindex(staggeredQuadrangle), areaVector.x()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getVindex(staggeredQuadrangle), areaVector.y()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, getWindex(staggeredQuadrangle), areaVector.z()) );
@@ -195,7 +195,7 @@ void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
 		auto& coefficients = this->linearSystem.coefficients;
 		coefficients.reserve(coefficients.size() + 3);
 		Eigen::Vector3d areaVector = this->alpha * staggeredTriangle->getAreaVector();
-		const unsigned frontRow = getPindex(staggeredTriangle->elements[0]);
+		const unsigned frontRow = transformIndex(Component::P,staggeredTriangle->elements[0]);
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getUindex(staggeredTriangle), -areaVector.x()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getVindex(staggeredTriangle), -areaVector.y()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, getWindex(staggeredTriangle), -areaVector.z()) );
@@ -243,17 +243,17 @@ void Terzaghi::insertPressureGradientInMatrix(const unsigned forceComponent, Sta
 		case DisplacementIndex::U:
 			row = getUindex(staggeredQuadrangle);
 			for(auto keyValuePair: pressureTerm)
-				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->getPindex(keyValuePair.first), keyValuePair.second.x()));
+				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.x()));
 			break;
 		case DisplacementIndex::V:
 			row = getVindex(staggeredQuadrangle);
 			for(auto keyValuePair: pressureTerm)
-				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->getPindex(keyValuePair.first), keyValuePair.second.y()));
+				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.y()));
 			break;
 		case DisplacementIndex::W:
 			row = getWindex(staggeredQuadrangle);
 			for(auto keyValuePair: pressureTerm)
-				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->getPindex(keyValuePair.first), keyValuePair.second.z()));
+				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.z()));
 			break;
 	}
 	return;
@@ -267,9 +267,9 @@ void Terzaghi::insertPressureDiffusiveTermInIndependent(void)
 		                            (1 - this->timeImplicitCoefficient)) * staggeredQuadrangle->getAreaVector();
 		ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredQuadrangle->getIndex()];
 		double independentValue = recoverPressureValueFromScalarStencil(pressureDiffusionOnFace);
-		const unsigned frontRow = getPindex(staggeredQuadrangle->elements[0]);
+		const unsigned frontRow = transformIndex(Component::P,staggeredQuadrangle->elements[0]);
 		this->linearSystem.independent[frontRow] += - independentValue;
-		const unsigned backRow = getPindex(staggeredQuadrangle->elements[1]);
+		const unsigned backRow = transformIndex(Component::P,staggeredQuadrangle->elements[1]);
 		this->linearSystem.independent[backRow] += independentValue;
 	}
 	return;
@@ -280,7 +280,7 @@ double Terzaghi::recoverPressureValueFromScalarStencil(const ScalarStencil& scal
 	double value = 0.0;
 	for(auto& keyValuePair: scalarStencilOnElements)
 	{
-		const unsigned index = getPindex(keyValuePair.first);
+		const unsigned index = transformIndex(Component::P,keyValuePair.first);
 		const double weightValue = keyValuePair.second;
 		value += weightValue * this->oldSolution[index];
 	}
@@ -289,10 +289,10 @@ double Terzaghi::recoverPressureValueFromScalarStencil(const ScalarStencil& scal
 
 void Terzaghi::insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements)
 {
-	const unsigned row = getPindex(element);
+	const unsigned row = transformIndex(Component::P,element);
 	this->linearSystem.coefficients.reserve(this->linearSystem.coefficients.size() + scalarStencilOnElements.size());
 	for(auto& keyValuePair: scalarStencilOnElements)
-		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, getPindex(keyValuePair.first), keyValuePair.second) );
+		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, transformIndex(Component::P,keyValuePair.first), keyValuePair.second) );
 	return;
 }
 
@@ -337,7 +337,7 @@ void Terzaghi::insertPressureAccumulationTermInIndependent(void)
 	const double compressibility = this->porosity * this->fluidCompressibility + (this->alpha - this->porosity) * this->solidCompressibility;
 	for(auto& element: this->grid.elements)
 	{
-		const unsigned index = this->getPindex(element);
+		const unsigned index = this->transformIndex(Component::P,element);
 		this->linearSystem.independent(index) = compressibility * element->getVolume() * this->oldSolution[index];
 	}
 	return;
@@ -348,15 +348,15 @@ void Terzaghi::insertPressureVolumeDilatationTermInIndependent(void)
 	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
 	{
 		double independentValue = this->alpha * (staggeredQuadrangle->getAreaVector().dot(this->getDisplacementVector(staggeredQuadrangle)));
-		const unsigned frontRow = getPindex(staggeredQuadrangle->elements[0]);
+		const unsigned frontRow = transformIndex(Component::P,staggeredQuadrangle->elements[0]);
 		this->linearSystem.independent[frontRow] += - independentValue;
-		const unsigned backRow = getPindex(staggeredQuadrangle->elements[1]);
+		const unsigned backRow = transformIndex(Component::P,staggeredQuadrangle->elements[1]);
 		this->linearSystem.independent[backRow] += independentValue;
 	}
 	for(auto staggeredTriangle: this->grid.staggeredTriangles)
 	{
 		double independentValue = this->alpha * (staggeredTriangle->getAreaVector().dot(this->getDisplacementVector(staggeredTriangle)));
-		const unsigned frontRow = getPindex(staggeredTriangle->elements[0]);
+		const unsigned frontRow = transformIndex(Component::P,staggeredTriangle->elements[0]);
 		this->linearSystem.independent[frontRow] += - independentValue;
 	}
 	return;
@@ -400,7 +400,7 @@ void Terzaghi::setOldPressure(const std::function<double(Eigen::Vector3d)> oldPr
 {
 	for(auto& element: this->grid.elements)
 	{
-		const unsigned index = getPindex(element);
+		const unsigned index = transformIndex(Component::P,element);
 		this->oldSolution[index] = oldPressureFunction(element->getCentroid());
 	}
 	return;
@@ -412,7 +412,7 @@ void Terzaghi::setOldPressure(const std::vector<double> oldPressureValues)
 		throw std::runtime_error("pressure old values size differ from grid number of elements.");
 	for(unsigned count = 0 ; count<(this->grid.elements.size()) ; ++count)
 	{
-		const unsigned index = getPindex( this->grid.elements[count] );
+		const unsigned index = transformIndex(Component::P, this->grid.elements[count] );
 		this->oldSolution[index] = oldPressureValues[count];
 	}
 	return;
