@@ -6,9 +6,19 @@ const std::vector<Component> Terzaghi::displacementComponents = {Component::U, C
 Terzaghi::Terzaghi(const std::string& gridFile)
 	: grid(gridFile)
 {
-	// Linear system
+	// Indices
 	this->numberOfElements = this->grid.elements.size();
 	this->numberOfStaggeredElements = this->grid.staggeredElements.size();
+	this->transformToP = [](const unsigned index) -> unsigned
+		{ return index; };
+	this->transformToU = [&](const unsigned index) -> unsigned
+		{ return this->numberOfElements + index; };
+	this->transformToV = [&](const unsigned index) -> unsigned
+		{ return this->numberOfElements + this->numberOfStaggeredElements + index; };
+	this->transformToW = [&](const unsigned index) -> unsigned
+		{ return this->numberOfElements + 2*(this->numberOfStaggeredElements) + index; };
+	this->transform = { this->transformToP, this->transformToU, this->transformToV, this->transformToW };
+	// Linear system
 	this->linearSystemSize = this->numberOfElements + 3 * this->numberOfStaggeredElements;
 	this->linearSystem.setSize(this->linearSystemSize);
 	this->oldSolution.resize(this->linearSystemSize);
@@ -83,17 +93,7 @@ void Terzaghi::initializeDisplacementGradient(void)
 
 unsigned Terzaghi::transformIndex(const Component component, const unsigned index)
 {
-	static auto transformToP = [](const unsigned index) -> unsigned
-		{ return index; };
-	static auto transformToU = [this](const unsigned index) -> unsigned
-		{ return this->numberOfElements + index; };
-	static auto transformToV = [this](const unsigned index) -> unsigned
-		{ return this->numberOfElements + this->numberOfStaggeredElements + index; };
-	static auto transformToW = [this](const unsigned index) -> unsigned
-		{ return this->numberOfElements + 2*(this->numberOfStaggeredElements) + index; };
-	static std::vector<std::function<unsigned(const unsigned)>> transform =
-		{ transformToP, transformToU, transformToV, transformToW } ;
-	return transform[static_cast<unsigned>(component)](index);
+	return this->transform[static_cast<unsigned>(component)](index);
 }
 
 unsigned Terzaghi::transformIndex(const Component component, Entity* entity)

@@ -39,6 +39,9 @@ class Terzaghi
 
 		Eigen::VectorXd oldSolution;
 
+		std::function<unsigned(const unsigned)> transformToP, transformToU, transformToV, transformToW;
+		std::vector<std::function<unsigned(const unsigned)>> transform;
+
 		static const std::vector<Component> displacementComponents;
 		unsigned numberOfElements, numberOfStaggeredElements, linearSystemSize;
 		unsigned transformIndex(const Component component, const unsigned index);
