@@ -15,13 +15,6 @@ TestCase("Terzaghi indices transformation", "[Terzaghi]")
 		check(terzaghi.transformIndex(Component::V, 3)==10);
 		check(terzaghi.transformIndex(Component::W, 1)==13);
 	}
-	section("compare with old functions")
-	{
-		check(terzaghi.transformIndex(Component::P, 5)==terzaghi.getPindex(5));
-		check(terzaghi.transformIndex(Component::U, 2)==terzaghi.getUindex(2));
-		check(terzaghi.transformIndex(Component::V, 3)==terzaghi.getVindex(3));
-		check(terzaghi.transformIndex(Component::W, 1)==terzaghi.getWindex(1));
-	}
 	section("for loop")
 	{
 		constexpr unsigned index = 2;

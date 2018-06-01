@@ -101,46 +101,6 @@ unsigned Terzaghi::transformIndex(const Component component, Entity* entity)
 	return this->transformIndex(component, entity->getIndex());
 }
 
-unsigned Terzaghi::getPindex(Element* element)
-{
-	return element->getIndex();
-}
-
-unsigned Terzaghi::getPindex(const unsigned elementIndex)
-{
-	return elementIndex;
-}
-
-unsigned Terzaghi::getUindex(StaggeredElement2D* staggeredElement)
-{
-	return this->numberOfElements + staggeredElement->getIndex();
-}
-
-unsigned Terzaghi::getUindex(const unsigned staggeredElementIndex)
-{
-	return this->numberOfElements + staggeredElementIndex;
-}
-
-unsigned Terzaghi::getVindex(StaggeredElement2D* staggeredElement)
-{
-	return this->numberOfElements + this->numberOfStaggeredElements + staggeredElement->getIndex();
-}
-
-unsigned Terzaghi::getVindex(const unsigned staggeredElementIndex)
-{
-	return this->numberOfElements + this->numberOfStaggeredElements + staggeredElementIndex;
-}
-
-unsigned Terzaghi::getWindex(StaggeredElement2D* staggeredElement)
-{
-	return this->numberOfElements + (2 * this->numberOfStaggeredElements) + staggeredElement->getIndex();
-}
-
-unsigned Terzaghi::getWindex(const unsigned staggeredElementIndex)
-{
-	return this->numberOfElements + (2 * this->numberOfStaggeredElements) + staggeredElementIndex;
-}
-
 Eigen::Vector3d Terzaghi::getDisplacementVector(StaggeredElement2D* staggeredElement)
 {
 	return Eigen::Vector3d(

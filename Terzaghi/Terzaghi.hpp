@@ -46,14 +46,6 @@ class Terzaghi
 		unsigned numberOfElements, numberOfStaggeredElements, linearSystemSize;
 		unsigned transformIndex(const Component component, const unsigned index);
 		unsigned transformIndex(const Component component, Entity* entity);
-		unsigned getPindex(Element* element);
-		unsigned getPindex(const unsigned elementIndex);
-		unsigned getUindex(StaggeredElement2D* staggeredElement);
-		unsigned getUindex(const unsigned staggeredElementIndex);
-		unsigned getVindex(StaggeredElement2D* staggeredElement);
-		unsigned getVindex(const unsigned staggeredElementIndex);
-		unsigned getWindex(StaggeredElement2D* staggeredElement);
-		unsigned getWindex(const unsigned staggeredElementIndex);
 		Eigen::Vector3d getDisplacementVector(StaggeredElement2D* staggeredElement);
 
 		// pressure
