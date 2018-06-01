@@ -309,3 +309,14 @@ TestCase("Terzaghi insert displacement tension term in matrix", "[Terzaghi]")
 	terzaghi.linearSystem.assemblyMatrix();
 	// std::cout << std::endl << "Linear system matrix" << std:: endl << terzaghi.linearSystem.matrix << std::endl;
 }
+
+TestCase("Terzaghi insert displacement pressure gradient term in matrix ")
+// No check done.
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.alpha = 1.0;
+	terzaghi.insertDisplacementPressureTermInMatrix();
+	terzaghi.linearSystem.assemblyMatrix();
+	std::cout << std::endl << "Linear system matrix" << std:: endl << terzaghi.linearSystem.matrix << std::endl;
+}

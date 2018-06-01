@@ -201,6 +201,42 @@ void Terzaghi::insertDisplacementTensionTermInMatrix(void)
 	return;
 }
 
+void Terzaghi::insertDisplacementPressureTermInMatrix(void)
+{
+	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
+	{
+		for(unsigned forceComponent=0 ; forceComponent<DisplacementIndex::numberOfComponents ; ++forceComponent)
+		{
+			insertPressureGradientInMatrix(forceComponent, staggeredQuadrangle);
+		}
+	}
+}
+
+void Terzaghi::insertPressureGradientInMatrix(const unsigned forceComponent, StaggeredElement2D* staggeredQuadrangle)
+{
+	unsigned row;
+	VectorStencil pressureTerm = (- this->alpha * staggeredQuadrangle->getVolume()) * this->pressureGradient[staggeredQuadrangle->getIndex()];
+	switch(forceComponent)
+	{
+		case DisplacementIndex::U:
+			row = getUindex(staggeredQuadrangle);
+			for(auto keyValuePair: pressureTerm)
+				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->getPindex(keyValuePair.first), keyValuePair.second.x()));
+			break;
+		case DisplacementIndex::V:
+			row = getVindex(staggeredQuadrangle);
+			for(auto keyValuePair: pressureTerm)
+				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->getPindex(keyValuePair.first), keyValuePair.second.y()));
+			break;
+		case DisplacementIndex::W:
+			row = getWindex(staggeredQuadrangle);
+			for(auto keyValuePair: pressureTerm)
+				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->getPindex(keyValuePair.first), keyValuePair.second.z()));
+			break;
+	}
+	return;
+}
+
 void Terzaghi::insertPressureDiffusiveTermInIndependent(void)
 {
 	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)

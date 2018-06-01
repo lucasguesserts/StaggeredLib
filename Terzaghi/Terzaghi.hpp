@@ -54,6 +54,7 @@ class Terzaghi
 		void insertPressureDiffusiveTermInMatrix(void);
 		void insertPressureVolumeDilatationTermInMatrix(void);
 		void insertDisplacementTensionTermInMatrix(void);
+		void insertDisplacementPressureTermInMatrix(void);
 		void insertPressureAccumulationTermInIndependent(void);
 		void insertPressureDiffusiveTermInIndependent(void);
 		void insertPressureVolumeDilatationTermInIndependent(void);
@@ -61,6 +62,7 @@ class Terzaghi
 		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
 		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
 		void insertScalarStencilDisplacementComponentInMatrix(const unsigned forceComponent, const unsigned displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements);
+		void insertPressureGradientInMatrix(const unsigned forceComponent, StaggeredElement2D* staggeredQuadrangle);
 
 		// Displacement auxiliar
 		Eigen::MatrixXd getPermutationMatrix(unsigned i, unsigned j);
