@@ -94,14 +94,29 @@ unsigned Terzaghi::getUindex(StaggeredElement2D* staggeredElement)
 	return this->numberOfElements + staggeredElement->getIndex();
 }
 
+unsigned Terzaghi::getUindex(const unsigned staggeredElementIndex)
+{
+	return this->numberOfElements + staggeredElementIndex;
+}
+
 unsigned Terzaghi::getVindex(StaggeredElement2D* staggeredElement)
 {
 	return this->numberOfElements + this->numberOfStaggeredElements + staggeredElement->getIndex();
 }
 
+unsigned Terzaghi::getVindex(const unsigned staggeredElementIndex)
+{
+	return this->numberOfElements + this->numberOfStaggeredElements + staggeredElementIndex;
+}
+
 unsigned Terzaghi::getWindex(StaggeredElement2D* staggeredElement)
 {
 	return this->numberOfElements + (2 * this->numberOfStaggeredElements) + staggeredElement->getIndex();
+}
+
+unsigned Terzaghi::getWindex(const unsigned staggeredElementIndex)
+{
+	return this->numberOfElements + (2 * this->numberOfStaggeredElements) + staggeredElementIndex;
 }
 
 Eigen::Vector3d Terzaghi::getDisplacementVector(StaggeredElement2D* staggeredElement)
@@ -166,6 +181,26 @@ void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
 	return;
 }
 
+void Terzaghi::insertDisplacementTensionTermInMatrix(void)
+{
+	for(auto& face: this->grid.faces)
+	{
+		for(unsigned forceComponent=0 ; forceComponent<DisplacementIndex::numberOfComponents ; ++forceComponent)
+		{
+			for(unsigned displacementComponent=0 ; displacementComponent<DisplacementIndex::numberOfComponents ; ++displacementComponent)
+			{
+				ScalarStencil solidForceOnFace = (face.getAreaVector().transpose() *
+						this->getPermutationMatrix(forceComponent,displacementComponent) *
+						this->getMechanicalPropertiesMatrix(forceComponent,displacementComponent)) *
+						this->displacementGradient[face.getIndex()];
+				insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, face.backwardStaggeredElement, solidForceOnFace);
+				insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, face.forwardStaggeredElement, (-1)*solidForceOnFace);
+			}
+		}
+	}
+	return;
+}
+
 void Terzaghi::insertPressureDiffusiveTermInIndependent(void)
 {
 	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
@@ -203,6 +238,42 @@ void Terzaghi::insertPressureScalarStencilInLinearSystem(Element* element, const
 	return;
 }
 
+void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const unsigned forceComponent, const unsigned displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements)
+{
+	unsigned row;
+	switch(forceComponent)
+	{
+		case DisplacementIndex::U:
+			row = this->getUindex(staggeredElement);
+			break;
+		case DisplacementIndex::V:
+			row = this->getVindex(staggeredElement);
+			break;
+		case DisplacementIndex::W:
+			row = this->getWindex(staggeredElement);
+			break;
+	}
+	this->linearSystem.coefficients.reserve(this->linearSystem.coefficients.size() + scalarStencilOnStaggeredElements.size());
+	for(auto& keyValuePair: scalarStencilOnStaggeredElements)
+	{
+		unsigned column;
+		switch(displacementComponent)
+		{
+			case DisplacementIndex::U:
+				column = this->getUindex(keyValuePair.first);
+				break;
+			case DisplacementIndex::V:
+				column = this->getVindex(keyValuePair.first);
+				break;
+			case DisplacementIndex::W:
+				column = this->getWindex(keyValuePair.first);
+				break;
+		}
+		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, column, keyValuePair.second) );
+	}
+	return;
+}
+
 void Terzaghi::insertPressureAccumulationTermInIndependent(void)
 {
 	const double compressibility = this->porosity * this->fluidCompressibility + (this->alpha - this->porosity) * this->solidCompressibility;
@@ -230,11 +301,6 @@ void Terzaghi::insertPressureVolumeDilatationTermInIndependent(void)
 		const unsigned frontRow = getPindex(staggeredTriangle->elements[0]);
 		this->linearSystem.independent[frontRow] += - independentValue;
 	}
-	return;
-}
-
-void Terzaghi::insertDisplacementTensionTermInMatrix(void)
-{
 	return;
 }
 

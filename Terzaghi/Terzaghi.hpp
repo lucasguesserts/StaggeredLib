@@ -35,8 +35,11 @@ class Terzaghi
 		unsigned getPindex(Element* element);
 		unsigned getPindex(const unsigned elementIndex);
 		unsigned getUindex(StaggeredElement2D* staggeredElement);
+		unsigned getUindex(const unsigned staggeredElementIndex);
 		unsigned getVindex(StaggeredElement2D* staggeredElement);
+		unsigned getVindex(const unsigned staggeredElementIndex);
 		unsigned getWindex(StaggeredElement2D* staggeredElement);
+		unsigned getWindex(const unsigned staggeredElementIndex);
 		Eigen::Vector3d getDisplacementVector(StaggeredElement2D* staggeredElement);
 
 		// pressure
@@ -57,6 +60,7 @@ class Terzaghi
 
 		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
 		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
+		void insertScalarStencilDisplacementComponentInMatrix(const unsigned forceComponent, const unsigned displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements);
 
 		// Displacement auxiliar
 		Eigen::MatrixXd getPermutationMatrix(unsigned i, unsigned j);

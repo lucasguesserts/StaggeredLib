@@ -298,3 +298,14 @@ TestCase("Terzaghi permutation matrix", "[Terzaghi]")
 		testPermutationMatrix(DisplacementIndex::W, DisplacementIndex::W, 0, 1, 2);
 	}
 }
+
+TestCase("Terzaghi insert displacement tension term in matrix", "[Terzaghi]")
+// It is difficult to calculate by hand this example.
+// No check done.
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.insertDisplacementTensionTermInMatrix();
+	terzaghi.linearSystem.assemblyMatrix();
+	// std::cout << std::endl << "Linear system matrix" << std:: endl << terzaghi.linearSystem.matrix << std::endl;
+}
