@@ -96,6 +96,11 @@ unsigned Terzaghi::transformIndex(const Component component, const unsigned inde
 	return transform[static_cast<unsigned>(component)](index);
 }
 
+unsigned Terzaghi::transformIndex(const Component component, Entity* entity)
+{
+	return this->transformIndex(component, entity->getIndex());
+}
+
 unsigned Terzaghi::getPindex(Element* element)
 {
 	return element->getIndex();

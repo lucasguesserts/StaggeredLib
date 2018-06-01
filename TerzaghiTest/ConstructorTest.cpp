@@ -8,7 +8,7 @@ TestCase("Terzaghi indices transformation", "[Terzaghi]")
 {
 	const std::string gridFile = gridDirectory + "two_triangles.cgns";
 	Terzaghi terzaghi(gridFile);
-	section("pontual tests")
+	section("simple tests")
 	{
 		check(terzaghi.transformIndex(Component::P, 5)==5);
 		check(terzaghi.transformIndex(Component::U, 2)==4);
@@ -25,6 +25,13 @@ TestCase("Terzaghi indices transformation", "[Terzaghi]")
 			check(terzaghi.transformIndex(component,index)==indices[i]);
 			++i;
 		}
+	}
+	section("entities test")
+	{
+		Element* element = terzaghi.grid.elements[1];
+		check(terzaghi.transformIndex(Component::P, element)==1);
+		StaggeredElement2D* staggeredElement = terzaghi.grid.staggeredQuadrangles[0];
+		check(terzaghi.transformIndex(Component::V, staggeredElement)==9);
 	}
 }
 

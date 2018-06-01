@@ -42,6 +42,7 @@ class Terzaghi
 		static const std::vector<Component> displacementComponents;
 		unsigned numberOfElements, numberOfStaggeredElements, linearSystemSize;
 		unsigned transformIndex(const Component component, const unsigned index);
+		unsigned transformIndex(const Component component, Entity* entity);
 		unsigned getPindex(Element* element);
 		unsigned getPindex(const unsigned elementIndex);
 		unsigned getUindex(StaggeredElement2D* staggeredElement);
