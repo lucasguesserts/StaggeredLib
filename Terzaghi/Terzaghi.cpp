@@ -167,13 +167,13 @@ void Terzaghi::insertDisplacementTensionTermInMatrix(void)
 {
 	for(auto& face: this->grid.faces)
 	{
-		for(unsigned forceComponent=0 ; forceComponent<DisplacementIndex::numberOfComponents ; ++forceComponent)
+		for(auto forceComponent: this->displacementComponents)
 		{
-			for(unsigned displacementComponent=0 ; displacementComponent<DisplacementIndex::numberOfComponents ; ++displacementComponent)
+			for(auto displacementComponent: this->displacementComponents)
 			{
 				ScalarStencil solidForceOnFace = (face.getAreaVector().transpose() *
-						this->getPermutationMatrix(forceComponent,displacementComponent) *
-						this->getMechanicalPropertiesMatrix(forceComponent,displacementComponent)) *
+						this->getPermutationMatrix(forceComponent, displacementComponent) *
+						this->getMechanicalPropertiesMatrix(forceComponent, displacementComponent)) *
 						this->displacementGradient[face.getIndex()];
 				insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, face.backwardStaggeredElement, solidForceOnFace);
 				insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, face.forwardStaggeredElement, (-1)*solidForceOnFace);
@@ -186,36 +186,20 @@ void Terzaghi::insertDisplacementTensionTermInMatrix(void)
 void Terzaghi::insertDisplacementPressureTermInMatrix(void)
 {
 	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
-	{
-		for(unsigned forceComponent=0 ; forceComponent<DisplacementIndex::numberOfComponents ; ++forceComponent)
-		{
+		for(auto forceComponent : this->displacementComponents)
 			insertPressureGradientInMatrix(forceComponent, staggeredQuadrangle);
-		}
-	}
 }
 
-void Terzaghi::insertPressureGradientInMatrix(const unsigned forceComponent, StaggeredElement2D* staggeredQuadrangle)
+void Terzaghi::insertPressureGradientInMatrix(const Component forceComponent, StaggeredElement2D* staggeredQuadrangle)
 {
-	unsigned row;
+	unsigned row = this->transformIndex(forceComponent, staggeredQuadrangle);
+	const unsigned pressureVectorComponent = static_cast<unsigned>(forceComponent) - 1u;
 	VectorStencil pressureTerm = (- this->alpha * staggeredQuadrangle->getVolume()) * this->pressureGradient[staggeredQuadrangle->getIndex()];
-	switch(forceComponent)
-	{
-		case DisplacementIndex::U:
-			row = transformIndex(Component::U,staggeredQuadrangle);
-			for(auto keyValuePair: pressureTerm)
-				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.x()));
-			break;
-		case DisplacementIndex::V:
-			row = transformIndex(Component::V,staggeredQuadrangle);
-			for(auto keyValuePair: pressureTerm)
-				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.y()));
-			break;
-		case DisplacementIndex::W:
-			row = transformIndex(Component::W,staggeredQuadrangle);
-			for(auto keyValuePair: pressureTerm)
-				this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second.z()));
-			break;
-	}
+	for(auto keyValuePair: pressureTerm)
+		this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(
+			row,
+			this->transformIndex(Component::P,keyValuePair.first),
+			keyValuePair.second.coeff(pressureVectorComponent)));
 	return;
 }
 
@@ -256,37 +240,13 @@ void Terzaghi::insertPressureScalarStencilInLinearSystem(Element* element, const
 	return;
 }
 
-void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const unsigned forceComponent, const unsigned displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements)
+void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const Component forceComponent, const Component displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements)
 {
-	unsigned row;
-	switch(forceComponent)
-	{
-		case DisplacementIndex::U:
-			row = this->transformIndex(Component::U,staggeredElement);
-			break;
-		case DisplacementIndex::V:
-			row = this->transformIndex(Component::V,staggeredElement);
-			break;
-		case DisplacementIndex::W:
-			row = this->transformIndex(Component::W,staggeredElement);
-			break;
-	}
+	const unsigned row = this->transformIndex(forceComponent, staggeredElement);
 	this->linearSystem.coefficients.reserve(this->linearSystem.coefficients.size() + scalarStencilOnStaggeredElements.size());
 	for(auto& keyValuePair: scalarStencilOnStaggeredElements)
 	{
-		unsigned column;
-		switch(displacementComponent)
-		{
-			case DisplacementIndex::U:
-				column = this->transformIndex(Component::U,keyValuePair.first);
-				break;
-			case DisplacementIndex::V:
-				column = this->transformIndex(Component::V,keyValuePair.first);
-				break;
-			case DisplacementIndex::W:
-				column = this->transformIndex(Component::W,keyValuePair.first);
-				break;
-		}
+		const unsigned column = this->transformIndex(displacementComponent, keyValuePair.first);
 		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, column, keyValuePair.second) );
 	}
 	return;
@@ -322,9 +282,11 @@ void Terzaghi::insertPressureVolumeDilatationTermInIndependent(void)
 	return;
 }
 
-Eigen::MatrixXd Terzaghi::getPermutationMatrix(unsigned i, unsigned j)
+Eigen::MatrixXd Terzaghi::getPermutationMatrix(const Component c0, const Component c1)
 {
 	constexpr unsigned matrixSize = 3;
+	const auto i = static_cast<unsigned>(c0) - 1u;
+	const auto j = static_cast<unsigned>(c1) - 1u;
 	Eigen::MatrixXd permutationMatrix = Eigen::MatrixXd::Zero(matrixSize,matrixSize);
 	if(i==j)
 		permutationMatrix = Eigen::MatrixXd::Identity(matrixSize,matrixSize);
@@ -338,9 +300,11 @@ Eigen::MatrixXd Terzaghi::getPermutationMatrix(unsigned i, unsigned j)
 	return permutationMatrix;
 }
 
-Eigen::MatrixXd Terzaghi::getMechanicalPropertiesMatrix(const unsigned i, const unsigned j)
+Eigen::MatrixXd Terzaghi::getMechanicalPropertiesMatrix(const Component c0, const Component c1)
 {
 	constexpr unsigned matrixSize = 3;
+	const auto i = static_cast<unsigned>(c0) - 1u;
+	const auto j = static_cast<unsigned>(c1) - 1u;
 	Eigen::MatrixXd mechanicalPropertiesMatrix = Eigen::MatrixXd::Zero(matrixSize,matrixSize);
 	if(i==j)
 	{

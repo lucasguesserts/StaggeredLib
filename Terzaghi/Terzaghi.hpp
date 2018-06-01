@@ -18,14 +18,6 @@ enum class Component: unsigned
 	W = 3u,
 };
 
-struct DisplacementIndex
-{
-	static constexpr unsigned U = 0u;
-	static constexpr unsigned V = 1u;
-	static constexpr unsigned W = 2u;
-	static constexpr unsigned numberOfComponents = 3u;
-};
-
 class Terzaghi
 {
 	public:
@@ -67,12 +59,12 @@ class Terzaghi
 
 		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
 		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
-		void insertScalarStencilDisplacementComponentInMatrix(const unsigned forceComponent, const unsigned displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements);
-		void insertPressureGradientInMatrix(const unsigned forceComponent, StaggeredElement2D* staggeredQuadrangle);
+		void insertScalarStencilDisplacementComponentInMatrix(const Component forceComponent, const Component displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements);
+		void insertPressureGradientInMatrix(const Component forceComponent, StaggeredElement2D* staggeredQuadrangle);
 
 		// Displacement auxiliar
-		Eigen::MatrixXd getPermutationMatrix(unsigned i, unsigned j);
-		Eigen::MatrixXd getMechanicalPropertiesMatrix(const unsigned i, const unsigned j);
+		Eigen::MatrixXd getPermutationMatrix(const Component c0, const Component c1);
+		Eigen::MatrixXd getMechanicalPropertiesMatrix(const Component c0, const Component c1);
 
 		EigenSparseLinearSystem linearSystem;
 
