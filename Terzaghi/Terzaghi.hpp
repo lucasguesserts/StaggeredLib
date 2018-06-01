@@ -10,14 +10,12 @@
 #include <Stencil/VectorStencil.hpp>
 #include <LinearSystem/EigenSparseLinearSystem.hpp>
 
-struct Component
+enum class Component: unsigned
 {
-	static constexpr unsigned P = 0u;
-	static constexpr unsigned displacementStart = 1u;
-	static constexpr unsigned U = 1u;
-	static constexpr unsigned V = 2u;
-	static constexpr unsigned W = 3u;
-	static constexpr unsigned displacementEnd = 4u;
+	P = 0u,
+	U = 1u,
+	V = 2u,
+	W = 3u,
 };
 
 struct DisplacementIndex
@@ -41,8 +39,9 @@ class Terzaghi
 
 		Eigen::VectorXd oldSolution;
 
+		static const std::vector<Component> displacementComponents;
 		unsigned numberOfElements, numberOfStaggeredElements, linearSystemSize;
-		unsigned transformIndex(const unsigned component, const unsigned index);
+		unsigned transformIndex(const Component component, const unsigned index);
 		unsigned getPindex(Element* element);
 		unsigned getPindex(const unsigned elementIndex);
 		unsigned getUindex(StaggeredElement2D* staggeredElement);

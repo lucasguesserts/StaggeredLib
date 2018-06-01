@@ -8,10 +8,24 @@ TestCase("Terzaghi indices transformation", "[Terzaghi]")
 {
 	const std::string gridFile = gridDirectory + "two_triangles.cgns";
 	Terzaghi terzaghi(gridFile);
-	check(terzaghi.transformIndex(Component::P, 5)==5);
-	check(terzaghi.transformIndex(Component::U, 2)==4);
-	check(terzaghi.transformIndex(Component::V, 3)==10);
-	check(terzaghi.transformIndex(Component::W, 1)==13);
+	section("pontual tests")
+	{
+		check(terzaghi.transformIndex(Component::P, 5)==5);
+		check(terzaghi.transformIndex(Component::U, 2)==4);
+		check(terzaghi.transformIndex(Component::V, 3)==10);
+		check(terzaghi.transformIndex(Component::W, 1)==13);
+	}
+	section("for loop")
+	{
+		constexpr unsigned index = 2;
+		std::vector<unsigned> indices = {4, 9, 14};
+		unsigned i = 0;
+		for(Component component: Terzaghi::displacementComponents)
+		{
+			check(terzaghi.transformIndex(component,index)==indices[i]);
+			++i;
+		}
+	}
 }
 
 TestCase("Pressure accumulation term")

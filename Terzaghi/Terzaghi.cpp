@@ -1,6 +1,8 @@
 #include <Terzaghi/Terzaghi.hpp>
 #include <stdexcept>
 
+const std::vector<Component> Terzaghi::displacementComponents = {Component::U, Component::V, Component::W};
+
 Terzaghi::Terzaghi(const std::string& gridFile)
 	: grid(gridFile)
 {
@@ -79,7 +81,7 @@ void Terzaghi::initializeDisplacementGradient(void)
 	return;
 }
 
-unsigned Terzaghi::transformIndex(const unsigned component, const unsigned index)
+unsigned Terzaghi::transformIndex(const Component component, const unsigned index)
 {
 	static auto transformToP = [](const unsigned index) -> unsigned
 		{ return index; };
@@ -91,7 +93,7 @@ unsigned Terzaghi::transformIndex(const unsigned component, const unsigned index
 		{ return this->numberOfElements + 2*(this->numberOfStaggeredElements) + index; };
 	static std::vector<std::function<unsigned(const unsigned)>> transform =
 		{ transformToP, transformToU, transformToV, transformToW } ;
-	return transform[component](index);
+	return transform[static_cast<unsigned>(component)](index);
 }
 
 unsigned Terzaghi::getPindex(Element* element)
