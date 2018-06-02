@@ -1,4 +1,5 @@
 #include <Stencil/Test.hpp>
+#include <stdexcept>
 
 bool operator==(const ScalarStencil& lhs, const ScalarStencil& rhs)
 {
@@ -86,12 +87,20 @@ std::string vectorStencilToString(const VectorStencil& vectorStencil)
 	// {{4, [-1.27e-3,+4.19e+53,-2.83e-01]}}
 	std::string str;
 	str += "{";
-	VectorStencil::const_iterator it = vectorStencil.cbegin();
-		str += vectorStencilPairToString("", *it, ",\n");
-	for(it=(++vectorStencil.cbegin()) ; it!=(--vectorStencil.cend()) ; ++it)
-		str += vectorStencilPairToString(" ", *it, ",\n");
-	it = --vectorStencil.cend();
-		str += vectorStencilPairToString(" ", *it, "");
+	if(vectorStencil.size()==1)
+	{
+		VectorStencil::const_iterator it = vectorStencil.cbegin();
+		str += vectorStencilPairToString("", *it, "");
+	}
+	else
+	{
+		VectorStencil::const_iterator it = vectorStencil.cbegin();
+			str += vectorStencilPairToString("", *it, ",\n");
+		for(it=(++vectorStencil.cbegin()) ; it!=(--vectorStencil.cend()) ; ++it)
+			str += vectorStencilPairToString(" ", *it, ",\n");
+		it = --vectorStencil.cend();
+			str += vectorStencilPairToString(" ", *it, "");
+	}
 	str += "}";
 	return str;
 }
