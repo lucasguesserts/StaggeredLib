@@ -326,6 +326,20 @@ void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const Component 
 	return;
 }
 
+void Terzaghi::insertDisplacementDirichletBoundaryConditionToMatrix(void)
+{
+	for(auto boundary: this->boundary)
+	{
+		for(unsigned count=0 ; count<boundary.component.size() ; count++)
+		{
+			if(boundary.component[count]==Component::P) continue;
+			if(boundary.boundaryConditionType[count]!=BoundaryConditionType::Dirichlet) continue;
+			for(auto staggeredTriangle: boundary.staggeredTriangle)
+				this->applyDisplacementDirichletBoundaryCondition(boundary.component[count], staggeredTriangle);
+		}
+	}
+}
+
 void Terzaghi::insertPressureAccumulationTermInIndependent(void)
 {
 	const double compressibility = this->porosity * this->fluidCompressibility + (this->alpha - this->porosity) * this->solidCompressibility;
@@ -421,6 +435,18 @@ StaggeredElement2D* Terzaghi::findStaggeredTriangleNeighbor(StaggeredElement2D* 
 	else
 		neighbor = possibleNeighbor_1;
 	return neighbor;
+}
+
+void Terzaghi::applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle)
+{
+	// TODO: move this function to somewhere in LinearSystem class
+	const unsigned row = this->transformIndex(component, staggeredTriangle);
+	for(auto& triplet: this->linearSystem.coefficients)
+	{
+		if(triplet.row()==row)
+			triplet = Eigen::Triplet<double,unsigned>(triplet.row(), triplet.col(), 0.0);
+	}
+	this->linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(row, row, 1.0));
 }
 
 void Terzaghi::setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction)

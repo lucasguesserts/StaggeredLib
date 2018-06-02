@@ -67,6 +67,8 @@ class Terzaghi
 
 		// Boundary
 		std::array<TerzaghiBoundary, 4> boundary;
+		void insertDisplacementDirichletBoundaryConditionToMatrix(void);
+		void applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle);
 
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);

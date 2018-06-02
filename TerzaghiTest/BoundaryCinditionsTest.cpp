@@ -86,3 +86,58 @@ TestCase("Displacement gradient on staggered triangle", "[Terzaghi]")
 		check(staggeredTriangleGradient==gradient);
 	}
 }
+
+TestCase("Terzaghi apply displacement dirichlet boundary condition to staggered triangle", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.poissonCoefficient = 0.25;
+	terzaghi.shearModulus = 1;
+	terzaghi.insertDisplacementTensionTermInMatrix();
+	section("component U")
+	{
+		for(auto staggeredTriangle: terzaghi.boundary[2].staggeredTriangle) // east
+			terzaghi.applyDisplacementDirichletBoundaryCondition(Component::U, staggeredTriangle);
+		// check coefficients
+		for(auto staggeredTriangle: terzaghi.boundary[2].staggeredTriangle) // east
+		{
+			const unsigned row = terzaghi.transformIndex(Component::U, staggeredTriangle);
+			for(auto& triplet: terzaghi.linearSystem.coefficients)
+				if((triplet.row()==row) && (triplet.col()!=row))
+					check(triplet.value()==0.0);
+		}
+	}
+	section("component V")
+	{
+		for(auto staggeredTriangle: terzaghi.boundary[0].staggeredTriangle) // bottom
+			terzaghi.applyDisplacementDirichletBoundaryCondition(Component::V, staggeredTriangle);
+		// check coefficients
+		for(auto staggeredTriangle: terzaghi.boundary[0].staggeredTriangle) // bottom
+		{
+			const unsigned row = terzaghi.transformIndex(Component::V, staggeredTriangle);
+			for(auto& triplet: terzaghi.linearSystem.coefficients)
+				if((triplet.row()==row) && (triplet.col()!=row))
+					check(triplet.value()==0.0);
+		}
+	}
+}
+
+TestCase("Terzaghi insert displacement dirichlet boundary condition to matrix", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.poissonCoefficient = 0.25;
+	terzaghi.shearModulus = 1;
+	terzaghi.insertDisplacementTensionTermInMatrix();
+	terzaghi.insertDisplacementDirichletBoundaryConditionToMatrix();
+	auto checkIfBoundaryConditionWasApplied = [&](Component component, StaggeredElement2D* staggeredElement) -> void
+	{
+		const unsigned row = terzaghi.transformIndex(component, staggeredElement);
+		for(auto& triplet: terzaghi.linearSystem.coefficients)
+			if((triplet.row()==row) && (triplet.col()!=row))
+				check(triplet.value()==0.0);
+	};
+	checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[1]));
+	checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[4]));
+	checkIfBoundaryConditionWasApplied(Component::V, &(terzaghi.grid.staggeredElements[0]));
+}
