@@ -69,6 +69,63 @@ TestCase("Pressure gradient on staggered triangles", "[Terzaghi]")
 	}
 }
 
+TestCase("Find staggered elements neighbors of a staggered triangle")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	section("staggered element 0")
+	{
+		section("vertex 0")
+		{
+			auto staggeredTriangle = &(terzaghi.grid.staggeredElements[0]);
+			auto neighbor = &(terzaghi.grid.staggeredElements[1]);
+			auto foundNeighbor = terzaghi.findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[0], staggeredTriangle->elements[0]);
+			check(foundNeighbor==neighbor);
+		}
+		section("vertex 1")
+		{
+			auto staggeredTriangle = &(terzaghi.grid.staggeredElements[0]);
+			auto neighbor = &(terzaghi.grid.staggeredElements[2]);
+			auto foundNeighbor = terzaghi.findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[1], staggeredTriangle->elements[0]);
+			check(foundNeighbor==neighbor);
+		}
+	}
+	section("staggered element 2 - staggered quadrangle")
+	{
+		section("vertex 0 & element 0")
+		{
+			auto staggeredTriangle = &(terzaghi.grid.staggeredElements[2]);
+			auto neighbor = &(terzaghi.grid.staggeredElements[0]);
+			auto foundNeighbor = terzaghi.findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[0], staggeredTriangle->elements[0]);
+			check(foundNeighbor==neighbor);
+		}
+		section("vertex 1")
+		{
+			auto staggeredTriangle = &(terzaghi.grid.staggeredElements[2]);
+			auto neighbor = &(terzaghi.grid.staggeredElements[1]);
+			auto foundNeighbor = terzaghi.findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[1], staggeredTriangle->elements[0]);
+			check(foundNeighbor==neighbor);
+		}
+	}
+	section("staggered element 3")
+	{
+		section("vertex 0")
+		{
+			auto staggeredTriangle = &(terzaghi.grid.staggeredElements[3]);
+			auto neighbor = &(terzaghi.grid.staggeredElements[4]);
+			auto foundNeighbor = terzaghi.findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[0], staggeredTriangle->elements[0]);
+			check(foundNeighbor==neighbor);
+		}
+		section("vertex 1")
+		{
+			auto staggeredTriangle = &(terzaghi.grid.staggeredElements[3]);
+			auto neighbor = &(terzaghi.grid.staggeredElements[2]);
+			auto foundNeighbor = terzaghi.findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[1], staggeredTriangle->elements[0]);
+			check(foundNeighbor==neighbor);
+		}
+	}
+}
+
 TestCase("Pressure accumulation term")
 {
 	const std::string gridFile = gridDirectory + "two_triangles.cgns";

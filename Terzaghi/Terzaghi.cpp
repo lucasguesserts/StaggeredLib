@@ -394,6 +394,19 @@ Eigen::MatrixXd Terzaghi::getMechanicalPropertiesMatrix(const Component c0, cons
 	return mechanicalPropertiesMatrix;
 }
 
+StaggeredElement2D* Terzaghi::findStaggeredTriangleNeighbor(StaggeredElement2D* staggeredTriangle, Vertex* adjacentVertex, Element* parentElement)
+{
+	std::array<unsigned,2> staggeredElementsLocation = this->grid.findStaggeredElements(adjacentVertex, parentElement);
+	StaggeredElement2D* possibleNeighbor_0 = &(this->grid.staggeredElements[staggeredElementsLocation[0]]);
+	StaggeredElement2D* possibleNeighbor_1 = &(this->grid.staggeredElements[staggeredElementsLocation[1]]);
+	StaggeredElement2D* neighbor;
+	if(possibleNeighbor_0!=staggeredTriangle)
+		neighbor = possibleNeighbor_0;
+	else
+		neighbor = possibleNeighbor_1;
+	return neighbor;
+}
+
 void Terzaghi::setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction)
 {
 	for(auto& element: this->grid.elements)

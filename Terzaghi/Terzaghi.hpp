@@ -60,6 +60,7 @@ class Terzaghi
 		// Displacement auxiliar
 		Eigen::MatrixXd getPermutationMatrix(const Component c0, const Component c1);
 		Eigen::MatrixXd getMechanicalPropertiesMatrix(const Component c0, const Component c1);
+			StaggeredElement2D* findStaggeredTriangleNeighbor(StaggeredElement2D* staggeredTriangle, Vertex* adjacentVertex, Element* parentElement);
 
 		EigenSparseLinearSystem linearSystem;
 
