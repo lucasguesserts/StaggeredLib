@@ -36,3 +36,53 @@ TestCase("Terzaghi boundary conditions build", "[Terzaghi][TerzaghiBoundary]")
 		check(terzaghi.boundary[3].prescribedValue[1]==0.0);
 	}
 }
+
+TestCase("Displacement gradient on staggered triangle", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	section("staggered triangle 0")
+	{
+		auto staggeredTriangle = terzaghi.grid.staggeredTriangles[0];
+		VectorStencil gradient = {
+			{0, {-0.5, -1.5, 0.0}},
+			{1, {0.5, 0.5, 0.0}},
+			{2, {0.0, 1.0, 0.0}}
+		};
+		auto staggeredTriangleGradient = terzaghi.getDisplacementGradientOnStaggeredTriangle(staggeredTriangle);
+		check(staggeredTriangleGradient==gradient);
+	}
+	section("staggered triangle 1")
+	{
+		auto staggeredTriangle = terzaghi.grid.staggeredTriangles[1];
+		VectorStencil gradient = {
+			{0, {-0.5, -0.5, 0.0}},
+			{1, {1.5, 0.5, 0.0}},
+			{2, {-1.0, 0.0, 0.0}}
+		};
+		auto staggeredTriangleGradient = terzaghi.getDisplacementGradientOnStaggeredTriangle(staggeredTriangle);
+		check(staggeredTriangleGradient==gradient);
+	}
+	section("staggered triangle 3")
+	{
+		auto staggeredTriangle = terzaghi.grid.staggeredTriangles[2];
+		VectorStencil gradient = {
+			{2, {0.0, -1.0, 0.0}},
+			{3, {0.5, 1.5, 0.0}},
+			{4, {-0.5, -0.5, 0.0}}
+		};
+		auto staggeredTriangleGradient = terzaghi.getDisplacementGradientOnStaggeredTriangle(staggeredTriangle);
+		check(staggeredTriangleGradient==gradient);
+	}
+	section("staggered triangle 4")
+	{
+		auto staggeredTriangle = terzaghi.grid.staggeredTriangles[3];
+		VectorStencil gradient = {
+			{2, {1.0, 0.0, 0.0}},
+			{3, {0.5, 0.5, 0.0}},
+			{4, {-1.5, -0.5, 0.0}}
+		};
+		auto staggeredTriangleGradient = terzaghi.getDisplacementGradientOnStaggeredTriangle(staggeredTriangle);
+		check(staggeredTriangleGradient==gradient);
+	}
+}

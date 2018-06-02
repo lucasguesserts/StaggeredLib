@@ -394,6 +394,22 @@ Eigen::MatrixXd Terzaghi::getMechanicalPropertiesMatrix(const Component c0, cons
 	return mechanicalPropertiesMatrix;
 }
 
+VectorStencil Terzaghi::getDisplacementGradientOnStaggeredTriangle(StaggeredElement2D* staggeredTriangle)
+{
+	auto neighbor_0 = this->findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[0], staggeredTriangle->elements[0]);
+	auto neighbor_1 = this->findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[1], staggeredTriangle->elements[0]);
+	Eigen::Vector3d vector_0 = neighbor_0->getCentroid() - staggeredTriangle->getCentroid();
+	vector_0 = vector_0 / vector_0.squaredNorm();
+	Eigen::Vector3d vector_1 = neighbor_1->getCentroid() - staggeredTriangle->getCentroid();
+	vector_1 = vector_1 / vector_1.squaredNorm();
+	VectorStencil gradient = {
+		{neighbor_0->getIndex(), vector_0},
+		{neighbor_1->getIndex(), vector_1},
+		{staggeredTriangle->getIndex(), -(vector_0 + vector_1)}
+	};
+	return gradient;
+}
+
 StaggeredElement2D* Terzaghi::findStaggeredTriangleNeighbor(StaggeredElement2D* staggeredTriangle, Vertex* adjacentVertex, Element* parentElement)
 {
 	std::array<unsigned,2> staggeredElementsLocation = this->grid.findStaggeredElements(adjacentVertex, parentElement);
