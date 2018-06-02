@@ -29,6 +29,8 @@ Terzaghi::Terzaghi(const std::string& gridFile)
 	this->initializeDisplacementScalarStencilOnElements();
 	this->initializeDisplacementScalarStencilOnVertices();
 	this->initializeDisplacementGradient();
+	// Boundary
+	this->initializeBoundaryConditions();
 	return;
 }
 
@@ -88,6 +90,71 @@ void Terzaghi::initializeDisplacementGradient(void)
 		this->displacementGradient[face.getIndex()] = ((1 / frontBackDifferencePosition.squaredNorm()) * frontBackDifferenceScalarStencil) * frontBackDifferencePosition +
 		                                         ((1 / vertexElementDifferencePosition.squaredNorm()) * vertexElementDifferenceScalarStencil) * vertexElementDifferencePosition;
 	}
+	return;
+}
+
+void Terzaghi::initializeBoundaryConditions(void)
+{
+	std::string boundaryName;
+
+	auto setBoundary = [this](
+		const unsigned boundaryIndex,
+		const std::string& boundaryName,
+		BoundaryConditionType pressureBCtype,
+		double pressureBCvalue,
+		BoundaryConditionType uBCtype,
+		double uBCvalue,
+		BoundaryConditionType vBCtype,
+		double vBCvalue,
+		BoundaryConditionType wBCtype,
+		double wBCvalue)
+	{
+		this->boundary[boundaryIndex].name = boundaryName;
+		this->boundary[boundaryIndex].staggeredTriangle = this->grid.boundary[this->boundary[boundaryIndex].name].staggeredTriangle;
+		if(this->boundary[boundaryIndex].staggeredTriangle.empty())
+			throw std::runtime_error("Terzaghi boundary not set: " + boundaryName);
+
+		this->boundary[boundaryIndex].component[0] = Component::P;
+		this->boundary[boundaryIndex].boundaryConditionType[0] = pressureBCtype;
+		this->boundary[boundaryIndex].prescribedValue[0] = pressureBCvalue;
+
+		this->boundary[boundaryIndex].component[1] = Component::U;
+		this->boundary[boundaryIndex].boundaryConditionType[1] = uBCtype;
+		this->boundary[boundaryIndex].prescribedValue[1] = uBCvalue;
+
+		this->boundary[boundaryIndex].component[2] = Component::V;
+		this->boundary[boundaryIndex].boundaryConditionType[2] = vBCtype;
+		this->boundary[boundaryIndex].prescribedValue[2] = vBCvalue;
+
+		this->boundary[boundaryIndex].component[3] = Component::W;
+		this->boundary[boundaryIndex].boundaryConditionType[3] = wBCtype;
+		this->boundary[boundaryIndex].prescribedValue[3] = wBCvalue;
+	};
+
+	setBoundary( 0, "bottom boundary",
+		BoundaryConditionType::Neumann, 0.0,
+		BoundaryConditionType::Neumann, 0.0,
+		BoundaryConditionType::Dirichlet, 0.0,
+		BoundaryConditionType::Neumann, 0.0);
+
+	setBoundary( 1, "top boundary",
+		BoundaryConditionType::Dirichlet, 0.0,
+		BoundaryConditionType::Neumann, 0.0,
+		BoundaryConditionType::Neumann, 1.0E+6,
+		BoundaryConditionType::Neumann, 0.0);
+
+	setBoundary( 2, "east boundary",
+		BoundaryConditionType::Neumann, 0.0,
+		BoundaryConditionType::Dirichlet, 0.0,
+		BoundaryConditionType::Neumann, 0.0,
+		BoundaryConditionType::Neumann, 0.0);
+
+	setBoundary( 3, "west boundary",
+		BoundaryConditionType::Neumann, 0.0,
+		BoundaryConditionType::Dirichlet, 0.0,
+		BoundaryConditionType::Neumann, 0.0,
+		BoundaryConditionType::Neumann, 0.0);
+
 	return;
 }
 

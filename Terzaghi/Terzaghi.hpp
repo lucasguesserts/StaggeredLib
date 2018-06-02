@@ -10,13 +10,8 @@
 #include <Stencil/VectorStencil.hpp>
 #include <LinearSystem/EigenSparseLinearSystem.hpp>
 
-enum class Component: unsigned
-{
-	P = 0u,
-	U = 1u,
-	V = 2u,
-	W = 3u,
-};
+#include <Terzaghi/Enums.hpp>
+#include <Terzaghi/TerzaghiBoundary.hpp>
 
 class Terzaghi
 {
@@ -68,6 +63,9 @@ class Terzaghi
 
 		EigenSparseLinearSystem linearSystem;
 
+		// Boundary
+		std::array<TerzaghiBoundary, 4> boundary;
+
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);
 		void setOldPressure(const std::vector<double> oldPressureValues);
@@ -81,6 +79,8 @@ class Terzaghi
 		void initializeDisplacementScalarStencilOnElements(void);
 		void initializeDisplacementScalarStencilOnVertices(void);
 		void initializeDisplacementGradient(void);
+		// Boundary
+		void initializeBoundaryConditions(void);
 };
 
 #endif
