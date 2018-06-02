@@ -290,6 +290,15 @@ void Terzaghi::insertPressureDiffusiveTermInIndependent(void)
 		const unsigned backRow = transformIndex(Component::P,staggeredQuadrangle->elements[1]);
 		this->linearSystem.independent[backRow] += independentValue;
 	}
+	for(auto staggeredTriangle: this->grid.staggeredTriangles)
+	{
+		const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity *
+		                            (1 - this->timeImplicitCoefficient)) * staggeredTriangle->getAreaVector();
+		ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredTriangle->getIndex()];
+		double independentValue = recoverPressureValueFromScalarStencil(pressureDiffusionOnFace);
+		const unsigned frontRow = transformIndex(Component::P,staggeredTriangle->elements[0]);
+		this->linearSystem.independent[frontRow] += - independentValue;
+	}
 	return;
 }
 
@@ -337,6 +346,29 @@ void Terzaghi::insertDisplacementDirichletBoundaryConditionToMatrix(void)
 			for(auto staggeredTriangle: boundary.staggeredTriangle)
 				this->applyDisplacementDirichletBoundaryCondition(boundary.component[count], staggeredTriangle);
 		}
+	}
+}
+
+void Terzaghi::insertPressureDirichletBoundaryConditionToMatrix(void)
+{
+	for(auto staggeredTriangle: this->boundary[0].staggeredTriangle) // bottom boundary
+	{
+		const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity *
+		                            this->timeImplicitCoefficient) * staggeredTriangle->getAreaVector();
+		ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredTriangle->getIndex()];
+		this->insertPressureScalarStencilInLinearSystem(staggeredTriangle->elements[0], pressureDiffusionOnFace); // front
+	}
+}
+
+void Terzaghi::insertPressureDirichletBoundaryConditionToIndependent(void)
+{
+	for(auto staggeredTriangle: this->boundary[0].staggeredTriangle) // bottom boundary
+	{
+		const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity) * staggeredTriangle->getAreaVector();
+		Eigen::Vector3d gradientVector = this->pressureGradient[staggeredTriangle->getIndex()][staggeredTriangle->elements[0]->getIndex()];
+		double independentValue = aux.dot(gradientVector);
+		const unsigned row = transformIndex(Component::P,staggeredTriangle->elements[0]);
+		this->linearSystem.independent[row] += independentValue;
 	}
 }
 
