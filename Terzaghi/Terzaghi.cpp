@@ -45,6 +45,13 @@ void Terzaghi::initializePressureGradient(void)
 	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
 		this->pressureGradient[staggeredQuadrangle->getIndex()] =
 			this->grid.computeVectorStencilOnQuadrangle(*staggeredQuadrangle,this->scalarStencilOnVertices);
+	for(auto staggeredTriangle: this->grid.staggeredTriangles)
+	{
+		const unsigned elementIndex = staggeredTriangle->elements[0]->getIndex();
+		Eigen::Vector3d gradientVector = staggeredTriangle->elements[0]->getCentroid() - staggeredTriangle->getCentroid();
+		gradientVector = gradientVector / gradientVector.squaredNorm();
+		this->pressureGradient[staggeredTriangle->getIndex()] = VectorStencil{{elementIndex, gradientVector}};
+	}
 	return;
 }
 

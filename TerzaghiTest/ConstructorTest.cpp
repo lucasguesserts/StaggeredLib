@@ -35,6 +35,40 @@ TestCase("Terzaghi indices transformation", "[Terzaghi]")
 	}
 }
 
+TestCase("Pressure gradient on staggered triangles", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	section("staggered triangle 0")
+	{
+		auto staggeredTriangle = terzaghi.grid.staggeredTriangles[0];
+		auto terzaghiVectorStencil = terzaghi.pressureGradient[staggeredTriangle->getIndex()];
+		auto vectorStencil = VectorStencil{ {0, {0.6, 1.2, 0.0}} };
+		check(terzaghiVectorStencil==vectorStencil);
+	}
+	section("staggered triangle 1")
+	{
+		auto staggeredTriangle = terzaghi.grid.staggeredTriangles[1];
+		auto terzaghiVectorStencil = terzaghi.pressureGradient[staggeredTriangle->getIndex()];
+		auto vectorStencil = VectorStencil{ {0, {-1.2, -0.6, 0.0}} };
+		check(terzaghiVectorStencil==vectorStencil);
+	}
+	section("staggered triangle 3")
+	{
+		auto staggeredTriangle = terzaghi.grid.staggeredTriangles[2];
+		auto terzaghiVectorStencil = terzaghi.pressureGradient[staggeredTriangle->getIndex()];
+		auto vectorStencil = VectorStencil{ {1, {-0.6, -1.2, 0.0}} };
+		check(terzaghiVectorStencil==vectorStencil);
+	}
+	section("staggered triangle 4")
+	{
+		auto staggeredTriangle = terzaghi.grid.staggeredTriangles[3];
+		auto terzaghiVectorStencil = terzaghi.pressureGradient[staggeredTriangle->getIndex()];
+		auto vectorStencil = VectorStencil{ {1, {1.2, 0.6, 0.0}} };
+		check(terzaghiVectorStencil==vectorStencil);
+	}
+}
+
 TestCase("Pressure accumulation term")
 {
 	const std::string gridFile = gridDirectory + "two_triangles.cgns";

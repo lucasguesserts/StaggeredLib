@@ -37,7 +37,7 @@ class Terzaghi
 
 		// pressure
 		std::vector<ScalarStencil> scalarStencilOnVertices; // auxiliar
-		std::vector<VectorStencil> pressureGradient; // stored on staggered quadrangles
+		std::vector<VectorStencil> pressureGradient; // stored on staggered elements
 		// displacement
 		std::vector<ScalarStencil> displacementScalarStencilOnElements;
 		std::vector<ScalarStencil> displacementScalarStencilOnVertices;
@@ -75,6 +75,7 @@ class Terzaghi
 		// Pressure
 		void initializeScalarStencilOnVertices(void);
 		void initializePressureGradient(void);
+		void initializePressureGradientOnStaggeredTriangles(void);
 		// Displacement
 		void initializeDisplacementScalarStencilOnElements(void);
 		void initializeDisplacementScalarStencilOnVertices(void);
