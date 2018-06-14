@@ -299,3 +299,42 @@ TestCase("Terzaghi insert displacement pressure gradient term in matrix ")
 	terzaghi.linearSystem.assemblyMatrix();
 	// std::cout << std::endl << "Linear system matrix" << std:: endl << terzaghi.linearSystem.matrix << std::endl;
 }
+
+TestCase("Terzaghi voigt vector transformation", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	Eigen::Vector3d vector(7.3, 5.7, -9.4);
+	auto voigtMatrix = terzaghi.voigtTransformation(vector);
+	check(voigtMatrix(0,0)==vector.x());
+	check(voigtMatrix(1,1)==vector.y());
+	check(voigtMatrix(2,2)==vector.z());
+	check(voigtMatrix(3,0)==vector.y());
+	check(voigtMatrix(3,1)==vector.x());
+	check(voigtMatrix(4,1)==vector.z());
+	check(voigtMatrix(4,2)==vector.y());
+	check(voigtMatrix(5,0)==vector.z());
+	check(voigtMatrix(5,2)==vector.x());
+}
+
+TestCase("Terzaghi phisical properties matrix", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	double ni = 0.2; terzaghi.poissonCoefficient = ni;
+	double G = 7; terzaghi.shearModulus = G;
+	double lambda = 2*G*ni / (1 - 2*ni);
+	auto matrix = terzaghi.getPhysicalPropertiesMatrix();
+	check(matrix(0,0)==(2*G+lambda));
+	check(matrix(1,1)==(2*G+lambda));
+	check(matrix(2,2)==(2*G+lambda));
+	check(matrix(0,1)==lambda);
+	check(matrix(0,2)==lambda);
+	check(matrix(1,0)==lambda);
+	check(matrix(1,2)==lambda);
+	check(matrix(2,0)==lambda);
+	check(matrix(2,1)==lambda);
+	check(matrix(3,3)==G);
+	check(matrix(4,4)==G);
+	check(matrix(5,5)==G);
+}

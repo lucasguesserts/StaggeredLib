@@ -69,6 +69,9 @@ class Terzaghi
 		Eigen::MatrixXd getMechanicalPropertiesMatrix(const Component c0, const Component c1);
 		VectorStencil getDisplacementGradientOnStaggeredTriangle(StaggeredElement2D* staggeredTriangle);
 			StaggeredElement2D* findStaggeredTriangleNeighbor(StaggeredElement2D* staggeredTriangle, Vertex* adjacentVertex, Element* parentElement);
+		std::vector<std::vector<ScalarStencil>> computeDisplacementScalarStencilMatrix(Face2D& face);
+		Eigen::MatrixXd voigtTransformation(const Eigen::Vector3d& vector);
+		Eigen::MatrixXd getPhysicalPropertiesMatrix(void);
 
 		EigenSparseLinearSystem linearSystem;
 

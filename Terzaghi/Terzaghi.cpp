@@ -3,7 +3,6 @@
 
 const std::vector<Component> Terzaghi::displacementComponents = {Component::U, Component::V, Component::W};
 
-
 const std::vector<Eigen::Matrix<double,1,3>> Terzaghi::leftDisplacementMatrix = {
 	{1, 0, 0},
 	{0, 1, 0},
@@ -281,20 +280,64 @@ void Terzaghi::insertDisplacementTensionTermInMatrix(void)
 {
 	for(auto& face: this->grid.faces)
 	{
-		for(auto forceComponent: this->displacementComponents)
+		auto scalarStencilMatrix = this->computeDisplacementScalarStencilMatrix(face);
+		for(auto forceComponent : this->displacementComponents)
 		{
-			for(auto displacementComponent: this->displacementComponents)
+			for(auto displacementComponent : this->displacementComponents)
 			{
-				ScalarStencil solidForceOnFace = (face.getAreaVector().transpose() *
-						this->getPermutationMatrix(forceComponent, displacementComponent) *
-						this->getMechanicalPropertiesMatrix(forceComponent, displacementComponent)) *
-						this->displacementGradient[face.getIndex()];
-				insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, face.backwardStaggeredElement, solidForceOnFace);
-				insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, face.forwardStaggeredElement, (-1)*solidForceOnFace);
+				const unsigned i = static_cast<unsigned>(forceComponent) - 1;
+				const unsigned j = static_cast<unsigned>(displacementComponent) - 1;
+				this->insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, face.backwardStaggeredElement, scalarStencilMatrix[i][j]);
+				this->insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, face.forwardStaggeredElement, (-1)*scalarStencilMatrix[i][j]);
 			}
 		}
 	}
 	return;
+}
+
+std::vector<std::vector<ScalarStencil>> Terzaghi::computeDisplacementScalarStencilMatrix(Face2D& face)
+{
+	std::vector<std::vector<ScalarStencil>> matrix(3, std::vector<ScalarStencil>(3));
+	for(unsigned force=0 ; force<3 ; ++force)
+	{
+		for(unsigned displacement=0; displacement<3 ; ++displacement)
+		{
+			matrix[force][displacement] = ( this->leftDisplacementMatrix[force] *
+			                              this->voigtTransformation(face.getAreaVector()).transpose() *
+										  this->getPhysicalPropertiesMatrix() *
+										  this->rightDisplacementMatrix[displacement] ) *
+										  this->displacementGradient[face.getIndex()];
+		}
+	}
+	return matrix;
+}
+
+Eigen::MatrixXd Terzaghi::getPhysicalPropertiesMatrix(void)
+// TODO: in some way, separate that code to use a one time defined value
+{
+	const double& G = this->shearModulus;
+	const double& ni = this->poissonCoefficient;
+	double lambda = 2 * G * ni / (1 - 2*ni);
+	double diag = 2*G + lambda;
+	return (Eigen::MatrixXd(6,6) <<
+		diag  , lambda, lambda, 0, 0, 0,
+		lambda, diag  , lambda, 0, 0, 0,
+		lambda, lambda, diag  , 0, 0, 0,
+		0     , 0     , 0     , G, 0, 0,
+		0     , 0     , 0     , 0, G, 0,
+		0     , 0     , 0     , 0, 0, G
+		).finished();
+}
+
+Eigen::MatrixXd Terzaghi::voigtTransformation(const Eigen::Vector3d& vector)
+{
+	return (Eigen::MatrixXd(6,3) <<
+		vector.x(), 0         , 0         ,
+		0         , vector.y(), 0         ,
+		0         , 0         , vector.z(),
+		vector.y(), vector.x(), 0         ,
+		0         , vector.z(), vector.y(),
+		vector.z(), 0         , vector.x()).finished();
 }
 
 void Terzaghi::insertDisplacementPressureTermInMatrix(void)
