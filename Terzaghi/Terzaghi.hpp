@@ -63,6 +63,7 @@ class Terzaghi
 		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
 		void insertScalarStencilDisplacementComponentInMatrix(const Component forceComponent, const Component displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements);
 		void insertPressureGradientInMatrix(const Component forceComponent, StaggeredElement2D* staggeredQuadrangle);
+		void insertForceComponentInIndependent(Eigen::Vector3d force, StaggeredElement2D* staggeredTriangle);
 
 		// Displacement auxiliar
 		VectorStencil getDisplacementGradientOnStaggeredTriangle(StaggeredElement2D* staggeredTriangle);
@@ -75,6 +76,7 @@ class Terzaghi
 
 		// Boundary
 		std::array<TerzaghiBoundary, 4> boundary;
+		void insertDisplacementNeumannDirichletBoundaryConditionToIndependent(void);
 		void insertDisplacementDirichletBoundaryConditionToMatrix(void);
 		void applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle);
 

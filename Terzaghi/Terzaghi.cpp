@@ -153,7 +153,8 @@ void Terzaghi::initializeBoundaryConditions(void)
 		BoundaryConditionType vBCtype,
 		double vBCvalue,
 		BoundaryConditionType wBCtype,
-		double wBCvalue)
+		double wBCvalue,
+		Eigen::Matrix<double,6,1> stress)
 	{
 		this->boundary[boundaryIndex].name = boundaryName;
 		this->boundary[boundaryIndex].staggeredTriangle = this->grid.boundary[this->boundary[boundaryIndex].name].staggeredTriangle;
@@ -175,31 +176,37 @@ void Terzaghi::initializeBoundaryConditions(void)
 		this->boundary[boundaryIndex].component[3] = Component::W;
 		this->boundary[boundaryIndex].boundaryConditionType[3] = wBCtype;
 		this->boundary[boundaryIndex].prescribedValue[3] = wBCvalue;
+
+		this->boundary[boundaryIndex].stress = stress;
 	};
 
 	setBoundary( 0, "bottom boundary",
 		BoundaryConditionType::Neumann, 0.0,
 		BoundaryConditionType::Neumann, 0.0,
 		BoundaryConditionType::Dirichlet, 0.0,
-		BoundaryConditionType::Neumann, 0.0);
+		BoundaryConditionType::Neumann, 0.0,
+		(Eigen::Matrix<double,6,1>() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
 
 	setBoundary( 1, "top boundary",
 		BoundaryConditionType::Dirichlet, 0.0,
 		BoundaryConditionType::Neumann, 0.0,
 		BoundaryConditionType::Neumann, 1.0E+6,
-		BoundaryConditionType::Neumann, 0.0);
+		BoundaryConditionType::Neumann, 0.0,
+		(Eigen::Matrix<double,6,1>() << 0.0, -1.0E+6, 0.0, 0.0, 0.0, 0.0).finished());
 
 	setBoundary( 2, "east boundary",
 		BoundaryConditionType::Neumann, 0.0,
 		BoundaryConditionType::Dirichlet, 0.0,
 		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Neumann, 0.0);
+		BoundaryConditionType::Neumann, 0.0,
+		(Eigen::Matrix<double,6,1>() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
 
 	setBoundary( 3, "west boundary",
 		BoundaryConditionType::Neumann, 0.0,
 		BoundaryConditionType::Dirichlet, 0.0,
 		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Neumann, 0.0);
+		BoundaryConditionType::Neumann, 0.0,
+		(Eigen::Matrix<double,6,1>() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
 
 	return;
 }
@@ -414,6 +421,31 @@ void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const Component 
 	{
 		const unsigned column = this->transformIndex(displacementComponent, keyValuePair.first);
 		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, column, keyValuePair.second) );
+	}
+	return;
+}
+
+void Terzaghi::insertDisplacementNeumannDirichletBoundaryConditionToIndependent(void)
+{
+	for(auto boundary: this->boundary)
+	{
+		for(auto staggeredTriangle: boundary.staggeredTriangle)
+		{
+			auto voigtMatrix = this->voigtTransformation( - staggeredTriangle->getAreaVector()).transpose();
+			Eigen::Vector3d forces = voigtMatrix * boundary.stress;
+			this->insertForceComponentInIndependent(forces, staggeredTriangle);
+		}
+	}
+	return;
+}
+
+void Terzaghi::insertForceComponentInIndependent(Eigen::Vector3d force, StaggeredElement2D* staggeredTriangle)
+{
+	for(auto forceComponent : this->displacementComponents)
+	{
+		auto component = static_cast<unsigned>(forceComponent) - 1u;
+		const unsigned row = this->transformIndex(forceComponent, staggeredTriangle);
+		this->linearSystem.independent[row] += - force[component];
 	}
 	return;
 }
