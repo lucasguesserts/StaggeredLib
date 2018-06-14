@@ -349,29 +349,6 @@ void Terzaghi::insertDisplacementDirichletBoundaryConditionToMatrix(void)
 	}
 }
 
-void Terzaghi::insertPressureDirichletBoundaryConditionToMatrix(void)
-{
-	for(auto staggeredTriangle: this->boundary[0].staggeredTriangle) // bottom boundary
-	{
-		const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity *
-		                            this->timeImplicitCoefficient) * staggeredTriangle->getAreaVector();
-		ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredTriangle->getIndex()];
-		this->insertPressureScalarStencilInLinearSystem(staggeredTriangle->elements[0], pressureDiffusionOnFace); // front
-	}
-}
-
-void Terzaghi::insertPressureDirichletBoundaryConditionToIndependent(void)
-{
-	for(auto staggeredTriangle: this->boundary[0].staggeredTriangle) // bottom boundary
-	{
-		const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity) * staggeredTriangle->getAreaVector();
-		Eigen::Vector3d gradientVector = this->pressureGradient[staggeredTriangle->getIndex()][staggeredTriangle->elements[0]->getIndex()];
-		double independentValue = aux.dot(gradientVector);
-		const unsigned row = transformIndex(Component::P,staggeredTriangle->elements[0]);
-		this->linearSystem.independent[row] += independentValue;
-	}
-}
-
 void Terzaghi::insertPressureAccumulationTermInIndependent(void)
 {
 	const double compressibility = this->porosity * this->fluidCompressibility + (this->alpha - this->porosity) * this->solidCompressibility;

@@ -68,7 +68,6 @@ class Terzaghi
 		// Boundary
 		std::array<TerzaghiBoundary, 4> boundary;
 		void insertDisplacementDirichletBoundaryConditionToMatrix(void);
-		void insertPressureDirichletBoundaryConditionToMatrix(void);
 		void applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle);
 
 		// just to help in tests
