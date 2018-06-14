@@ -462,44 +462,6 @@ void Terzaghi::insertPressureVolumeDilatationTermInIndependent(void)
 	return;
 }
 
-Eigen::MatrixXd Terzaghi::getPermutationMatrix(const Component c0, const Component c1)
-{
-	constexpr unsigned matrixSize = 3;
-	const auto i = static_cast<unsigned>(c0) - 1u;
-	const auto j = static_cast<unsigned>(c1) - 1u;
-	Eigen::MatrixXd permutationMatrix = Eigen::MatrixXd::Zero(matrixSize,matrixSize);
-	if(i==j)
-		permutationMatrix = Eigen::MatrixXd::Identity(matrixSize,matrixSize);
-	else
-	{
-		const unsigned k = 3 - (i + j);
-		permutationMatrix(i,j) = 1;
-		permutationMatrix(j,i) = 1;
-		permutationMatrix(k,k) = 1;
-	}
-	return permutationMatrix;
-}
-
-Eigen::MatrixXd Terzaghi::getMechanicalPropertiesMatrix(const Component c0, const Component c1)
-{
-	constexpr unsigned matrixSize = 3;
-	const auto i = static_cast<unsigned>(c0) - 1u;
-	const auto j = static_cast<unsigned>(c1) - 1u;
-	Eigen::MatrixXd mechanicalPropertiesMatrix = Eigen::MatrixXd::Zero(matrixSize,matrixSize);
-	if(i==j)
-	{
-		for(unsigned k=0 ; k<matrixSize ; ++k)
-			mechanicalPropertiesMatrix(k,k) = this->shearModulus;
-		mechanicalPropertiesMatrix(i,i) *= 2 * (1 - this->poissonCoefficient) / (1 - 2*this->poissonCoefficient);
-	}
-	else
-	{
-		mechanicalPropertiesMatrix(i,i) = this->shearModulus;
-		mechanicalPropertiesMatrix(j,j) = 2 * this->shearModulus * this->poissonCoefficient / (1 - 2*this->poissonCoefficient);
-	}
-	return mechanicalPropertiesMatrix;
-}
-
 VectorStencil Terzaghi::getDisplacementGradientOnStaggeredTriangle(StaggeredElement2D* staggeredTriangle)
 {
 	auto neighbor_0 = this->findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[0], staggeredTriangle->elements[0]);
