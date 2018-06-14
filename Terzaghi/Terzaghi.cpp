@@ -228,11 +228,11 @@ void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
 	{
 		auto& coefficients = this->linearSystem.coefficients;
 		coefficients.reserve(coefficients.size() + 3);
-		Eigen::Vector3d areaVector = this->alpha * staggeredTriangle->getAreaVector();
-		const unsigned frontRow = transformIndex(Component::P,staggeredTriangle->elements[0]);
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::U,staggeredTriangle), -areaVector.x()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::V,staggeredTriangle), -areaVector.y()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, transformIndex(Component::W,staggeredTriangle), -areaVector.z()) );
+		Eigen::Vector3d areaVector = - this->alpha * staggeredTriangle->getAreaVector();
+		const unsigned row = transformIndex(Component::P,staggeredTriangle->elements[0]);
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, transformIndex(Component::U,staggeredTriangle), areaVector.x()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, transformIndex(Component::V,staggeredTriangle), areaVector.y()) );
+			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, transformIndex(Component::W,staggeredTriangle), areaVector.z()) );
 	}
 	return;
 }
@@ -292,12 +292,12 @@ void Terzaghi::insertPressureDiffusiveTermInIndependent(void)
 	}
 	for(auto staggeredTriangle: this->grid.staggeredTriangles)
 	{
-		const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity *
+		const Eigen::Vector3d aux = - (this->timeInterval * this->permeability / this->fluidViscosity *
 		                            (1 - this->timeImplicitCoefficient)) * staggeredTriangle->getAreaVector();
 		ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredTriangle->getIndex()];
 		double independentValue = recoverPressureValueFromScalarStencil(pressureDiffusionOnFace);
-		const unsigned frontRow = transformIndex(Component::P,staggeredTriangle->elements[0]);
-		this->linearSystem.independent[frontRow] += - independentValue;
+		const unsigned row = transformIndex(Component::P,staggeredTriangle->elements[0]);
+		this->linearSystem.independent[row] += independentValue;
 	}
 	return;
 }
