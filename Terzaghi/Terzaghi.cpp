@@ -3,6 +3,46 @@
 
 const std::vector<Component> Terzaghi::displacementComponents = {Component::U, Component::V, Component::W};
 
+
+const std::vector<Eigen::Matrix<double,1,3>> Terzaghi::leftDisplacementMatrix = {
+	{1, 0, 0},
+	{0, 1, 0},
+	{0, 0, 1}
+};
+
+const std::vector<Eigen::Matrix<double,6,3>> Terzaghi::rightDisplacementMatrix = {
+	{
+		(Eigen::Matrix<double,6,3>() <<
+		1, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 1, 0,
+		0, 0, 0,
+		0, 0, 1
+		).finished()
+	},
+	{
+		(Eigen::Matrix<double,6,3>() <<
+		0, 0, 0,
+		0, 1, 0,
+		0, 0, 0,
+		1, 0, 0,
+		0, 0, 1,
+		0, 0, 0
+		).finished()
+	},
+	{
+		(Eigen::Matrix<double,6,3>() <<
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 1,
+		0, 0, 0,
+		0, 1, 0,
+		1, 0, 0
+		).finished()
+	}
+};
+
 Terzaghi::Terzaghi(const std::string& gridFile)
 	: grid(gridFile)
 {

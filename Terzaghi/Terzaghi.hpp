@@ -22,6 +22,10 @@ class Terzaghi
 		double timeInterval, timeImplicitCoefficient;
 		double shearModulus, poissonCoefficient;
 
+		// Displacement auxiliar matrices
+		static const std::vector<Eigen::Matrix<double,1,3>> leftDisplacementMatrix;
+		static const std::vector<Eigen::Matrix<double,6,3>> rightDisplacementMatrix;
+
 		Grid2DInverseDistanceStencil grid;
 
 		Eigen::VectorXd oldSolution;
