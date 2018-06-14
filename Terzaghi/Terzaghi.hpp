@@ -36,21 +36,24 @@ class Terzaghi
 		Eigen::Vector3d getDisplacementVector(StaggeredElement2D* staggeredElement);
 
 		// pressure
-		std::vector<ScalarStencil> scalarStencilOnVertices; // auxiliar
-		std::vector<VectorStencil> pressureGradient; // stored on staggered elements
+		std::vector<ScalarStencil> scalarStencilOnVertices;
+		std::vector<VectorStencil> pressureGradient;
 		// displacement
 		std::vector<ScalarStencil> displacementScalarStencilOnElements;
 		std::vector<ScalarStencil> displacementScalarStencilOnVertices;
 		std::vector<VectorStencil> displacementGradient;
 
+		// pressure
 		void insertPressureAccumulationTermInMatrix(void);
 		void insertPressureDiffusiveTermInMatrix(void);
 		void insertPressureVolumeDilatationTermInMatrix(void);
-		void insertDisplacementTensionTermInMatrix(void);
-		void insertDisplacementPressureTermInMatrix(void);
 		void insertPressureAccumulationTermInIndependent(void);
 		void insertPressureDiffusiveTermInIndependent(void);
 		void insertPressureVolumeDilatationTermInIndependent(void);
+
+		// displacement
+		void insertDisplacementTensionTermInMatrix(void);
+		void insertDisplacementPressureTermInMatrix(void);
 
 		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
 		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
