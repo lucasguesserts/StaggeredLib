@@ -101,6 +101,7 @@ class Terzaghi
 		// Solve
 		void assemblyLinearSystemMatrix(void);
 		void assemblyLinearSystemIndependent(void);
+		void solve(void);
 
 	private:
 		// Pressure

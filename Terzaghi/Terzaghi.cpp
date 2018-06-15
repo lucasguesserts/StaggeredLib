@@ -737,3 +737,10 @@ void Terzaghi::assemblyLinearSystemIndependent(void)
 
 	return;
 }
+
+void Terzaghi::solve(void)
+{
+	this->assemblyLinearSystemIndependent();
+	this->oldSolution = this->linearSystem.solve();
+	return;
+}

@@ -6,7 +6,7 @@
 
 TestCase("Assembly linear system", "[Terzaghi]")
 {
-	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	const std::string gridFile = gridDirectory + "terzaghi.cgns";
 	Terzaghi terzaghi(gridFile);
 	// Values from Gustavo Thesis
 	terzaghi.fluidViscosity = 0.001;
@@ -19,10 +19,21 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	terzaghi.timeImplicitCoefficient = 1;
 	terzaghi.shearModulus = 6.0E+9;
 	terzaghi.poissonCoefficient = 0.2;
-	terzaghi.oldSolution = Eigen::VectorXd::Zero(terzaghi.linearSystemSize);
+
+	std::vector<double> initialPressureValues(terzaghi.numberOfElements, 435.2E+3);
+	terzaghi.setOldPressure(initialPressureValues);
+
 	terzaghi.assemblyLinearSystemMatrix();
 	terzaghi.assemblyLinearSystemIndependent();
-	Eigen::MatrixXd dense(terzaghi.linearSystem.matrix);
-	std::cout << "Matrix:" << std::endl << dense << std::endl << std::endl;
-	std::cout << "Independent:" << std::endl << eigenVectorToString(terzaghi.linearSystem.independent) << std::endl << std::endl;
+	// Eigen::MatrixXd dense(terzaghi.linearSystem.matrix);
+	// std::cout << "Matrix:" << std::endl << dense << std::endl << std::endl;
+	// std::cout << "Independent:" << std::endl << eigenVectorToString(terzaghi.linearSystem.independent) << std::endl << std::endl;
+
+	constexpr unsigned numberOfTimeSteps = 10;
+	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
+	{
+		terzaghi.solve();
+		std::cout << timeStep << std::endl;
+	}
+	std::cout << "final solution:" << std::endl << eigenVectorToString(terzaghi.oldSolution) << std::endl << std::endl;
 }
