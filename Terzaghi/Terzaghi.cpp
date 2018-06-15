@@ -68,8 +68,6 @@ Terzaghi::Terzaghi(const std::string& gridFile)
 	this->initializeDisplacementScalarStencilOnElements();
 	this->initializeDisplacementScalarStencilOnVertices();
 	this->initializeDisplacementGradient();
-	// Boundary
-	this->initializeBoundaryConditions();
 	return;
 }
 
@@ -136,78 +134,6 @@ void Terzaghi::initializeDisplacementGradient(void)
 		this->displacementGradient[face.getIndex()] = ((1 / frontBackDifferencePosition.squaredNorm()) * frontBackDifferenceScalarStencil) * frontBackDifferencePosition +
 		                                         ((1 / vertexElementDifferencePosition.squaredNorm()) * vertexElementDifferenceScalarStencil) * vertexElementDifferencePosition;
 	}
-	return;
-}
-
-void Terzaghi::initializeBoundaryConditions(void)
-{
-	std::string boundaryName;
-
-	auto setBoundary = [this](
-		const unsigned boundaryIndex,
-		const std::string& boundaryName,
-		BoundaryConditionType pressureBCtype,
-		double pressureBCvalue,
-		BoundaryConditionType uBCtype,
-		double uBCvalue,
-		BoundaryConditionType vBCtype,
-		double vBCvalue,
-		BoundaryConditionType wBCtype,
-		double wBCvalue,
-		Eigen::Matrix<double,6,1> stress)
-	{
-		this->boundary[boundaryIndex].name = boundaryName;
-		this->boundary[boundaryIndex].staggeredTriangle = this->grid.boundary[this->boundary[boundaryIndex].name].staggeredTriangle;
-		if(this->boundary[boundaryIndex].staggeredTriangle.empty())
-			throw std::runtime_error("Terzaghi boundary not set: " + boundaryName);
-
-		this->boundary[boundaryIndex].component[0] = Component::P;
-		this->boundary[boundaryIndex].boundaryConditionType[0] = pressureBCtype;
-		this->boundary[boundaryIndex].prescribedValue[0] = pressureBCvalue;
-
-		this->boundary[boundaryIndex].component[1] = Component::U;
-		this->boundary[boundaryIndex].boundaryConditionType[1] = uBCtype;
-		this->boundary[boundaryIndex].prescribedValue[1] = uBCvalue;
-
-		this->boundary[boundaryIndex].component[2] = Component::V;
-		this->boundary[boundaryIndex].boundaryConditionType[2] = vBCtype;
-		this->boundary[boundaryIndex].prescribedValue[2] = vBCvalue;
-
-		this->boundary[boundaryIndex].component[3] = Component::W;
-		this->boundary[boundaryIndex].boundaryConditionType[3] = wBCtype;
-		this->boundary[boundaryIndex].prescribedValue[3] = wBCvalue;
-
-		this->boundary[boundaryIndex].stress = stress;
-	};
-
-	setBoundary( 0, "bottom boundary",
-		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Dirichlet, 0.0,
-		BoundaryConditionType::Neumann, 0.0,
-		(Eigen::Matrix<double,6,1>() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
-
-	setBoundary( 1, "top boundary",
-		BoundaryConditionType::Dirichlet, 0.0,
-		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Neumann, 1.0E+6,
-		BoundaryConditionType::Neumann, 0.0,
-		(Eigen::Matrix<double,6,1>() << 0.0, -1.0E+6, 0.0, 0.0, 0.0, 0.0).finished());
-
-	setBoundary( 2, "east boundary",
-		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Dirichlet, 0.0,
-		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Neumann, 0.0,
-		(Eigen::Matrix<double,6,1>() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
-
-	setBoundary( 3, "west boundary",
-		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Dirichlet, 0.0,
-		BoundaryConditionType::Neumann, 0.0,
-		BoundaryConditionType::Neumann, 0.0,
-		(Eigen::Matrix<double,6,1>() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
-
 	return;
 }
 
@@ -425,20 +351,6 @@ void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const Component 
 	return;
 }
 
-void Terzaghi::insertDisplacementNeumannDirichletBoundaryConditionToIndependent(void)
-{
-	for(auto boundary: this->boundary)
-	{
-		for(auto staggeredTriangle: boundary.staggeredTriangle)
-		{
-			auto voigtMatrix = this->voigtTransformation( - staggeredTriangle->getAreaVector()).transpose();
-			Eigen::Vector3d forces = voigtMatrix * boundary.stress;
-			this->insertForceComponentInIndependent(forces, staggeredTriangle);
-		}
-	}
-	return;
-}
-
 void Terzaghi::insertForceComponentInIndependent(Eigen::Vector3d force, StaggeredElement2D* staggeredTriangle)
 {
 	for(auto forceComponent : this->displacementComponents)
@@ -448,20 +360,6 @@ void Terzaghi::insertForceComponentInIndependent(Eigen::Vector3d force, Staggere
 		this->linearSystem.independent[row] += - force[component];
 	}
 	return;
-}
-
-void Terzaghi::insertDisplacementDirichletBoundaryConditionToMatrix(void)
-{
-	for(auto boundary: this->boundary)
-	{
-		for(unsigned count=0 ; count<boundary.component.size() ; count++)
-		{
-			if(boundary.component[count]==Component::P) continue;
-			if(boundary.boundaryConditionType[count]!=BoundaryConditionType::Dirichlet) continue;
-			for(auto staggeredTriangle: boundary.staggeredTriangle)
-				this->applyDisplacementDirichletBoundaryCondition(boundary.component[count], staggeredTriangle);
-		}
-	}
 }
 
 void Terzaghi::insertPressureAccumulationTermInIndependent(void)
@@ -521,18 +419,6 @@ StaggeredElement2D* Terzaghi::findStaggeredTriangleNeighbor(StaggeredElement2D* 
 	else
 		neighbor = possibleNeighbor_1;
 	return neighbor;
-}
-
-void Terzaghi::applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle)
-{
-	// TODO: move this function to somewhere in LinearSystem class
-	const unsigned row = this->transformIndex(component, staggeredTriangle);
-	for(auto& triplet: this->linearSystem.coefficients)
-	{
-		if(triplet.row()==row)
-			triplet = Eigen::Triplet<double,unsigned>(triplet.row(), triplet.col(), 0.0);
-	}
-	this->linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(row, row, 1.0));
 }
 
 void Terzaghi::setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction)

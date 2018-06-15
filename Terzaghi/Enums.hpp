@@ -10,10 +10,4 @@ enum class Component: unsigned
 	NumberOfComponents = 4u
 };
 
-enum class BoundaryConditionType
-{
-	Dirichlet,
-	Neumann
-};
-
 #endif

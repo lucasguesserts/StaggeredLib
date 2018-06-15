@@ -11,7 +11,6 @@
 #include <LinearSystem/EigenSparseLinearSystem.hpp>
 
 #include <Terzaghi/Enums.hpp>
-#include <Terzaghi/TerzaghiBoundary.hpp>
 
 class Terzaghi
 {
@@ -74,12 +73,6 @@ class Terzaghi
 
 		EigenSparseLinearSystem linearSystem;
 
-		// Boundary
-		std::array<TerzaghiBoundary, 4> boundary;
-		void insertDisplacementNeumannDirichletBoundaryConditionToIndependent(void);
-		void insertDisplacementDirichletBoundaryConditionToMatrix(void);
-		void applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle);
-
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);
 		void setOldPressure(const std::vector<double> oldPressureValues);
@@ -94,8 +87,6 @@ class Terzaghi
 		void initializeDisplacementScalarStencilOnElements(void);
 		void initializeDisplacementScalarStencilOnVertices(void);
 		void initializeDisplacementGradient(void);
-		// Boundary
-		void initializeBoundaryConditions(void);
 };
 
 #endif
