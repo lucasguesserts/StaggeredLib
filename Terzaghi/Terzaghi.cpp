@@ -652,3 +652,17 @@ void Terzaghi::insertPressureGradientNeumannInIndependent(const Component forceC
 	this->linearSystem.independent[row] += pressureTerm[pressureVectorComponent];
 	return;
 }
+
+void Terzaghi::insertPressureDirichletBoundaryConditionToMatrix(void)
+{
+	for(auto& boundary: this->boundaries)
+		if( ! boundary.isDirichlet )
+			for(auto staggeredTriangle: boundary.staggeredTriangles)
+			{
+				const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity *
+											this->timeImplicitCoefficient) * ( - staggeredTriangle->getAreaVector());
+				ScalarStencil pressureDiffusionOnFace = aux * this->pressureGradient[staggeredTriangle->getIndex()];
+				this->insertPressureScalarStencilInLinearSystem(staggeredTriangle->elements[0], (-1)*pressureDiffusionOnFace); // back
+			}
+	return;
+}

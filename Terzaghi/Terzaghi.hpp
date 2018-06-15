@@ -89,6 +89,7 @@ class Terzaghi
 			void insertPressureGradientInIndependent(const Component forceComponent, StaggeredElement2D* staggeredElement, double prescribedValue);
 		void insertDisplacementPressureNeumannBoundaryConditionToIndependent(void);
 			void insertPressureGradientNeumannInIndependent(const Component forceComponent, StaggeredElement2D* staggeredElement, Eigen::Vector3d pressureGradientPrescribed);
+		void insertPressureDirichletBoundaryConditionToMatrix(void);
 
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);
