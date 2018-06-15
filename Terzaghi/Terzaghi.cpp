@@ -577,3 +577,29 @@ std::vector<std::vector<ScalarStencil>> Terzaghi::computeDisplacementScalarStenc
 	}
 	return matrix;
 }
+
+void Terzaghi::insertDisplacementDirichletBoundaryConditionToMatrix(void)
+{
+	for(auto boundary: this->boundaries)
+	{
+		for(auto displacementComponent : this->displacementComponents)
+		{
+			const unsigned i = static_cast<unsigned>(displacementComponent) - 1;
+			if(boundary.prescribedDisplacement[i].first)
+				for(auto staggeredTriangle: boundary.staggeredTriangles)
+					this->applyDisplacementDirichletBoundaryCondition(displacementComponent, staggeredTriangle);
+		}
+	}
+}
+
+void Terzaghi::applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle)
+{
+	// TODO: update and move this function to somewhere in LinearSystem class
+	const unsigned row = this->transformIndex(component, staggeredTriangle);
+	for(auto& triplet: this->linearSystem.coefficients)
+	{
+		if(triplet.row()==row)
+			triplet = Eigen::Triplet<double,unsigned>(triplet.row(), triplet.col(), 0.0);
+	}
+	this->linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(row, row, 1.0));
+}

@@ -81,6 +81,8 @@ class Terzaghi
 		void insertDisplacementBoundaryTensionTermInMatrix(void);
 			Eigen::MatrixXd getNeumannAppliedPhysicalPropertiesMatrix(std::array<bool,6>& isStressPrescribed);
 			std::vector<std::vector<ScalarStencil>> computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix);
+		void insertDisplacementDirichletBoundaryConditionToMatrix(void);
+			void applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle);
 
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);
