@@ -11,6 +11,7 @@
 #include <LinearSystem/EigenSparseLinearSystem.hpp>
 
 #include <Terzaghi/Enums.hpp>
+#include <Terzaghi/TerzaghiBoundary.hpp>
 
 class Terzaghi
 {
@@ -72,6 +73,10 @@ class Terzaghi
 		Eigen::MatrixXd getPhysicalPropertiesMatrix(void);
 
 		EigenSparseLinearSystem linearSystem;
+
+		// Boundary
+		std::vector<TerzaghiBoundary> boundary;
+		void initializeBoundaryConditions(void);
 
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);

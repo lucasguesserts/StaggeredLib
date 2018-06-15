@@ -68,6 +68,8 @@ Terzaghi::Terzaghi(const std::string& gridFile)
 	this->initializeDisplacementScalarStencilOnElements();
 	this->initializeDisplacementScalarStencilOnVertices();
 	this->initializeDisplacementGradient();
+	// Boundary
+	this->initializeBoundaryConditions();
 	return;
 }
 
@@ -457,5 +459,55 @@ void Terzaghi::setOldDisplacement(const std::vector<Eigen::Vector3d>& displaceme
 		this->oldSolution[vIndex] = displacements[count].y();
 		this->oldSolution[wIndex] = displacements[count].z();
 	}
+	return;
+}
+
+void Terzaghi::initializeBoundaryConditions(void)
+{
+	this->boundary.resize(4);
+
+	std::string boundaryName;
+	TerzaghiBoundary& boundary = this->boundary[0];
+
+	boundaryName = "top boundary";
+	boundary = this->boundary[0];
+	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
+	boundary.stress << 0.0, -1E+6, 0.0, +0.0, 0.0, 0.0;
+	boundary.isStressPrescribed = {false, true, false, true, false, false};
+	boundary.prescribedDisplacement = {{ {false, 0.0}, {false, 0.0}, {false, 0.0} }};
+	boundary.isDirichlet = true;
+	boundary.pressureGradient << 0.0, 0.0, 0.0;
+	boundary.pressurePrescribedValue = 0.0;
+
+	boundaryName = "bottom boundary";
+	boundary = this->boundary[1];
+	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
+	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
+	boundary.isStressPrescribed = {false, false, false, true, false, false};
+	boundary.prescribedDisplacement = {{ {false, 0.0}, {true, 0.0}, {false, 0.0} }};
+	boundary.isDirichlet = false;
+	boundary.pressureGradient << 0.0, 0.0, 0.0;
+	boundary.pressurePrescribedValue = 0.0;
+
+	boundaryName = "west boundary";
+	boundary = this->boundary[2];
+	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
+	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
+	boundary.isStressPrescribed = {false, false, false, true, false, false};
+	boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
+	boundary.isDirichlet = false;
+	boundary.pressureGradient << 0.0, 0.0, 0.0;
+	boundary.pressurePrescribedValue = 0.0;
+
+	boundaryName = "east boundary";
+	boundary = this->boundary[3];
+	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
+	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
+	boundary.isStressPrescribed = {false, false, false, true, false, false};
+	boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
+	boundary.isDirichlet = false;
+	boundary.pressureGradient << 0.0, 0.0, 0.0;
+	boundary.pressurePrescribedValue = 0.0;
+
 	return;
 }
