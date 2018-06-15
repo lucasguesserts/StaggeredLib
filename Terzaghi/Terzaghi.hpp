@@ -75,8 +75,12 @@ class Terzaghi
 		EigenSparseLinearSystem linearSystem;
 
 		// Boundary
-		std::vector<TerzaghiBoundary> boundary;
+		std::vector<TerzaghiBoundary> boundaries;
 		void initializeBoundaryConditions(void);
+		void insertPrescribedStressInIndependent(void);
+		void insertDisplacementBoundaryTensionTermInMatrix(void);
+			Eigen::MatrixXd getNeumannAppliedPhysicalPropertiesMatrix(std::array<bool,6>& isStressPrescribed);
+			std::vector<std::vector<ScalarStencil>> computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix);
 
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);

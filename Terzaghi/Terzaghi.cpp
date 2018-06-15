@@ -239,9 +239,9 @@ std::vector<std::vector<ScalarStencil>> Terzaghi::computeDisplacementScalarStenc
 		{
 			matrix[force][displacement] = ( this->leftDisplacementMatrix[force] *
 			                              this->voigtTransformation(face.getAreaVector()).transpose() *
-										  this->getPhysicalPropertiesMatrix() *
-										  this->rightDisplacementMatrix[displacement] ) *
-										  this->displacementGradient[face.getIndex()];
+			                              this->getPhysicalPropertiesMatrix() *
+			                              this->rightDisplacementMatrix[displacement] ) *
+			                              this->displacementGradient[face.getIndex()];
 		}
 	}
 	return matrix;
@@ -464,13 +464,13 @@ void Terzaghi::setOldDisplacement(const std::vector<Eigen::Vector3d>& displaceme
 
 void Terzaghi::initializeBoundaryConditions(void)
 {
-	this->boundary.resize(4);
+	this->boundaries.resize(4);
 
 	std::string boundaryName;
-	TerzaghiBoundary& boundary = this->boundary[0];
+	TerzaghiBoundary& boundary = this->boundaries[0];
 
 	boundaryName = "top boundary";
-	boundary = this->boundary[0];
+	boundary = this->boundaries[0];
 	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
 	boundary.stress << 0.0, -1E+6, 0.0, +0.0, 0.0, 0.0;
 	boundary.isStressPrescribed = {false, true, false, true, false, false};
@@ -480,7 +480,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 	boundary.pressurePrescribedValue = 0.0;
 
 	boundaryName = "bottom boundary";
-	boundary = this->boundary[1];
+	boundary = this->boundaries[1];
 	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
 	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 	boundary.isStressPrescribed = {false, false, false, true, false, false};
@@ -490,7 +490,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 	boundary.pressurePrescribedValue = 0.0;
 
 	boundaryName = "west boundary";
-	boundary = this->boundary[2];
+	boundary = this->boundaries[2];
 	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
 	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 	boundary.isStressPrescribed = {false, false, false, true, false, false};
@@ -500,7 +500,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 	boundary.pressurePrescribedValue = 0.0;
 
 	boundaryName = "east boundary";
-	boundary = this->boundary[3];
+	boundary = this->boundaries[3];
 	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
 	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 	boundary.isStressPrescribed = {false, false, false, true, false, false};
@@ -510,4 +510,70 @@ void Terzaghi::initializeBoundaryConditions(void)
 	boundary.pressurePrescribedValue = 0.0;
 
 	return;
+}
+
+void Terzaghi::insertPrescribedStressInIndependent(void)
+{
+	for(auto& boundary: this->boundaries)
+	{
+		for(auto staggeredTriangle: boundary.staggeredTriangles)
+		{
+			auto transformedAreaVector = this->voigtTransformation(- staggeredTriangle->getAreaVector()).transpose();
+			Eigen::Vector3d force = transformedAreaVector * boundary.stress;
+			for(auto forceComponent : this->displacementComponents)
+			{
+				const auto component = static_cast<unsigned>(forceComponent) - 1;
+				auto row = this->transformIndex(forceComponent,staggeredTriangle);
+				this->linearSystem.independent[row] += - force(component);
+			}
+		}
+	}
+}
+
+void Terzaghi::insertDisplacementBoundaryTensionTermInMatrix(void)
+{
+	for(auto& boundary: this->boundaries)
+	{
+		for(auto staggeredTriangle: boundary.staggeredTriangles)
+		{
+			auto physicalPropertiesMatrix = this->getNeumannAppliedPhysicalPropertiesMatrix(boundary.isStressPrescribed);
+			auto scalarStencilMatrix = this->computeDisplacementScalarStencilMatrix(staggeredTriangle, physicalPropertiesMatrix);
+			for(auto forceComponent : this->displacementComponents)
+			{
+				for(auto displacementComponent : this->displacementComponents)
+				{
+					const unsigned i = static_cast<unsigned>(forceComponent) - 1;
+					const unsigned j = static_cast<unsigned>(displacementComponent) - 1;
+					this->insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, staggeredTriangle, scalarStencilMatrix[i][j]);
+				}
+			}
+		}
+	}
+}
+
+Eigen::MatrixXd Terzaghi::getNeumannAppliedPhysicalPropertiesMatrix(std::array<bool,6>& isStressPrescribed)
+{
+	auto physicalPropertiesMatrix = this->getPhysicalPropertiesMatrix();
+	for(unsigned i=0 ; i<6 ; ++i)
+		if(isStressPrescribed[i])
+			physicalPropertiesMatrix.block<1,6>(i,0) << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+	return physicalPropertiesMatrix;
+}
+
+std::vector<std::vector<ScalarStencil>> Terzaghi::computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix)
+{
+	std::vector<std::vector<ScalarStencil>> matrix(3, std::vector<ScalarStencil>(3));
+	VectorStencil gradientDisplacement = this->getDisplacementGradientOnStaggeredTriangle(staggeredTriangle);
+	for(unsigned force=0 ; force<3 ; ++force)
+	{
+		for(unsigned displacement=0; displacement<3 ; ++displacement)
+		{
+			matrix[force][displacement] = ( this->leftDisplacementMatrix[force] *
+			                              this->voigtTransformation(-staggeredTriangle->getAreaVector()).transpose() *
+			                              physicalPropertiesMatrix *
+			                              this->rightDisplacementMatrix[displacement] ) *
+			                              gradientDisplacement;
+		}
+	}
+	return matrix;
 }
