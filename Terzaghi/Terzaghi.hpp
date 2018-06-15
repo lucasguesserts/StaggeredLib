@@ -42,6 +42,7 @@ class Terzaghi
 		// pressure
 		std::vector<ScalarStencil> scalarStencilOnVertices;
 		std::vector<VectorStencil> pressureGradient;
+		std::vector<Eigen::Vector3d> pressureGradientIndependent;
 		// displacement
 		std::vector<ScalarStencil> displacementScalarStencilOnElements;
 		std::vector<ScalarStencil> displacementScalarStencilOnVertices;
@@ -62,7 +63,7 @@ class Terzaghi
 		void insertPressureScalarStencilInLinearSystem(Element* element, const ScalarStencil& scalarStencilOnElements);
 		double recoverPressureValueFromScalarStencil(const ScalarStencil& scalarStencilOnElements);
 		void insertScalarStencilDisplacementComponentInMatrix(const Component forceComponent, const Component displacementComponent, StaggeredElement2D* staggeredElement, const ScalarStencil& scalarStencilOnStaggeredElements);
-		void insertPressureGradientInMatrix(const Component forceComponent, StaggeredElement2D* staggeredQuadrangle);
+		void insertPressureGradientInMatrix(const Component forceComponent, StaggeredElement2D* staggeredElement);
 		void insertForceComponentInIndependent(Eigen::Vector3d force, StaggeredElement2D* staggeredTriangle);
 
 		// Displacement auxiliar
@@ -83,6 +84,9 @@ class Terzaghi
 			std::vector<std::vector<ScalarStencil>> computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix);
 		void insertDisplacementDirichletBoundaryConditionToMatrix(void);
 			void applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle);
+		void insertDisplacementPressureDirichletBoundaryConditionToMatrix(void);
+		void insertDisplacementPressureDirichletBoundaryConditionToIndependent(void);
+			void insertPressureGradientInIndependent(const Component forceComponent, StaggeredElement2D* staggeredElement, double prescribedValue);
 
 		// just to help in tests
 		void setOldPressure(const std::function<double(Eigen::Vector3d)> oldPressureFunction);

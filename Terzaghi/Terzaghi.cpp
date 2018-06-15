@@ -81,6 +81,7 @@ void Terzaghi::initializeScalarStencilOnVertices(void)
 void Terzaghi::initializePressureGradient(void)
 {
 	this->pressureGradient.resize(this->grid.staggeredElements.size());
+	this->pressureGradientIndependent.resize(this->grid.staggeredElements.size());
 	for(auto staggeredQuadrangle: this->grid.staggeredQuadrangles)
 		this->pressureGradient[staggeredQuadrangle->getIndex()] =
 			this->grid.computeVectorStencilOnQuadrangle(*staggeredQuadrangle,this->scalarStencilOnVertices);
@@ -90,6 +91,7 @@ void Terzaghi::initializePressureGradient(void)
 		Eigen::Vector3d gradientVector = staggeredTriangle->elements[0]->getCentroid() - staggeredTriangle->getCentroid();
 		gradientVector = gradientVector / gradientVector.squaredNorm();
 		this->pressureGradient[staggeredTriangle->getIndex()] = VectorStencil{{elementIndex, gradientVector}};
+		this->pressureGradientIndependent[staggeredTriangle->getIndex()] = - gradientVector;
 	}
 	return;
 }
@@ -282,11 +284,11 @@ void Terzaghi::insertDisplacementPressureTermInMatrix(void)
 			insertPressureGradientInMatrix(forceComponent, staggeredQuadrangle);
 }
 
-void Terzaghi::insertPressureGradientInMatrix(const Component forceComponent, StaggeredElement2D* staggeredQuadrangle)
+void Terzaghi::insertPressureGradientInMatrix(const Component forceComponent, StaggeredElement2D* staggeredElement)
 {
-	unsigned row = this->transformIndex(forceComponent, staggeredQuadrangle);
+	unsigned row = this->transformIndex(forceComponent, staggeredElement);
 	const unsigned pressureVectorComponent = static_cast<unsigned>(forceComponent) - 1u;
-	VectorStencil pressureTerm = (- this->alpha * staggeredQuadrangle->getVolume()) * this->pressureGradient[staggeredQuadrangle->getIndex()];
+	VectorStencil pressureTerm = (- this->alpha * staggeredElement->getVolume()) * this->pressureGradient[staggeredElement->getIndex()];
 	for(auto keyValuePair: pressureTerm)
 		this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(
 			row,
@@ -602,4 +604,33 @@ void Terzaghi::applyDisplacementDirichletBoundaryCondition(const Component compo
 			triplet = Eigen::Triplet<double,unsigned>(triplet.row(), triplet.col(), 0.0);
 	}
 	this->linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(row, row, 1.0));
+}
+
+void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToMatrix(void)
+{
+	for(auto& boundary: this->boundaries)
+		if(boundary.isDirichlet)
+			for(auto staggeredTriangle: boundary.staggeredTriangles)
+				for(auto forceComponent : this->displacementComponents)
+					insertPressureGradientInMatrix(forceComponent, staggeredTriangle);
+}
+
+void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToIndependent(void)
+{
+	for(auto& boundary: this->boundaries)
+		if(boundary.isDirichlet)
+			for(auto staggeredTriangle: boundary.staggeredTriangles)
+				for(auto forceComponent : this->displacementComponents)
+					insertPressureGradientInIndependent(forceComponent, staggeredTriangle, boundary.pressurePrescribedValue);
+}
+
+void Terzaghi::insertPressureGradientInIndependent(const Component forceComponent, StaggeredElement2D* staggeredElement, double prescribedValue)
+{
+	unsigned row = this->transformIndex(forceComponent, staggeredElement);
+	const unsigned pressureVectorComponent = static_cast<unsigned>(forceComponent) - 1u;
+	Eigen::Vector3d pressureTerm = ( this->alpha * staggeredElement->getVolume() *
+	                               prescribedValue) *
+	                               this->pressureGradientIndependent[staggeredElement->getIndex()];
+	this->linearSystem.independent[row] += pressureTerm[pressureVectorComponent];
+	return;
 }
