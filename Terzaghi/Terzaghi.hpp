@@ -98,6 +98,10 @@ class Terzaghi
 		void setOldPressure(const std::vector<double> oldPressureValues);
 		void setOldDisplacement(const std::vector<Eigen::Vector3d>& displacements);
 
+		// Solve
+		void assemblyLinearSystemMatrix(void);
+		void assemblyLinearSystemIndependent(void);
+
 	private:
 		// Pressure
 		void initializeScalarStencilOnVertices(void);

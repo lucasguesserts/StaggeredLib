@@ -699,3 +699,41 @@ void Terzaghi::insertPressureNeumannBoundaryConditionToIndependent(void)
 			}
 	return;
 }
+
+void Terzaghi::assemblyLinearSystemMatrix(void)
+{
+	this->insertPressureAccumulationTermInMatrix();
+	this->insertPressureDiffusiveTermInMatrix();
+	this->insertPressureVolumeDilatationTermInMatrix();
+
+	this->insertDisplacementTensionTermInMatrix();
+	this->insertDisplacementPressureTermInMatrix();
+
+	this->insertPressureDirichletBoundaryConditionToMatrix();
+
+	this->insertDisplacementBoundaryTensionTermInMatrix();
+	this->insertDisplacementPressureDirichletBoundaryConditionToMatrix();
+	this->insertDisplacementDirichletBoundaryConditionToMatrix();
+
+	this->linearSystem.computeLU();
+
+	return;
+}
+
+void Terzaghi::assemblyLinearSystemIndependent(void)
+{
+	this->linearSystem.independent = Eigen::VectorXd::Zero(this->linearSystemSize);
+
+	this->insertPressureAccumulationTermInIndependent();
+	this->insertPressureDiffusiveTermInIndependent();
+	this->insertPressureVolumeDilatationTermInIndependent();
+
+	this->insertPressureDirichletBoundaryConditionToIndependent();
+	this->insertPressureNeumannBoundaryConditionToIndependent();
+
+	this->insertPrescribedStressInIndependent();
+	this->insertDisplacementPressureNeumannBoundaryConditionToIndependent();
+	this->insertDisplacementPressureDirichletBoundaryConditionToIndependent();
+
+	return;
+}
