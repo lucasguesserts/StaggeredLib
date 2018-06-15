@@ -612,7 +612,7 @@ void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToMatrix(void
 		if(boundary.isDirichlet)
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 				for(auto forceComponent : this->displacementComponents)
-					insertPressureGradientInMatrix(forceComponent, staggeredTriangle);
+					this->insertPressureGradientInMatrix(forceComponent, staggeredTriangle);
 }
 
 void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToIndependent(void)
@@ -621,7 +621,7 @@ void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToIndependent
 		if(boundary.isDirichlet)
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 				for(auto forceComponent : this->displacementComponents)
-					insertPressureGradientInIndependent(forceComponent, staggeredTriangle, boundary.pressurePrescribedValue);
+					this->insertPressureGradientInIndependent(forceComponent, staggeredTriangle, boundary.pressurePrescribedValue);
 }
 
 void Terzaghi::insertPressureGradientInIndependent(const Component forceComponent, StaggeredElement2D* staggeredElement, double prescribedValue)
@@ -631,6 +631,24 @@ void Terzaghi::insertPressureGradientInIndependent(const Component forceComponen
 	Eigen::Vector3d pressureTerm = ( this->alpha * staggeredElement->getVolume() *
 	                               prescribedValue) *
 	                               this->pressureGradientIndependent[staggeredElement->getIndex()];
+	this->linearSystem.independent[row] += pressureTerm[pressureVectorComponent];
+	return;
+}
+
+void Terzaghi::insertDisplacementPressureNeumannBoundaryConditionToIndependent(void)
+{
+	for(auto& boundary: this->boundaries)
+		if( ! boundary.isDirichlet )
+			for(auto staggeredTriangle: boundary.staggeredTriangles)
+				for(auto forceComponent : this->displacementComponents)
+					this->insertPressureGradientNeumannInIndependent(forceComponent, staggeredTriangle, boundary.pressureGradient);
+}
+
+void Terzaghi::insertPressureGradientNeumannInIndependent(const Component forceComponent, StaggeredElement2D* staggeredElement, Eigen::Vector3d pressureGradientPrescribed)
+{
+	unsigned row = this->transformIndex(forceComponent, staggeredElement);
+	const unsigned pressureVectorComponent = static_cast<unsigned>(forceComponent) - 1u;
+	Eigen::Vector3d pressureTerm = ( this->alpha * staggeredElement->getVolume()) * pressureGradientPrescribed;
 	this->linearSystem.independent[row] += pressureTerm[pressureVectorComponent];
 	return;
 }
