@@ -1,5 +1,5 @@
-#ifndef GRID_2D_WITH_STAGGERED_ELEMENTS_HPP
-#define GRID_2D_WITH_STAGGERED_ELEMENTS_HPP
+#ifndef GRID_2D_WITH_STAGGERED_ELEMENTS_EXPORT_HPP
+#define GRID_2D_WITH_STAGGERED_ELEMENTS_EXPORT_HPP
 
 #include <Utils/String.hpp>
 #include <Grid/Grid2DWithStaggeredElements.hpp>
