@@ -744,3 +744,27 @@ void Terzaghi::solve(void)
 	this->oldSolution = this->linearSystem.solve();
 	return;
 }
+
+std::vector<double> Terzaghi::getComponentFromOldSolution(const Component component)
+{
+	std::vector<double> oldSolutionComponent;
+	if(component==Component::P)
+	{
+		oldSolutionComponent.resize(this->numberOfElements);
+		for(auto element: this->grid.elements)
+		{
+			const unsigned index = this->transformIndex(Component::P, element);
+			oldSolutionComponent[element->getIndex()] = this->oldSolution[index];
+		}
+	}
+	else
+	{
+		oldSolutionComponent.resize(this->numberOfStaggeredElements);
+		for(auto staggeredElement: this->grid.staggeredElements)
+		{
+			const unsigned index = this->transformIndex(component, staggeredElement.getIndex());
+			oldSolutionComponent[staggeredElement.getIndex()] = this->oldSolution[index];
+		}
+	}
+	return oldSolutionComponent;
+}

@@ -4,6 +4,10 @@
 
 #include <Terzaghi/Terzaghi.hpp>
 
+#include <Grid/Grid2DWithStaggeredElementsExport.hpp>
+#include <CgnsInterface/CgnsWriter.hpp>
+#include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
+
 TestCase("Assembly linear system", "[Terzaghi]")
 {
 	const std::string gridFile = gridDirectory + "terzaghi.cgns";
@@ -35,5 +39,15 @@ TestCase("Assembly linear system", "[Terzaghi]")
 		terzaghi.solve();
 		std::cout << timeStep << std::endl;
 	}
-	std::cout << "final solution:" << std::endl << eigenVectorToString(terzaghi.oldSolution) << std::endl << std::endl;
+	// std::cout << "final solution:" << std::endl << eigenVectorToString(terzaghi.oldSolution) << std::endl << std::endl;
+
+	// Facet center export
+	const std::string outputDirectory = gridDirectory + std::string("output/");
+	std::string resultFileName = outputDirectory + "terzaghi_facet_center.cgns";
+	Grid2DWithStaggeredElementsExport::cgns(resultFileName, terzaghi.grid);
+	CgnsWriter cgnsWriter(resultFileName, "CellCenter");
+	cgnsWriter.writePermanentSolution("steadySolution");
+	cgnsWriter.writePermanentField("u_displacement", terzaghi.getComponentFromOldSolution(Component::U));
+	cgnsWriter.writePermanentField("v_displacement", terzaghi.getComponentFromOldSolution(Component::V));
+	cgnsWriter.writePermanentField("w_displacement", terzaghi.getComponentFromOldSolution(Component::W));
 }

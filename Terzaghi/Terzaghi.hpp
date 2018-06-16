@@ -103,6 +103,9 @@ class Terzaghi
 		void assemblyLinearSystemIndependent(void);
 		void solve(void);
 
+		// Output
+		std::vector<double> getComponentFromOldSolution(const Component component);
+
 	private:
 		// Pressure
 		void initializeScalarStencilOnVertices(void);
