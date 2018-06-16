@@ -258,7 +258,7 @@ TestCase("Terzaghi phisical properties matrix", "[Terzaghi]")
 	auto matrix = terzaghi.getPhysicalPropertiesMatrix();
 	check(matrix(0,0)==(2*G+lambda));
 	check(matrix(1,1)==(2*G+lambda));
-	check(matrix(2,2)==(2*G+lambda));
+	check(matrix(2,2)==0.0);
 	check(matrix(0,1)==lambda);
 	check(matrix(1,0)==lambda);
 	check(matrix(0,2)==0.0);
