@@ -50,7 +50,6 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	cgnsWriter.writePermanentSolution("steadySolution");
 	cgnsWriter.writePermanentField("u_displacement", terzaghi.getComponentFromOldSolution(Component::U));
 	cgnsWriter.writePermanentField("v_displacement", terzaghi.getComponentFromOldSolution(Component::V));
-	cgnsWriter.writePermanentField("w_displacement", terzaghi.getComponentFromOldSolution(Component::W));
 
 	// Element center export
 	std::string elementCenterResult = outputDirectory + "terzaghi_element_center.cgns";

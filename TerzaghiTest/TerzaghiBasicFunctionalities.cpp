@@ -13,7 +13,6 @@ TestCase("Terzaghi indices transformation", "[Terzaghi]")
 		check(terzaghi.transformIndex(Component::P, 5)==5);
 		check(terzaghi.transformIndex(Component::U, 2)==4);
 		check(terzaghi.transformIndex(Component::V, 3)==10);
-		check(terzaghi.transformIndex(Component::W, 1)==13);
 	}
 	section("for loop")
 	{
@@ -261,12 +260,12 @@ TestCase("Terzaghi phisical properties matrix", "[Terzaghi]")
 	check(matrix(1,1)==(2*G+lambda));
 	check(matrix(2,2)==(2*G+lambda));
 	check(matrix(0,1)==lambda);
-	check(matrix(0,2)==lambda);
 	check(matrix(1,0)==lambda);
-	check(matrix(1,2)==lambda);
-	check(matrix(2,0)==lambda);
-	check(matrix(2,1)==lambda);
+	check(matrix(0,2)==0.0);
+	check(matrix(1,2)==0.0);
+	check(matrix(2,0)==0.0);
+	check(matrix(2,1)==0.0);
 	check(matrix(3,3)==G);
-	check(matrix(4,4)==G);
-	check(matrix(5,5)==G);
+	check(matrix(4,4)==0.0);
+	check(matrix(5,5)==0.0);
 }

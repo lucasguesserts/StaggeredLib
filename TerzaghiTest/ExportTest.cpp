@@ -33,7 +33,6 @@ TestCase("Terzaghi solution export test", "[Terzaghi]")
 	cgnsFacetCenterWriter.writePermanentSolution("steadySolution");
 	cgnsFacetCenterWriter.writePermanentField("u_displacement", terzaghi.getComponentFromOldSolution(Component::U));
 	cgnsFacetCenterWriter.writePermanentField("v_displacement", terzaghi.getComponentFromOldSolution(Component::V));
-	cgnsFacetCenterWriter.writePermanentField("w_displacement", terzaghi.getComponentFromOldSolution(Component::W));
 
 	// Element center export
 	count = 0.0;

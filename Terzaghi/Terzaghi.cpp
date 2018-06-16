@@ -442,10 +442,8 @@ void Terzaghi::setOldDisplacement(const std::vector<Eigen::Vector3d>& displaceme
 		StaggeredElement2D* staggeredElement = &(this->grid.staggeredElements[count]);
 		const unsigned uIndex = this->transformIndex(Component::U, staggeredElement );
 		const unsigned vIndex = this->transformIndex(Component::V, staggeredElement );
-		const unsigned wIndex = this->transformIndex(Component::W, staggeredElement );
 		this->oldSolution[uIndex] = displacements[count].x();
 		this->oldSolution[vIndex] = displacements[count].y();
-		this->oldSolution[wIndex] = displacements[count].z();
 	}
 	return;
 }
