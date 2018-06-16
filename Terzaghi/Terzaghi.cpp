@@ -257,12 +257,12 @@ Eigen::MatrixXd Terzaghi::getPhysicalPropertiesMatrix(void)
 	double lambda = 2 * G * ni / (1 - 2*ni);
 	double diag = 2*G + lambda;
 	return (Eigen::MatrixXd(6,6) <<
-		diag  , lambda, lambda, 0, 0, 0,
-		lambda, diag  , lambda, 0, 0, 0,
-		lambda, lambda, diag  , 0, 0, 0,
-		0     , 0     , 0     , G, 0, 0,
-		0     , 0     , 0     , 0, G, 0,
-		0     , 0     , 0     , 0, 0, G
+		diag  , lambda, 0, 0, 0, 0,
+		lambda, diag  , 0, 0, 0, 0,
+		0     , 0     , 0, 0, 0, 0,
+		0     , 0     , 0, G, 0, 0,
+		0     , 0     , 0, 0, 0, 0,
+		0     , 0     , 0, 0, 0, 0
 		).finished();
 }
 
