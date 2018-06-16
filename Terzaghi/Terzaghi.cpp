@@ -463,7 +463,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 	boundary.stress << 0.0, -1E+6, 0.0, +0.0, 0.0, 0.0;
 	boundary.isStressPrescribed = {false, true, false, true, false, false};
 	boundary.prescribedDisplacement = {{ {false, 0.0}, {false, 0.0}, {false, 0.0} }};
-	boundary.isDirichlet = true;
+	boundary.isPressureDirichlet = true;
 	boundary.pressureGradient << 0.0, 0.0, 0.0;
 	boundary.pressurePrescribedValue = 0.0;
 
@@ -473,7 +473,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 	boundary.isStressPrescribed = {false, false, false, true, false, false};
 	boundary.prescribedDisplacement = {{ {false, 0.0}, {true, 0.0}, {false, 0.0} }};
-	boundary.isDirichlet = false;
+	boundary.isPressureDirichlet = false;
 	boundary.pressureGradient << 0.0, 0.0, 0.0;
 	boundary.pressurePrescribedValue = 0.0;
 
@@ -483,7 +483,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 	boundary.isStressPrescribed = {false, false, false, true, false, false};
 	boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
-	boundary.isDirichlet = false;
+	boundary.isPressureDirichlet = false;
 	boundary.pressureGradient << 0.0, 0.0, 0.0;
 	boundary.pressurePrescribedValue = 0.0;
 
@@ -493,7 +493,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 	boundary.isStressPrescribed = {false, false, false, true, false, false};
 	boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
-	boundary.isDirichlet = false;
+	boundary.isPressureDirichlet = false;
 	boundary.pressureGradient << 0.0, 0.0, 0.0;
 	boundary.pressurePrescribedValue = 0.0;
 
@@ -595,7 +595,7 @@ void Terzaghi::applyDisplacementDirichletBoundaryCondition(const Component compo
 void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToMatrix(void)
 {
 	for(auto& boundary: this->boundaries)
-		if(boundary.isDirichlet)
+		if(boundary.isPressureDirichlet)
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 				for(auto forceComponent : this->displacementComponents)
 					this->insertPressureGradientInMatrix(forceComponent, staggeredTriangle);
@@ -604,7 +604,7 @@ void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToMatrix(void
 void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToIndependent(void)
 {
 	for(auto& boundary: this->boundaries)
-		if(boundary.isDirichlet)
+		if(boundary.isPressureDirichlet)
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 				for(auto forceComponent : this->displacementComponents)
 					this->insertPressureGradientInIndependent(forceComponent, staggeredTriangle, boundary.pressurePrescribedValue);
@@ -624,7 +624,7 @@ void Terzaghi::insertPressureGradientInIndependent(const Component forceComponen
 void Terzaghi::insertDisplacementPressureNeumannBoundaryConditionToIndependent(void)
 {
 	for(auto& boundary: this->boundaries)
-		if( ! boundary.isDirichlet )
+		if( ! boundary.isPressureDirichlet )
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 				for(auto forceComponent : this->displacementComponents)
 					this->insertPressureGradientNeumannInIndependent(forceComponent, staggeredTriangle, boundary.pressureGradient);
@@ -642,7 +642,7 @@ void Terzaghi::insertPressureGradientNeumannInIndependent(const Component forceC
 void Terzaghi::insertPressureDirichletBoundaryConditionToMatrix(void)
 {
 	for(auto& boundary: this->boundaries)
-		if(boundary.isDirichlet)
+		if(boundary.isPressureDirichlet)
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 			{
 				const Eigen::Vector3d aux = (this->timeInterval * this->permeability / this->fluidViscosity *
@@ -656,7 +656,7 @@ void Terzaghi::insertPressureDirichletBoundaryConditionToMatrix(void)
 void Terzaghi::insertPressureDirichletBoundaryConditionToIndependent(void)
 {
 	for(auto& boundary: this->boundaries)
-		if(boundary.isDirichlet)
+		if(boundary.isPressureDirichlet)
 		{
 			// Old diffusion
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
@@ -684,7 +684,7 @@ void Terzaghi::insertPressureDirichletBoundaryConditionToIndependent(void)
 void Terzaghi::insertPressureNeumannBoundaryConditionToIndependent(void)
 {
 	for(auto& boundary: this->boundaries)
-		if( ! boundary.isDirichlet )
+		if( ! boundary.isPressureDirichlet )
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 			{
 				const double independentValue = (this->timeInterval * this->permeability / this->fluidViscosity) *

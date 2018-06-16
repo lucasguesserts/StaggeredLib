@@ -18,7 +18,7 @@ struct TerzaghiBoundary
 	std::array<std::pair<bool, double>,3> prescribedDisplacement;
 
 	// Mass conservation
-	bool isDirichlet;
+	bool isPressureDirichlet;
 	Eigen::Vector3d pressureGradient;
 	double pressurePrescribedValue;
 };
