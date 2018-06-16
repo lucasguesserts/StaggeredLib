@@ -4,6 +4,7 @@
 
 #include <Terzaghi/Terzaghi.hpp>
 
+#include <Grid/Grid2DExport.hpp>
 #include <Grid/Grid2DWithStaggeredElementsExport.hpp>
 #include <CgnsInterface/CgnsWriter.hpp>
 #include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
@@ -43,10 +44,8 @@ TestCase("Terzaghi solution export test", "[Terzaghi]")
 		++count;
 	}
 	std::string elementCenterResult = outputDirectory + "terzaghi_export_test_element_center.cgns";
-	boost::filesystem::copy_file(gridFile, elementCenterResult, boost::filesystem::copy_option::overwrite_if_exists);
+	Grid2DExport::cgns(elementCenterResult, terzaghi.grid);
 	CgnsWriter cgnsElementCenterWriter(elementCenterResult, "CellCenter");
 	cgnsElementCenterWriter.writePermanentSolution("steadySolution");
-	std::cout << "number of pressures: " << terzaghi.getComponentFromOldSolution(Component::P).size() << std::endl;
-	std::cout << "number of elements : " << terzaghi.grid.elements.size() << std::endl;
 	cgnsElementCenterWriter.writePermanentField("pressure", terzaghi.getComponentFromOldSolution(Component::P));
 }

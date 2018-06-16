@@ -4,6 +4,7 @@
 
 #include <Terzaghi/Terzaghi.hpp>
 
+#include <Grid/Grid2DExport.hpp>
 #include <Grid/Grid2DWithStaggeredElementsExport.hpp>
 #include <CgnsInterface/CgnsWriter.hpp>
 #include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
@@ -29,17 +30,17 @@ TestCase("Assembly linear system", "[Terzaghi]")
 
 	terzaghi.assemblyLinearSystemMatrix();
 	terzaghi.assemblyLinearSystemIndependent();
-	// Eigen::MatrixXd dense(terzaghi.linearSystem.matrix);
-	// std::cout << "Matrix:" << std::endl << dense << std::endl << std::endl;
-	// std::cout << "Independent:" << std::endl << eigenVectorToString(terzaghi.linearSystem.independent) << std::endl << std::endl;
+	// // Eigen::MatrixXd dense(terzaghi.linearSystem.matrix);
+	// // std::cout << "Matrix:" << std::endl << dense << std::endl << std::endl;
+	// // std::cout << "Independent:" << std::endl << eigenVectorToString(terzaghi.linearSystem.independent) << std::endl << std::endl;
 
 	constexpr unsigned numberOfTimeSteps = 10;
 	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
 	{
 		terzaghi.solve();
-		std::cout << timeStep << std::endl;
+		// // std::cout << timeStep << std::endl;
 	}
-	// std::cout << "final solution:" << std::endl << eigenVectorToString(terzaghi.oldSolution) << std::endl << std::endl;
+	// // std::cout << "final solution:" << std::endl << eigenVectorToString(terzaghi.oldSolution) << std::endl << std::endl;
 
 	// Facet center export
 	const std::string outputDirectory = gridDirectory + std::string("output/");
@@ -50,4 +51,11 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	cgnsWriter.writePermanentField("u_displacement", terzaghi.getComponentFromOldSolution(Component::U));
 	cgnsWriter.writePermanentField("v_displacement", terzaghi.getComponentFromOldSolution(Component::V));
 	cgnsWriter.writePermanentField("w_displacement", terzaghi.getComponentFromOldSolution(Component::W));
+
+	// Element center export
+	std::string elementCenterResult = outputDirectory + "terzaghi_element_center.cgns";
+	Grid2DExport::cgns(elementCenterResult, terzaghi.grid);
+	CgnsWriter cgnsElementCenterWriter(elementCenterResult, "CellCenter");
+	cgnsElementCenterWriter.writePermanentSolution("steadySolution");
+	cgnsElementCenterWriter.writePermanentField("pressure", terzaghi.getComponentFromOldSolution(Component::P));
 }
