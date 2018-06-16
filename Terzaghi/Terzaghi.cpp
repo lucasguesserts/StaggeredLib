@@ -1,7 +1,7 @@
 #include <Terzaghi/Terzaghi.hpp>
 #include <stdexcept>
 
-const std::vector<Component> Terzaghi::displacementComponents = {Component::U, Component::V, Component::W};
+const std::vector<Component> Terzaghi::displacementComponents = {Component::U, Component::V};
 
 const std::vector<Eigen::Matrix<double,1,3>> Terzaghi::leftDisplacementMatrix = {
 	{1, 0, 0},
@@ -54,11 +54,9 @@ Terzaghi::Terzaghi(const std::string& gridFile)
 		{ return this->numberOfElements + index; };
 	this->transformToV = [&](const unsigned index) -> unsigned
 		{ return this->numberOfElements + this->numberOfStaggeredElements + index; };
-	this->transformToW = [&](const unsigned index) -> unsigned
-		{ return this->numberOfElements + 2*(this->numberOfStaggeredElements) + index; };
-	this->transform = { this->transformToP, this->transformToU, this->transformToV, this->transformToW };
+	this->transform = { this->transformToP, this->transformToU, this->transformToV };
 	// Linear system
-	this->linearSystemSize = this->numberOfElements + 3 * this->numberOfStaggeredElements;
+	this->linearSystemSize = this->numberOfElements + 2 * this->numberOfStaggeredElements;
 	this->linearSystem.setSize(this->linearSystemSize);
 	this->oldSolution.resize(this->linearSystemSize);
 	// Pressure
@@ -156,7 +154,7 @@ Eigen::Vector3d Terzaghi::getDisplacementVector(StaggeredElement2D* staggeredEle
 	return Eigen::Vector3d(
 		this->oldSolution[this->transformIndex(Component::U,staggeredElement)],
 		this->oldSolution[this->transformIndex(Component::V,staggeredElement)],
-		this->oldSolution[this->transformIndex(Component::W,staggeredElement)]
+		0.0
 	);
 }
 
@@ -194,11 +192,9 @@ void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
 		const unsigned frontRow = this->transformIndex(Component::P,staggeredQuadrangle->elements[0]);
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, this->transformIndex(Component::U,staggeredQuadrangle), -areaVector.x()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, this->transformIndex(Component::V,staggeredQuadrangle), -areaVector.y()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(frontRow, this->transformIndex(Component::W,staggeredQuadrangle), -areaVector.z()) );
 		const unsigned backRow = this->transformIndex(Component::P,staggeredQuadrangle->elements[1]);
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, this->transformIndex(Component::U,staggeredQuadrangle), areaVector.x()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, this->transformIndex(Component::V,staggeredQuadrangle), areaVector.y()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(backRow, this->transformIndex(Component::W,staggeredQuadrangle), areaVector.z()) );
 	}
 	for(auto staggeredTriangle: this->grid.staggeredTriangles)
 	{
@@ -208,7 +204,6 @@ void Terzaghi::insertPressureVolumeDilatationTermInMatrix(void)
 		const unsigned row = this->transformIndex(Component::P,staggeredTriangle->elements[0]);
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::U,staggeredTriangle), areaVector.x()) );
 			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::V,staggeredTriangle), areaVector.y()) );
-			coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::W,staggeredTriangle), areaVector.z()) );
 	}
 	return;
 }
@@ -234,10 +229,10 @@ void Terzaghi::insertDisplacementTensionTermInMatrix(void)
 
 std::vector<std::vector<ScalarStencil>> Terzaghi::computeDisplacementScalarStencilMatrix(Face2D& face)
 {
-	std::vector<std::vector<ScalarStencil>> matrix(3, std::vector<ScalarStencil>(3));
-	for(unsigned force=0 ; force<3 ; ++force)
+	std::vector<std::vector<ScalarStencil>> matrix(2, std::vector<ScalarStencil>(2));
+	for(unsigned force=0 ; force<2 ; ++force)
 	{
-		for(unsigned displacement=0; displacement<3 ; ++displacement)
+		for(unsigned displacement=0; displacement<2 ; ++displacement)
 		{
 			matrix[force][displacement] = ( this->leftDisplacementMatrix[force] *
 			                              this->voigtTransformation(face.getAreaVector()).transpose() *
