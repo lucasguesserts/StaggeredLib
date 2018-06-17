@@ -25,8 +25,10 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	terzaghi.shearModulus = 6.0E+9;
 	terzaghi.poissonCoefficient = 0.2;
 
-	std::vector<double> initialPressureValues(terzaghi.numberOfElements, 435.2E+3);
+	const std::vector<double> initialPressureValues(terzaghi.numberOfElements, 0.0);
 	terzaghi.setOldPressure(initialPressureValues);
+	const std::vector<Eigen::Vector3d> oldDisplacements(terzaghi.numberOfStaggeredElements, Eigen::Vector3d::Zero());
+	terzaghi.setOldDisplacement(oldDisplacements);
 
 	terzaghi.assemblyLinearSystemMatrix();
 	terzaghi.assemblyLinearSystemIndependent();
