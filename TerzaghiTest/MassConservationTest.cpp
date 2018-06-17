@@ -81,22 +81,22 @@ TestCase("Pressure volumetric dilatation term", "[Terzaghi]")
 {
 	const std::string gridFile = gridDirectory + "two_triangles.cgns";
 	Terzaghi terzaghi(gridFile);
-	terzaghi.alpha = 1.0;
+	terzaghi.alpha = 2.0;
 	section("matrix")
 	{
 		std::vector<Eigen::Triplet<double,unsigned>> triplets = {
 			{0,  2,  0.0},
-			{0,  7, -2.0},
-			{0,  3,  2.0},
+			{0,  7, -4.0},
+			{0,  3, +4.0},
 			{0,  8,  0.0},
-			{0,  4, -2.0},
-			{0,  9,  2.0},
-			{1,  4,  2.0},
-			{1,  9, -2.0},
+			{0,  4, -4.0},
+			{0,  9, +4.0},
+			{1,  4, +4.0},
+			{1,  9, -4.0},
 			{1,  5,  0.0},
-			{1, 10,  2.0},
-			{1,  6, -2.0},
-			{1,  1,  0.0}
+			{1, 10, +4.0},
+			{1,  6, -4.0},
+			{1, 11,  0.0}
 		};
 		Eigen::SparseMatrix<double> matrix(terzaghi.linearSystemSize,terzaghi.linearSystemSize);
 		matrix.setFromTriplets(triplets.cbegin(), triplets.cend());
@@ -115,7 +115,7 @@ TestCase("Pressure volumetric dilatation term", "[Terzaghi]")
 		};
 		terzaghi.setOldDisplacement(displacements);
 		terzaghi.insertPressureVolumeDilatationTermInIndependent();
-		std::vector<double> independentValues = {12.0, -24.0};
+		std::vector<double> independentValues = {24.0, -48.0};
 		for(unsigned count=0 ; count<terzaghi.numberOfElements ; ++count)
 		{
 			auto element = terzaghi.grid.elements[count];
