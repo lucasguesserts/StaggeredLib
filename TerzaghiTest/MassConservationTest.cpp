@@ -47,14 +47,15 @@ TestCase("Pressure diffusive term", "[Terzaghi]")
 	terzaghi.fluidViscosity = 4.0;
 	terzaghi.timeImplicitCoefficient = 0.7;
 	terzaghi.timeInterval = 1.1;
+	terzaghi.pressureGradient[2] = { {0.0, {-3.0, 2.0, 0.0}}, {1.0, {4.0, -5.0, 0.0}} };
 	section("matrix")
 	{
 		Eigen::SparseMatrix<double> matrix(linearSystemSize,linearSystemSize);
 		std::vector< Eigen::Triplet<double,unsigned> > triplets = {
-			{ 0, 0,  11.55 },
-			{ 0, 1, -11.55 },
-			{ 1, 0, -11.55 },
-			{ 1, 1,  11.55 }
+			{ 0, 0, -38.5 },
+			{ 0, 1, +69.3 },
+			{ 1, 0, +38.5 },
+			{ 1, 1, -69.3 }
 		};
 		matrix.setFromTriplets(triplets.begin(), triplets.end());
 		terzaghi.insertPressureDiffusiveTermInMatrix();
@@ -63,10 +64,10 @@ TestCase("Pressure diffusive term", "[Terzaghi]")
 	}
 	section("independent")
 	{
-		std::vector<double> oldPressureValues = {13.0, 17.0};
+		std::vector<double> oldPressureValues = {2.0, 3.0};
 		terzaghi.setOldPressure(oldPressureValues);
 		terzaghi.insertPressureDiffusiveTermInIndependent();
-		std::vector<double> independentValues = {19.8, -19.8};
+		std::vector<double> independentValues = {-56.1, +56.1};
 		for(unsigned count=0 ; count<terzaghi.numberOfElements ; ++count)
 		{
 			auto element = terzaghi.grid.elements[count];
