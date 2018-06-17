@@ -26,13 +26,14 @@ TestCase("Pressure accumulation term")
 	}
 	section("independent")
 	{
-		constexpr double oldPressureValue = 2.0;
-		terzaghi.setOldPressure([oldPressureValue](Eigen::Vector3d) -> double {return oldPressureValue;});
+		const std::vector<double> oldPressureValues = {2.0, 3.0};
+		terzaghi.setOldPressure(oldPressureValues);
 		terzaghi.insertPressureAccumulationTermInIndependent();
-		for(auto element: terzaghi.grid.elements)
+		for(unsigned count=0 ; count< terzaghi.grid.elements.size() ; ++count)
 		{
+			auto element = terzaghi.grid.elements[count];
 			const unsigned index = terzaghi.transformIndex(Component::P,element);
-			check(terzaghi.linearSystem.independent[index]==(diagonalValue*oldPressureValue));
+			check(terzaghi.linearSystem.independent[index]==(diagonalValue*oldPressureValues[count]));
 		}
 	}
 }
