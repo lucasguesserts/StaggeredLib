@@ -70,8 +70,7 @@ TestCase("Pressure diffusive term", "[Terzaghi]")
 		{
 			auto element = terzaghi.grid.elements[count];
 			auto independentIndex = terzaghi.transformIndex(Component::P,element);
-			// check(terzaghi.linearSystem.independent[independentIndex]==Approx(independentValues[count]));
-			// TODO: compute the staggered triangle gradients
+			check(terzaghi.linearSystem.independent[independentIndex]==Approx(independentValues[count]));
 		}
 	}
 }
@@ -106,11 +105,11 @@ TestCase("Pressure volumetric dilatation term", "[Terzaghi]")
 	section("independent")
 	{
 		std::vector<Eigen::Vector3d> displacements = {
-			{ 1.0,  3.0,  5.0},
-			{ 7.0, 11.0, 13.0},
-			{17.0, 19.0, 23.0},
-			{29.0, 31.0, 37.0},
-			{41.0, 43.0, 47.0},
+			{ 1.0,  3.0, 0.0},
+			{ 7.0, 11.0, 0.0},
+			{17.0, 19.0, 0.0},
+			{29.0, 31.0, 0.0},
+			{41.0, 43.0, 0.0},
 		};
 		terzaghi.setOldDisplacement(displacements);
 		terzaghi.insertPressureVolumeDilatationTermInIndependent();
