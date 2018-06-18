@@ -121,3 +121,33 @@ TestCase("Displacement - stress prescribed")
 	independent[11] = +137.4;
 	check(terzaghi.linearSystem.independent==independent);
 }
+
+TestCase("Displacement - Neumann pressure boundary condition")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.alpha = 0.32;
+		// top
+		terzaghi.boundaries[0].isPressureDirichlet = false;
+		terzaghi.boundaries[0].pressureGradient << 4.7, 2.4, 0.0;
+		// bottom
+		terzaghi.boundaries[1].isPressureDirichlet = false;
+		terzaghi.boundaries[1].pressureGradient << -6.0, -8.3 , 0.0;
+		// west
+		terzaghi.boundaries[2].isPressureDirichlet = false;
+		terzaghi.boundaries[2].pressureGradient << 7.0, -11.0, 0.0;
+		// east
+		terzaghi.boundaries[3].isPressureDirichlet = false;
+		terzaghi.boundaries[3].pressureGradient << -2.7, 7.1, 0.0;
+	terzaghi.insertDisplacementPressureNeumannBoundaryConditionToIndependent();
+	Eigen::VectorXd independent = Eigen::VectorXd::Zero(terzaghi.linearSystemSize);
+	independent[ 2] = - 1.28;
+	independent[ 7] = - 664.0 / 375.0;
+	independent[ 3] = - 0.576;
+	independent[ 8] = + 568.0 / 375.0;
+	independent[ 5] = + 376.0 / 375.0;
+	independent[10] = + 0.512;
+	independent[ 6] = + 112.0 / 75.0;
+	independent[11] = - 176.0 / 75.0;
+	check(terzaghi.linearSystem.independent==independent);
+}
