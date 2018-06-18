@@ -151,3 +151,34 @@ TestCase("Displacement - Neumann pressure boundary condition")
 	independent[11] = - 176.0 / 75.0;
 	check(terzaghi.linearSystem.independent==independent);
 }
+
+TestCase("Displacement - dirichlet boundary condition")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.fluidViscosity = 0.001;
+	terzaghi.porosity = 0.19;
+	terzaghi.alpha = 0.77777777777777;
+	terzaghi.fluidCompressibility = 3.03030303030E-10;
+	terzaghi.solidCompressibility = 2.77777777777E-11;
+	terzaghi.permeability = 1.9E-15;
+	terzaghi.timeInterval = 100;
+	terzaghi.timeImplicitCoefficient = 1;
+	terzaghi.shearModulus = 6.0E+9;
+	terzaghi.poissonCoefficient = 0.2;
+	terzaghi.insertDisplacementTensionTermInMatrix();
+	terzaghi.insertDisplacementDirichletBoundaryConditionToMatrix();
+	auto checkIfBoundaryConditionWasApplied = [&](Component component, StaggeredElement2D* staggeredElement) -> void
+	{
+		const unsigned row = terzaghi.transformIndex(component, staggeredElement);
+		for(auto& triplet: terzaghi.linearSystem.coefficients)
+			if((triplet.row()==row) && (triplet.col()!=row))
+				check(triplet.value()==0.0);
+		for(auto& triplet: terzaghi.linearSystem.coefficients)
+			if((triplet.row()==row) && (triplet.col()==row))
+				check(triplet.value()==1.0);
+	};
+	checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[1]));
+	checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[4]));
+	checkIfBoundaryConditionWasApplied(Component::V, &(terzaghi.grid.staggeredElements[0]));
+}

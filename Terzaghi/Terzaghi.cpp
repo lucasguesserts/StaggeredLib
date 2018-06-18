@@ -589,9 +589,14 @@ void Terzaghi::applyDisplacementDirichletBoundaryCondition(const Component compo
 	for(auto& triplet: this->linearSystem.coefficients)
 	{
 		if(triplet.row()==row)
-			triplet = Eigen::Triplet<double,unsigned>(triplet.row(), triplet.col(), 0.0);
+		{
+			if(triplet.col()!=row)
+				triplet = Eigen::Triplet<double,unsigned>(row, triplet.col(), 0.0);
+			else
+				triplet = Eigen::Triplet<double,unsigned>(row, row, 1.0);
+		}
 	}
-	this->linearSystem.coefficients.push_back(Eigen::Triplet<double,unsigned>(row, row, 1.0));
+	return;
 }
 
 void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToMatrix(void)
