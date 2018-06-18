@@ -325,7 +325,8 @@ void Terzaghi::insertPressureScalarStencilInLinearSystem(Element* element, const
 	const unsigned row = this->transformIndex(Component::P,element);
 	this->linearSystem.coefficients.reserve(this->linearSystem.coefficients.size() + scalarStencilOnElements.size());
 	for(auto& keyValuePair: scalarStencilOnElements)
-		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second) );
+		if(keyValuePair.second!=0.0)
+			this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, this->transformIndex(Component::P,keyValuePair.first), keyValuePair.second) );
 	return;
 }
 
@@ -336,7 +337,8 @@ void Terzaghi::insertScalarStencilDisplacementComponentInMatrix(const Component 
 	for(auto& keyValuePair: scalarStencilOnStaggeredElements)
 	{
 		const unsigned column = this->transformIndex(displacementComponent, keyValuePair.first);
-		this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, column, keyValuePair.second) );
+		if(keyValuePair.second!=0.0)
+			this->linearSystem.coefficients.emplace_back( Eigen::Triplet<double,unsigned>(row, column, keyValuePair.second) );
 	}
 	return;
 }
