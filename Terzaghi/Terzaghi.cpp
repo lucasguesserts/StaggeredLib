@@ -508,7 +508,7 @@ void Terzaghi::insertPrescribedStressInIndependent(void)
 	{
 		for(auto staggeredTriangle: boundary.staggeredTriangles)
 		{
-			auto transformedAreaVector = this->voigtTransformation(- staggeredTriangle->getAreaVector()).transpose();
+			Eigen::MatrixXd transformedAreaVector = this->voigtTransformation(- staggeredTriangle->getAreaVector()).transpose();
 			Eigen::Vector3d force = transformedAreaVector * boundary.stress;
 			for(auto forceComponent : this->displacementComponents)
 			{

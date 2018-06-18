@@ -104,3 +104,20 @@ TestCase("Displacement pressure term")
 		terzaghi.linearSystem.assemblyMatrix();
 		check(terzaghi.linearSystem.matrix==matrix);
 }
+
+TestCase("Displacement - stress prescribed")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.boundaries[0].stress << 0.0, +29.8, 0.0, 0.0, 0.0, 0.0;
+	terzaghi.boundaries[1].stress << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+	terzaghi.boundaries[2].stress << 0.0, 0.0, 0.0, +68.7, 0.0, 0.0;
+	terzaghi.boundaries[3].stress << -35.7, 15.2, 0.0, 7.1, 0.0, 0.0;
+	terzaghi.insertPrescribedStressInIndependent();
+	Eigen::VectorXd independent = Eigen::VectorXd::Zero(terzaghi.linearSystemSize);
+	independent[ 3] = +71.4;
+	independent[ 8] = -14.2;
+	independent[10] = -59.6;
+	independent[11] = +137.4;
+	check(terzaghi.linearSystem.independent==independent);
+}

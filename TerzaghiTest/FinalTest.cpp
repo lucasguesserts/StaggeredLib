@@ -20,7 +20,7 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	terzaghi.fluidCompressibility = 3.03030303030E-10;
 	terzaghi.solidCompressibility = 2.77777777777E-11;
 	terzaghi.permeability = 1.9E-15;
-	terzaghi.timeInterval = 0.1;
+	terzaghi.timeInterval = 100;
 	terzaghi.timeImplicitCoefficient = 1;
 	terzaghi.shearModulus = 6.0E+9;
 	terzaghi.poissonCoefficient = 0.2;
@@ -36,7 +36,7 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	// // std::cout << "Matrix:" << std::endl << dense << std::endl << std::endl;
 	// // std::cout << "Independent:" << std::endl << eigenVectorToString(terzaghi.linearSystem.independent) << std::endl << std::endl;
 
-	constexpr unsigned numberOfTimeSteps = 10;
+	constexpr unsigned numberOfTimeSteps = 100;
 	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
 	{
 		terzaghi.solve();
