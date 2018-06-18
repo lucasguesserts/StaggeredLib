@@ -79,3 +79,28 @@ TestCase("Displacement stress term")
 		check(terzaghi.linearSystem.matrix==matrix);
 	}
 }
+
+TestCase("Displacement pressure term")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.alpha = 0.8;
+	terzaghi.pressureGradient = {
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, {3.1, 6.7, 0.0}}, {1, {-1.2, 6.1, 0.0}} },
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, Eigen::Vector3d::Zero()} },
+	};
+		std::vector<Eigen::Triplet<double,unsigned>> triplets = {
+			{4, 0, -248.0/75.0},
+			{4, 1, +1.28},
+			{9, 0, -536.0/75.0},
+			{9, 1, -488.0/75.0}
+		};
+		Eigen::SparseMatrix<double> matrix(terzaghi.linearSystemSize,terzaghi.linearSystemSize);
+		matrix.setFromTriplets(triplets.cbegin(), triplets.cend());
+		terzaghi.insertDisplacementPressureTermInMatrix();
+		terzaghi.linearSystem.assemblyMatrix();
+		check(terzaghi.linearSystem.matrix==matrix);
+}
