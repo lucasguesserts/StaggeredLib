@@ -360,7 +360,7 @@ void Terzaghi::insertPressureAccumulationTermInIndependent(void)
 	for(auto& element: this->grid.elements)
 	{
 		const unsigned index = this->transformIndex(Component::P,element);
-		this->linearSystem.independent(index) = compressibility * element->getVolume() * this->oldSolution[index];
+		this->linearSystem.independent(index) += compressibility * element->getVolume() * this->oldSolution[index];
 	}
 	return;
 }
