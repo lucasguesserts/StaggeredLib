@@ -124,3 +124,42 @@ TestCase("Pressure volumetric dilatation term", "[Terzaghi]")
 		}
 	}
 }
+
+TestCase("Mass conservation - pressure dirichlet boundary condition", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.permeability = 20.0;
+	terzaghi.fluidViscosity = 4.0;
+	terzaghi.timeImplicitCoefficient = 0.7;
+	terzaghi.timeInterval = 1.1;
+	terzaghi.pressureGradient = {
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, {-4.0, 3.0, 0.0}}, {1, {5.0, -2.0, 0.0}} },
+		{ {0, Eigen::Vector3d::Zero()} }
+	};
+	terzaghi.pressureGradientIndependent = {
+		Eigen::Vector3d::Zero(),
+		Eigen::Vector3d::Zero(),
+		Eigen::Vector3d::Zero(),
+		{-5.0, 7.0, 0.0},
+		Eigen::Vector3d::Zero()
+	};
+	TerzaghiBoundary& boundary = terzaghi.boundaries[0]; // top boundary
+	boundary.isPressureDirichlet = true;
+	boundary.pressurePrescribedValue = 5.0;
+	section("matrix")
+	{
+		std::vector<Eigen::Triplet<double,unsigned>> triplets = {
+			{1, 0, -23.1},
+			{1, 1, +15.4}
+		};
+		Eigen::SparseMatrix<double> matrix(terzaghi.linearSystemSize,terzaghi.linearSystemSize);
+		matrix.setFromTriplets(triplets.cbegin(), triplets.cend());
+		terzaghi.insertPressureDirichletBoundaryConditionToMatrix();
+		terzaghi.linearSystem.assemblyMatrix();
+		check(terzaghi.linearSystem.matrix==matrix);
+	}
+}
