@@ -269,3 +269,20 @@ TestCase("Terzaghi phisical properties matrix", "[Terzaghi]")
 	check(matrix(4,4)==0.0);
 	check(matrix(5,5)==0.0);
 }
+
+TestCase("Terzaghi boundary construction", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	section("number of boundaries")
+	{
+		constexpr unsigned numberOfBoundaries = 4;
+		check(terzaghi.boundaries.size()==numberOfBoundaries);
+	}
+	section("top boundary")
+	{
+		std::vector<StaggeredElement2D*> staggeredTrianglesInBoundary = { &terzaghi.grid.staggeredElements[3] };
+		TerzaghiBoundary& boundary = terzaghi.boundaries[0];
+		check(boundary.staggeredTriangles==staggeredTrianglesInBoundary);
+	}
+}

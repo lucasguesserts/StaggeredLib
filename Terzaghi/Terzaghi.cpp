@@ -451,50 +451,52 @@ void Terzaghi::setOldDisplacement(const std::vector<Eigen::Vector3d>& displaceme
 void Terzaghi::initializeBoundaryConditions(void)
 {
 	this->boundaries.resize(4);
-
 	std::string boundaryName;
-	TerzaghiBoundary& boundary = this->boundaries[0];
-
-	boundaryName = "top boundary";
-	boundary = this->boundaries[0];
-	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
-	boundary.stress << 0.0, -1E+6, 0.0, +0.0, 0.0, 0.0;
-	boundary.isStressPrescribed = {false, true, false, true, false, false};
-	boundary.prescribedDisplacement = {{ {false, 0.0}, {false, 0.0}, {false, 0.0} }};
-	boundary.isPressureDirichlet = true;
-	boundary.pressureGradient << 0.0, 0.0, 0.0;
-	boundary.pressurePrescribedValue = 0.0;
-
-	boundaryName = "bottom boundary";
-	boundary = this->boundaries[1];
-	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
-	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
-	boundary.isStressPrescribed = {false, false, false, true, false, false};
-	boundary.prescribedDisplacement = {{ {false, 0.0}, {true, 0.0}, {false, 0.0} }};
-	boundary.isPressureDirichlet = false;
-	boundary.pressureGradient << 0.0, 0.0, 0.0;
-	boundary.pressurePrescribedValue = 0.0;
-
-	boundaryName = "west boundary";
-	boundary = this->boundaries[2];
-	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
-	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
-	boundary.isStressPrescribed = {false, false, false, true, false, false};
-	boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
-	boundary.isPressureDirichlet = false;
-	boundary.pressureGradient << 0.0, 0.0, 0.0;
-	boundary.pressurePrescribedValue = 0.0;
-
-	boundaryName = "east boundary";
-	boundary = this->boundaries[3];
-	boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
-	boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
-	boundary.isStressPrescribed = {false, false, false, true, false, false};
-	boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
-	boundary.isPressureDirichlet = false;
-	boundary.pressureGradient << 0.0, 0.0, 0.0;
-	boundary.pressurePrescribedValue = 0.0;
-
+	{
+		boundaryName = "top boundary";
+		TerzaghiBoundary& boundary = this->boundaries[0];
+		boundary = this->boundaries[0];
+		boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
+		boundary.stress << 0.0, -1E+6, 0.0, +0.0, 0.0, 0.0;
+		boundary.isStressPrescribed = {false, true, false, true, false, false};
+		boundary.prescribedDisplacement = {{ {false, 0.0}, {false, 0.0}, {false, 0.0} }};
+		boundary.isPressureDirichlet = true;
+		boundary.pressureGradient << 0.0, 0.0, 0.0;
+		boundary.pressurePrescribedValue = 0.0;
+	}
+	{
+		boundaryName = "bottom boundary";
+		TerzaghiBoundary& boundary = this->boundaries[1];
+		boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
+		boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
+		boundary.isStressPrescribed = {false, false, false, true, false, false};
+		boundary.prescribedDisplacement = {{ {false, 0.0}, {true, 0.0}, {false, 0.0} }};
+		boundary.isPressureDirichlet = false;
+		boundary.pressureGradient << 0.0, 0.0, 0.0;
+		boundary.pressurePrescribedValue = 0.0;
+	}
+	{
+		boundaryName = "west boundary";
+		TerzaghiBoundary& boundary = this->boundaries[2];
+		boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
+		boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
+		boundary.isStressPrescribed = {false, false, false, true, false, false};
+		boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
+		boundary.isPressureDirichlet = false;
+		boundary.pressureGradient << 0.0, 0.0, 0.0;
+		boundary.pressurePrescribedValue = 0.0;
+	}
+	{
+		boundaryName = "east boundary";
+		TerzaghiBoundary& boundary = this->boundaries[3];
+		boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
+		boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
+		boundary.isStressPrescribed = {false, false, false, true, false, false};
+		boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
+		boundary.isPressureDirichlet = false;
+		boundary.pressureGradient << 0.0, 0.0, 0.0;
+		boundary.pressurePrescribedValue = 0.0;
+	}
 	return;
 }
 
