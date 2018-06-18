@@ -135,24 +135,28 @@ TestCase("Mass conservation - pressure dirichlet boundary condition", "[Terzaghi
 	terzaghi.timeInterval = 1.1;
 	terzaghi.pressureGradient = {
 		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, {-3.0, +5.0, 0.0}}, {1, {7.0, +11.0, 0.0}} },
 		{ {0, Eigen::Vector3d::Zero()} },
-		{ {0, Eigen::Vector3d::Zero()} },
-		{ {0, {-4.0, 3.0, 0.0}}, {1, {5.0, -2.0, 0.0}} },
+		{ {0, {-4.0, +3.0, 0.0}}, {1, {5.0,  -2.0, 0.0}} },
 		{ {0, Eigen::Vector3d::Zero()} }
 	};
 	terzaghi.pressureGradientIndependent = {
 		Eigen::Vector3d::Zero(),
-		Eigen::Vector3d::Zero(),
+		{-13.0, -17.0, 0.0},
 		Eigen::Vector3d::Zero(),
 		{-5.0, 7.0, 0.0},
 		Eigen::Vector3d::Zero()
 	};
-	TerzaghiBoundary& boundary = terzaghi.boundaries[0]; // top boundary
-	boundary.isPressureDirichlet = true;
-	boundary.pressurePrescribedValue = 5.0;
+	terzaghi.setOldPressure(std::vector<double>{11.0, 17.0});
+	terzaghi.boundaries[3].isPressureDirichlet = true;
+	terzaghi.boundaries[3].pressurePrescribedValue = 7.0;
+	terzaghi.boundaries[0].isPressureDirichlet = true;
+	terzaghi.boundaries[0].pressurePrescribedValue = 5.0;
 	section("matrix")
 	{
 		std::vector<Eigen::Triplet<double,unsigned>> triplets = {
+			{0, 0, +23.1},
+			{0, 1, -53.9},
 			{1, 0, -23.1},
 			{1, 1, +15.4}
 		};
@@ -161,5 +165,26 @@ TestCase("Mass conservation - pressure dirichlet boundary condition", "[Terzaghi
 		terzaghi.insertPressureDirichletBoundaryConditionToMatrix();
 		terzaghi.linearSystem.assemblyMatrix();
 		check(terzaghi.linearSystem.matrix==matrix);
+	}
+	section("prescribed value in independent")
+	{
+		terzaghi.setOldPressure([](Eigen::Vector3d) -> double { return 0.0;});
+		terzaghi.insertPressureDirichletBoundaryConditionToIndependent();
+		check(terzaghi.linearSystem.independent[0]==Approx(-1001.0));
+		check(terzaghi.linearSystem.independent[1]==Approx(+385.0));
+	}
+	section("old value in independent")
+	{
+		terzaghi.boundaries[0].pressurePrescribedValue = 0.0;
+		terzaghi.boundaries[3].pressurePrescribedValue = 0.0;
+		terzaghi.insertPressureDirichletBoundaryConditionToIndependent();
+		check(terzaghi.linearSystem.independent[0]==Approx(+283.8));
+		check(terzaghi.linearSystem.independent[1]==Approx(-3.3));
+	}
+	section("prescribed and old pressure values in independent")
+	{
+		terzaghi.insertPressureDirichletBoundaryConditionToIndependent();
+		check(terzaghi.linearSystem.independent[0]==Approx(-717.2));
+		check(terzaghi.linearSystem.independent[1]==Approx(+381.7));
 	}
 }
