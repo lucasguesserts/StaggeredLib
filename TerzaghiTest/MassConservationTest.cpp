@@ -188,3 +188,26 @@ TestCase("Mass conservation - pressure dirichlet boundary condition", "[Terzaghi
 		check(terzaghi.linearSystem.independent[1]==Approx(+381.7));
 	}
 }
+
+TestCase("Mass conservation - pressure Neumann boundary condition", "[Terzaghi]")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.permeability = 3.0;
+	terzaghi.fluidViscosity = 5.0;
+	terzaghi.timeInterval = 1.1;
+
+	terzaghi.boundaries[0].isPressureDirichlet = false;
+	terzaghi.boundaries[0].pressureGradient << +4.7, -2.4, 0.0;
+	terzaghi.boundaries[1].isPressureDirichlet = false;
+	terzaghi.boundaries[1].pressureGradient << -6.0, -8.3, 0.0;
+	terzaghi.boundaries[2].isPressureDirichlet = false;
+	terzaghi.boundaries[2].pressureGradient << +7.0, -11.0, 0.0;
+	terzaghi.boundaries[3].isPressureDirichlet = false;
+	terzaghi.boundaries[3].pressureGradient << -2.7, +7.1, 0.0;
+
+	terzaghi.insertPressureNeumannBoundaryConditionToIndependent();
+
+	check(terzaghi.linearSystem.independent[0]==Approx(+7.392));
+	check(terzaghi.linearSystem.independent[1]==Approx(-12.408));
+}

@@ -688,7 +688,7 @@ void Terzaghi::insertPressureNeumannBoundaryConditionToIndependent(void)
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 			{
 				const double independentValue = (this->timeInterval * this->permeability / this->fluidViscosity) *
-				                                staggeredTriangle->getAreaVector().dot( boundary.pressureGradient );
+				                                ( - staggeredTriangle->getAreaVector()).dot( boundary.pressureGradient );
 				const unsigned row = this->transformIndex(Component::P,staggeredTriangle->elements[0]);
 				this->linearSystem.independent[row] += independentValue;
 			}
