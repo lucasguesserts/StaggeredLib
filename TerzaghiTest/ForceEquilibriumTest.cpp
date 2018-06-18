@@ -197,3 +197,46 @@ TestCase("Displacement - dirichlet boundary condition")
 		checkIfIndependentIsNull(Component::V, &(terzaghi.grid.staggeredElements[0]));
 	}
 }
+
+TestCase("Displacement - pressure dirichlet boundary condition")
+{
+	const std::string gridFile = gridDirectory + "two_triangles.cgns";
+	Terzaghi terzaghi(gridFile);
+	terzaghi.alpha = 0.34;
+	terzaghi.pressureGradient = {
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, Eigen::Vector3d::Zero()} },
+		{ {0, {-4.8, 8.2, 0.0}}, {1, {1.8, -7.5, 0.0}} },
+		{ {0, Eigen::Vector3d::Zero()} }
+	};
+	terzaghi.pressureGradientIndependent = {
+		Eigen::Vector3d::Zero(),
+		Eigen::Vector3d::Zero(),
+		Eigen::Vector3d::Zero(),
+		{-1.7, 5.5, 0.0},
+		Eigen::Vector3d::Zero(),
+	};
+	terzaghi.boundaries[0].pressurePrescribedValue = 3.1;
+	section("matrix")
+	{
+		std::vector<Eigen::Triplet<double,unsigned>> triplets = {
+			// staggered element 3
+			{ 5, 0, 1.088},
+			{10, 0, -697.0/375.0},
+			{ 5, 1, -0.408},
+			{10, 1, 1.7}
+		};
+		Eigen::SparseMatrix<double> matrix(terzaghi.linearSystemSize,terzaghi.linearSystemSize);
+		matrix.setFromTriplets(triplets.cbegin(), triplets.cend());
+		terzaghi.insertDisplacementPressureDirichletBoundaryConditionToMatrix();
+		terzaghi.linearSystem.assemblyMatrix();
+		check(terzaghi.linearSystem.matrix==matrix);
+	}
+	section("independent")
+	{
+		terzaghi.insertDisplacementPressureDirichletBoundaryConditionToIndependent();
+		check(terzaghi.linearSystem.independent[ 5]==Approx(-1.194533333333));
+		check(terzaghi.linearSystem.independent[10]==Approx(+3.864666666666));
+	}
+}

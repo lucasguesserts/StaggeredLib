@@ -626,6 +626,7 @@ void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToMatrix(void
 			for(auto staggeredTriangle: boundary.staggeredTriangles)
 				for(auto forceComponent : this->displacementComponents)
 					this->insertPressureGradientInMatrix(forceComponent, staggeredTriangle);
+	return;
 }
 
 void Terzaghi::insertDisplacementPressureDirichletBoundaryConditionToIndependent(void)
