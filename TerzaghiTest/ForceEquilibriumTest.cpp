@@ -166,19 +166,34 @@ TestCase("Displacement - dirichlet boundary condition")
 	terzaghi.timeImplicitCoefficient = 1;
 	terzaghi.shearModulus = 6.0E+9;
 	terzaghi.poissonCoefficient = 0.2;
-	terzaghi.insertDisplacementTensionTermInMatrix();
-	terzaghi.insertDisplacementDirichletBoundaryConditionToMatrix();
-	auto checkIfBoundaryConditionWasApplied = [&](Component component, StaggeredElement2D* staggeredElement) -> void
+	section("matrix")
 	{
-		const unsigned row = terzaghi.transformIndex(component, staggeredElement);
-		for(auto& triplet: terzaghi.linearSystem.coefficients)
-			if((triplet.row()==row) && (triplet.col()!=row))
-				check(triplet.value()==0.0);
-		for(auto& triplet: terzaghi.linearSystem.coefficients)
-			if((triplet.row()==row) && (triplet.col()==row))
-				check(triplet.value()==1.0);
-	};
-	checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[1]));
-	checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[4]));
-	checkIfBoundaryConditionWasApplied(Component::V, &(terzaghi.grid.staggeredElements[0]));
+		terzaghi.insertDisplacementTensionTermInMatrix();
+		terzaghi.insertDisplacementDirichletBoundaryConditionToMatrix();
+		auto checkIfBoundaryConditionWasApplied = [&](Component component, StaggeredElement2D* staggeredElement) -> void
+		{
+			const unsigned row = terzaghi.transformIndex(component, staggeredElement);
+			for(auto& triplet: terzaghi.linearSystem.coefficients)
+				if((triplet.row()==row) && (triplet.col()!=row))
+					check(triplet.value()==0.0);
+			for(auto& triplet: terzaghi.linearSystem.coefficients)
+				if((triplet.row()==row) && (triplet.col()==row))
+					check(triplet.value()==1.0);
+		};
+		checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[1]));
+		checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[4]));
+		checkIfBoundaryConditionWasApplied(Component::V, &(terzaghi.grid.staggeredElements[0]));
+	}
+	section("independent")
+	{
+		terzaghi.assemblyLinearSystemIndependent();
+		auto checkIfIndependentIsNull = [&terzaghi](Component component, StaggeredElement2D* staggeredElement) -> void
+		{
+			const unsigned row = terzaghi.transformIndex(component, staggeredElement);
+			check(terzaghi.linearSystem.independent[row]==0.0);
+		};
+		checkIfIndependentIsNull(Component::U, &(terzaghi.grid.staggeredElements[1]));
+		checkIfIndependentIsNull(Component::U, &(terzaghi.grid.staggeredElements[4]));
+		checkIfIndependentIsNull(Component::V, &(terzaghi.grid.staggeredElements[0]));
+	}
 }

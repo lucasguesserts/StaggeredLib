@@ -84,6 +84,7 @@ class Terzaghi
 		// 	std::vector<std::vector<ScalarStencil>> computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix);
 		void insertDisplacementDirichletBoundaryConditionToMatrix(void);
 			void applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle);
+		void insertDisplacementDirichletBoundaryConditionToIndependent(void);
 		void insertDisplacementPressureDirichletBoundaryConditionToMatrix(void);
 		void insertDisplacementPressureDirichletBoundaryConditionToIndependent(void);
 			void insertPressureGradientInIndependent(const Component forceComponent, StaggeredElement2D* staggeredElement, double prescribedValue);

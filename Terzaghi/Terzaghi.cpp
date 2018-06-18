@@ -570,7 +570,7 @@ void Terzaghi::insertPrescribedStressInIndependent(void)
 
 void Terzaghi::insertDisplacementDirichletBoundaryConditionToMatrix(void)
 {
-	for(auto boundary: this->boundaries)
+	for(auto& boundary: this->boundaries)
 	{
 		for(auto displacementComponent : this->displacementComponents)
 		{
@@ -594,6 +594,26 @@ void Terzaghi::applyDisplacementDirichletBoundaryCondition(const Component compo
 				triplet = Eigen::Triplet<double,unsigned>(row, triplet.col(), 0.0);
 			else
 				triplet = Eigen::Triplet<double,unsigned>(row, row, 1.0);
+		}
+	}
+	return;
+}
+
+void Terzaghi::insertDisplacementDirichletBoundaryConditionToIndependent(void)
+{
+	for(auto& boundary: this->boundaries)
+	{
+		for(auto displacementComponent : this->displacementComponents)
+		{
+			const unsigned i = static_cast<unsigned>(displacementComponent) - 1;
+			if(boundary.prescribedDisplacement[i].first)
+			{
+				for(auto staggeredTriangle: boundary.staggeredTriangles)
+				{
+					const unsigned row = this->transformIndex(displacementComponent, staggeredTriangle);
+					this->linearSystem.independent[row] = 0.0;
+				}
+			}
 		}
 	}
 	return;
@@ -736,6 +756,7 @@ void Terzaghi::assemblyLinearSystemIndependent(void)
 	this->insertPrescribedStressInIndependent();
 	this->insertDisplacementPressureNeumannBoundaryConditionToIndependent();
 	this->insertDisplacementPressureDirichletBoundaryConditionToIndependent();
+	this->insertDisplacementDirichletBoundaryConditionToIndependent();
 
 	return;
 }
