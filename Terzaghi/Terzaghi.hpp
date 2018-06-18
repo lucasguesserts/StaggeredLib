@@ -79,9 +79,9 @@ class Terzaghi
 		std::vector<TerzaghiBoundary> boundaries;
 		void initializeBoundaryConditions(void);
 		void insertPrescribedStressInIndependent(void);
-		void insertDisplacementBoundaryTensionTermInMatrix(void);
-			Eigen::MatrixXd getNeumannAppliedPhysicalPropertiesMatrix(std::array<bool,6>& isStressPrescribed);
-			std::vector<std::vector<ScalarStencil>> computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix);
+		// void insertDisplacementBoundaryTensionTermInMatrix(void);
+		// 	Eigen::MatrixXd getNeumannAppliedPhysicalPropertiesMatrix(std::array<bool,6>& isStressPrescribed);
+		// 	std::vector<std::vector<ScalarStencil>> computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix);
 		void insertDisplacementDirichletBoundaryConditionToMatrix(void);
 			void applyDisplacementDirichletBoundaryCondition(const Component component, StaggeredElement2D* staggeredTriangle);
 		void insertDisplacementPressureDirichletBoundaryConditionToMatrix(void);

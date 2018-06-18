@@ -520,53 +520,53 @@ void Terzaghi::insertPrescribedStressInIndependent(void)
 	}
 }
 
-void Terzaghi::insertDisplacementBoundaryTensionTermInMatrix(void)
-{
-	for(auto& boundary: this->boundaries)
-	{
-		for(auto staggeredTriangle: boundary.staggeredTriangles)
-		{
-			auto physicalPropertiesMatrix = this->getNeumannAppliedPhysicalPropertiesMatrix(boundary.isStressPrescribed);
-			auto scalarStencilMatrix = this->computeDisplacementScalarStencilMatrix(staggeredTriangle, physicalPropertiesMatrix);
-			for(auto forceComponent : this->displacementComponents)
-			{
-				for(auto displacementComponent : this->displacementComponents)
-				{
-					const unsigned i = static_cast<unsigned>(forceComponent) - 1;
-					const unsigned j = static_cast<unsigned>(displacementComponent) - 1;
-					this->insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, staggeredTriangle, scalarStencilMatrix[i][j]);
-				}
-			}
-		}
-	}
-}
+// void Terzaghi::insertDisplacementBoundaryTensionTermInMatrix(void)
+// {
+// 	for(auto& boundary: this->boundaries)
+// 	{
+// 		for(auto staggeredTriangle: boundary.staggeredTriangles)
+// 		{
+// 			auto physicalPropertiesMatrix = this->getNeumannAppliedPhysicalPropertiesMatrix(boundary.isStressPrescribed);
+// 			auto scalarStencilMatrix = this->computeDisplacementScalarStencilMatrix(staggeredTriangle, physicalPropertiesMatrix);
+// 			for(auto forceComponent : this->displacementComponents)
+// 			{
+// 				for(auto displacementComponent : this->displacementComponents)
+// 				{
+// 					const unsigned i = static_cast<unsigned>(forceComponent) - 1;
+// 					const unsigned j = static_cast<unsigned>(displacementComponent) - 1;
+// 					this->insertScalarStencilDisplacementComponentInMatrix(forceComponent, displacementComponent, staggeredTriangle, scalarStencilMatrix[i][j]);
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
-Eigen::MatrixXd Terzaghi::getNeumannAppliedPhysicalPropertiesMatrix(std::array<bool,6>& isStressPrescribed)
-{
-	auto physicalPropertiesMatrix = this->getPhysicalPropertiesMatrix();
-	for(unsigned i=0 ; i<6 ; ++i)
-		if(isStressPrescribed[i])
-			physicalPropertiesMatrix.block<1,6>(i,0) << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
-	return physicalPropertiesMatrix;
-}
+// Eigen::MatrixXd Terzaghi::getNeumannAppliedPhysicalPropertiesMatrix(std::array<bool,6>& isStressPrescribed)
+// {
+// 	auto physicalPropertiesMatrix = this->getPhysicalPropertiesMatrix();
+// 	for(unsigned i=0 ; i<6 ; ++i)
+// 		if(isStressPrescribed[i])
+// 			physicalPropertiesMatrix.block<1,6>(i,0) << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+// 	return physicalPropertiesMatrix;
+// }
 
-std::vector<std::vector<ScalarStencil>> Terzaghi::computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix)
-{
-	std::vector<std::vector<ScalarStencil>> matrix(3, std::vector<ScalarStencil>(3));
-	VectorStencil gradientDisplacement = this->getDisplacementGradientOnStaggeredTriangle(staggeredTriangle);
-	for(unsigned force=0 ; force<3 ; ++force)
-	{
-		for(unsigned displacement=0; displacement<3 ; ++displacement)
-		{
-			matrix[force][displacement] = ( this->leftDisplacementMatrix[force] *
-			                              this->voigtTransformation(-staggeredTriangle->getAreaVector()).transpose() *
-			                              physicalPropertiesMatrix *
-			                              this->rightDisplacementMatrix[displacement] ) *
-			                              gradientDisplacement;
-		}
-	}
-	return matrix;
-}
+// std::vector<std::vector<ScalarStencil>> Terzaghi::computeDisplacementScalarStencilMatrix(StaggeredElement2D* staggeredTriangle, Eigen::MatrixXd& physicalPropertiesMatrix)
+// {
+// 	std::vector<std::vector<ScalarStencil>> matrix(3, std::vector<ScalarStencil>(3));
+// 	VectorStencil gradientDisplacement = this->getDisplacementGradientOnStaggeredTriangle(staggeredTriangle);
+// 	for(unsigned force=0 ; force<3 ; ++force)
+// 	{
+// 		for(unsigned displacement=0; displacement<3 ; ++displacement)
+// 		{
+// 			matrix[force][displacement] = ( this->leftDisplacementMatrix[force] *
+// 			                              this->voigtTransformation(-staggeredTriangle->getAreaVector()).transpose() *
+// 			                              physicalPropertiesMatrix *
+// 			                              this->rightDisplacementMatrix[displacement] ) *
+// 			                              gradientDisplacement;
+// 		}
+// 	}
+// 	return matrix;
+// }
 
 void Terzaghi::insertDisplacementDirichletBoundaryConditionToMatrix(void)
 {
@@ -713,7 +713,7 @@ void Terzaghi::assemblyLinearSystemMatrix(void)
 
 	this->insertPressureDirichletBoundaryConditionToMatrix();
 
-	this->insertDisplacementBoundaryTensionTermInMatrix();
+	// this->insertDisplacementBoundaryTensionTermInMatrix();
 	this->insertDisplacementPressureDirichletBoundaryConditionToMatrix();
 	this->insertDisplacementDirichletBoundaryConditionToMatrix();
 
