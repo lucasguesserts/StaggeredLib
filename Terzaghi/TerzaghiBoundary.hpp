@@ -16,6 +16,7 @@ struct TerzaghiBoundary
 	Eigen::Matrix<double,6,1> stress;
 	std::array<bool,6> isStressPrescribed;
 	std::array<std::pair<bool, double>,3> prescribedDisplacement;
+	bool applyTerzaghiPressureInStaggeredTriangles;
 
 	// Mass conservation
 	bool isPressureDirichlet;

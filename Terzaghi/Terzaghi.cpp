@@ -481,6 +481,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 		boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
 		boundary.stress << 0.0, -1E+6, 0.0, +0.0, 0.0, 0.0;
 		boundary.isStressPrescribed = {false, true, false, true, false, false};
+		boundary.applyTerzaghiPressureInStaggeredTriangles = true;
 		boundary.prescribedDisplacement = {{ {false, 0.0}, {false, 0.0}, {false, 0.0} }};
 		boundary.isPressureDirichlet = true;
 		boundary.pressureGradient << 0.0, 0.0, 0.0;
@@ -492,6 +493,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 		boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
 		boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 		boundary.isStressPrescribed = {false, false, false, true, false, false};
+		boundary.applyTerzaghiPressureInStaggeredTriangles = false;
 		boundary.prescribedDisplacement = {{ {false, 0.0}, {true, 0.0}, {false, 0.0} }};
 		boundary.isPressureDirichlet = false;
 		boundary.pressureGradient << 0.0, 0.0, 0.0;
@@ -503,6 +505,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 		boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
 		boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 		boundary.isStressPrescribed = {false, false, false, true, false, false};
+		boundary.applyTerzaghiPressureInStaggeredTriangles = false;
 		boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
 		boundary.isPressureDirichlet = false;
 		boundary.pressureGradient << 0.0, 0.0, 0.0;
@@ -514,6 +517,7 @@ void Terzaghi::initializeBoundaryConditions(void)
 		boundary.staggeredTriangles = this->grid.boundary[boundaryName].staggeredTriangle;
 		boundary.stress << 0.0, 0.0, 0.0, +0.0, 0.0, 0.0;
 		boundary.isStressPrescribed = {false, false, false, true, false, false};
+		boundary.applyTerzaghiPressureInStaggeredTriangles = false;
 		boundary.prescribedDisplacement = {{ {true, 0.0}, {false, 0.0}, {false, 0.0} }};
 		boundary.isPressureDirichlet = false;
 		boundary.pressureGradient << 0.0, 0.0, 0.0;
@@ -747,6 +751,51 @@ void Terzaghi::insertPressureNeumannBoundaryConditionToIndependent(void)
 	return;
 }
 
+void Terzaghi::insertPrescribedStressPressureTermInMatrix(void)
+{
+	for(auto& boundary: this->boundaries)
+	{
+		if(boundary.applyTerzaghiPressureInStaggeredTriangles)
+		{
+			for(auto staggeredTriangle: boundary.staggeredTriangles)
+			{
+				// vertex 0
+				ScalarStencil pressure_0 = 0.5 * (this->scalarStencilOnVertices[staggeredTriangle->vertices[0]->getIndex()] +
+				                                  ScalarStencil{ {staggeredTriangle->elements[0]->getIndex(), 1.0} });
+				Eigen::Vector3d areaVector_0 = (staggeredTriangle->elements[0]->getCentroid()) - *(staggeredTriangle->vertices[0]);
+					std::swap(areaVector_0[0],areaVector_0[1]);
+					areaVector_0[1] = - areaVector_0[1];
+				VectorStencil force_0 = pressure_0 * areaVector_0;
+				this->insertPressureGradientInMatrix(staggeredTriangle, (-1)*force_0);
+				// vertex 1
+				ScalarStencil pressure_1 = 0.5 * (this->scalarStencilOnVertices[staggeredTriangle->vertices[1]->getIndex()] +
+				                                  ScalarStencil{ {staggeredTriangle->elements[0]->getIndex(), 1.0} });
+				Eigen::Vector3d areaVector_1 = *(staggeredTriangle->vertices[1]) - (staggeredTriangle->elements[0]->getCentroid());
+					std::swap(areaVector_1[0],areaVector_1[1]);
+					areaVector_1[1] = - areaVector_1[1];
+				VectorStencil force_1 = pressure_1 * areaVector_1;
+				this->insertPressureGradientInMatrix(staggeredTriangle, (-1)*force_1);
+			}
+		}
+	}
+	return;
+}
+
+void Terzaghi::insertPressureGradientInMatrix(StaggeredElement2D* staggeredElement, const VectorStencil& pressureTerm)
+{
+	for(auto forceComponent : this->displacementComponents)
+	{
+		unsigned row = this->transformIndex(forceComponent, staggeredElement);
+		const unsigned pressureVectorComponent = static_cast<unsigned>(forceComponent) - 1u;
+		for(auto keyValuePair: pressureTerm)
+			this->linearSystem.coefficients.emplace_back(Eigen::Triplet<double,unsigned>(
+				row,
+				this->transformIndex(Component::P,keyValuePair.first),
+				keyValuePair.second.coeff(pressureVectorComponent)));
+	}
+	return;
+}
+
 void Terzaghi::assemblyLinearSystemMatrix(void)
 {
 	this->insertPressureAccumulationTermInMatrix();
@@ -759,7 +808,8 @@ void Terzaghi::assemblyLinearSystemMatrix(void)
 	this->insertPressureDirichletBoundaryConditionToMatrix();
 
 	// this->insertDisplacementBoundaryTensionTermInMatrix();
-	this->insertDisplacementPressureDirichletBoundaryConditionToMatrix();
+	// this->insertDisplacementPressureDirichletBoundaryConditionToMatrix();
+	this->insertPrescribedStressPressureTermInMatrix();
 	this->insertDisplacementDirichletBoundaryConditionToMatrix();
 
 	this->linearSystem.computeLU();
