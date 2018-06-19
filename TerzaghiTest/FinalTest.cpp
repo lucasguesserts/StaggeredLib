@@ -20,7 +20,7 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	terzaghi.fluidCompressibility = 3.03030303030E-10;
 	terzaghi.solidCompressibility = 2.77777777777E-11;
 	terzaghi.permeability = 1.9E-15;
-	terzaghi.timeInterval = 100;
+	terzaghi.timeInterval = 1.0e-1;
 	terzaghi.timeImplicitCoefficient = 1;
 	terzaghi.shearModulus = 6.0E+9;
 	terzaghi.poissonCoefficient = 0.2;
@@ -32,31 +32,27 @@ TestCase("Assembly linear system", "[Terzaghi]")
 
 	terzaghi.assemblyLinearSystemMatrix();
 	terzaghi.assemblyLinearSystemIndependent();
-	// // Eigen::MatrixXd dense(terzaghi.linearSystem.matrix);
-	// // std::cout << "Matrix:" << std::endl << dense << std::endl << std::endl;
-	// // std::cout << "Independent:" << std::endl << eigenVectorToString(terzaghi.linearSystem.independent) << std::endl << std::endl;
-
-	constexpr unsigned numberOfTimeSteps = 100;
-	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
-	{
-		terzaghi.solve();
-		// // std::cout << timeStep << std::endl;
-	}
-	// // std::cout << "final solution:" << std::endl << eigenVectorToString(terzaghi.oldSolution) << std::endl << std::endl;
 
 	// Facet center export
 	const std::string outputDirectory = gridDirectory + std::string("output/");
 	std::string resultFileName = outputDirectory + "terzaghi_facet_center.cgns";
 	Grid2DWithStaggeredElementsExport::cgns(resultFileName, terzaghi.grid);
-	CgnsWriter cgnsWriter(resultFileName, "CellCenter");
-	cgnsWriter.writePermanentSolution("steadySolution");
-	cgnsWriter.writePermanentField("u_displacement", terzaghi.getComponentFromOldSolution(Component::U));
-	cgnsWriter.writePermanentField("v_displacement", terzaghi.getComponentFromOldSolution(Component::V));
+	CgnsWriter cgnsWriterFacetCenter(resultFileName, "CellCenter");
 
 	// Element center export
 	std::string elementCenterResult = outputDirectory + "terzaghi_element_center.cgns";
 	Grid2DExport::cgns(elementCenterResult, terzaghi.grid);
 	CgnsWriter cgnsElementCenterWriter(elementCenterResult, "CellCenter");
-	cgnsElementCenterWriter.writePermanentSolution("steadySolution");
-	cgnsElementCenterWriter.writePermanentField("pressure", terzaghi.getComponentFromOldSolution(Component::P));
+
+	constexpr unsigned numberOfTimeSteps = 100;
+	for(unsigned timeStep=0 ; timeStep<numberOfTimeSteps ; ++timeStep)
+	{
+		terzaghi.solve();
+		cgnsElementCenterWriter.writeTransientSolution(terzaghi.timeInterval * timeStep);
+		cgnsElementCenterWriter.writeTransientField(terzaghi.getComponentFromOldSolution(Component::P), "pressure");
+		cgnsWriterFacetCenter.writeTransientSolution(terzaghi.timeInterval * timeStep);
+		cgnsWriterFacetCenter.writeTransientField(terzaghi.getComponentFromOldSolution(Component::U), "u_displacement");
+		cgnsWriterFacetCenter.writeTransientField(terzaghi.getComponentFromOldSolution(Component::V), "v_displacement");
+		std::cout << timeStep << std::endl;
+	}
 }
