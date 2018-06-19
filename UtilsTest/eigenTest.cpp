@@ -1,6 +1,6 @@
 #include <Utils/Test.hpp>
 #include <Eigen/Core>
-#include <Eigen/LU>
+#include <Eigen/Eigen>
 #include <Utils/EigenTest.hpp>
 
 TestCase("double to string")
@@ -172,4 +172,29 @@ TestCase("Build sparse matrix with repeated indices in triplet", "[eigen]")
 	std::vector<Eigen::Triplet<double>> triplets_repeated = { {0, 0, 3.0}, {0, 0, -1.0}, {1, 1, 1.0} };
 	matrix_repeated.setFromTriplets(triplets_repeated.begin(), triplets_repeated.end());
 	check(matrix_repeated==matrix_no_repeated);
+}
+
+TestCase("Eigen block inverse", "[eigen]")
+{
+	Eigen::MatrixXd matrix = Eigen::MatrixXd::Zero(3,2);
+	Eigen::MatrixXd correctMatrix = Eigen::MatrixXd::Zero(3,2);
+	matrix << 0.5, 0.0,
+	          0.0, 0.2,
+	          0.0, 0.0;
+	correctMatrix << 2.0, 0.0,
+	                 0.0, 5.0,
+	                 0.0, 0.0;
+	matrix.block<2,2>(0,0) = matrix.block<2,2>(0,0).inverse().eval();
+	check(matrix==correctMatrix);
+}
+
+TestCase("Eigen block assigment", "[eigen]")
+{
+	Eigen::MatrixXd matrix = Eigen::MatrixXd::Zero(3,2);
+	Eigen::Vector3d vector{3.0, 4.0, 0.0};
+	matrix.block<1,2>(0,0) = vector.normalized().block<2,1>(0,0);
+	Eigen::MatrixXd correctMatrix = Eigen::MatrixXd::Zero(3,2);
+	correctMatrix(0,0) = 3.0 / 5.0;
+	correctMatrix(0,1) = 4.0 / 5.0;
+	check(matrix==correctMatrix);
 }
