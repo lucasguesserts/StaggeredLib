@@ -403,14 +403,20 @@ VectorStencil Terzaghi::getDisplacementGradientOnStaggeredTriangle(StaggeredElem
 	auto neighbor_0 = this->findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[0], staggeredTriangle->elements[0]);
 	auto neighbor_1 = this->findStaggeredTriangleNeighbor(staggeredTriangle, staggeredTriangle->vertices[1], staggeredTriangle->elements[0]);
 	Eigen::Vector3d vector_0 = neighbor_0->getCentroid() - staggeredTriangle->getCentroid();
-	vector_0 = vector_0 / vector_0.squaredNorm();
 	Eigen::Vector3d vector_1 = neighbor_1->getCentroid() - staggeredTriangle->getCentroid();
-	vector_1 = vector_1 / vector_1.squaredNorm();
-	VectorStencil gradient = {
-		{neighbor_0->getIndex(), vector_0},
-		{neighbor_1->getIndex(), vector_1},
-		{staggeredTriangle->getIndex(), -(vector_0 + vector_1)}
-	};
+	ScalarStencil neighborScalarStencil_0 = ScalarStencil{ {neighbor_0->getIndex(), +1.0}, {staggeredTriangle->getIndex(), -1.0} };
+	ScalarStencil neighborScalarStencil_1 = ScalarStencil{ {neighbor_1->getIndex(), +1.0}, {staggeredTriangle->getIndex(), -1.0} };
+	// Compute vector stencil
+	Eigen::Matrix<double,3,2> directionComponentsMatrix = Eigen::Matrix<double,3,2>::Zero();
+		directionComponentsMatrix.block<1,2>(0,0) = vector_0.normalized().block<2,1>(0,0);
+		directionComponentsMatrix.block<1,2>(1,0) = vector_1.normalized().block<2,1>(0,0);
+		directionComponentsMatrix.block<2,2>(0,0) = directionComponentsMatrix.block<2,2>(0,0).inverse().eval();
+	Eigen::Matrix<double,2,2> inverseDistanceMatrix;
+		inverseDistanceMatrix << 1.0/vector_0.norm(), 0.0,
+		                         0.0,                 1.0/vector_1.norm();
+	Eigen::MatrixXd vectorsMatrix = directionComponentsMatrix * inverseDistanceMatrix;
+	VectorStencil gradient = neighborScalarStencil_0 * Eigen::Vector3d(vectorsMatrix.block<3,1>(0,0)) +
+	                              neighborScalarStencil_1 * Eigen::Vector3d(vectorsMatrix.block<3,1>(0,1));
 	return gradient;
 }
 
@@ -625,7 +631,7 @@ void Terzaghi::insertDisplacementDirichletBoundaryConditionToIndependent(void)
 				for(auto staggeredTriangle: boundary.staggeredTriangles)
 				{
 					const unsigned row = this->transformIndex(displacementComponent, staggeredTriangle);
-					this->linearSystem.independent[row] = 0.0;
+					this->linearSystem.independent[row] = boundary.prescribedDisplacement[i].second;
 				}
 			}
 		}
