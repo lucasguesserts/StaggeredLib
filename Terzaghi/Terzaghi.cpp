@@ -606,14 +606,18 @@ void Terzaghi::applyDisplacementDirichletBoundaryCondition(const Component compo
 {
 	// TODO: update and move this function to somewhere in LinearSystem class
 	const unsigned row = this->transformIndex(component, staggeredTriangle);
+	bool wasInserted = false;
 	for(auto& triplet: this->linearSystem.coefficients)
 	{
 		if(triplet.row()==row)
 		{
-			if(triplet.col()!=row)
+			if(triplet.col()!=row || wasInserted)
 				triplet = Eigen::Triplet<double,unsigned>(row, triplet.col(), 0.0);
 			else
+			{
 				triplet = Eigen::Triplet<double,unsigned>(row, row, 1.0);
+				wasInserted = true;
+			}
 		}
 	}
 	return;

@@ -166,19 +166,25 @@ TestCase("Displacement - dirichlet boundary condition")
 	terzaghi.timeImplicitCoefficient = 1;
 	terzaghi.shearModulus = 6.0E+9;
 	terzaghi.poissonCoefficient = 0.2;
+	terzaghi.boundaries[0].prescribedDisplacement[1].first = true;
+	terzaghi.boundaries[0].prescribedDisplacement[1].second = 1.0E-3;
 	section("matrix")
 	{
 		terzaghi.insertDisplacementTensionTermInMatrix();
 		terzaghi.insertDisplacementDirichletBoundaryConditionToMatrix();
+		terzaghi.linearSystem.assemblyMatrix();
 		auto checkIfBoundaryConditionWasApplied = [&](Component component, StaggeredElement2D* staggeredElement) -> void
 		{
 			const unsigned row = terzaghi.transformIndex(component, staggeredElement);
-			for(auto& triplet: terzaghi.linearSystem.coefficients)
-				if((triplet.row()==row) && (triplet.col()!=row))
-					check(triplet.value()==0.0);
-			for(auto& triplet: terzaghi.linearSystem.coefficients)
-				if((triplet.row()==row) && (triplet.col()==row))
-					check(triplet.value()==1.0);
+			Eigen::MatrixXd matrixRow = Eigen::MatrixXd(terzaghi.linearSystem.matrix).block(row,0,1,terzaghi.linearSystemSize);
+			// Eigen::MatrixXd matrixRow = Eigen::Matrix3d::Zero();
+			for(unsigned column=0 ; column<terzaghi.linearSystemSize ; ++column)
+			{
+				if(column!=row)
+					check(matrixRow(column)==0.0);
+				else
+					check(matrixRow(column)==1.0);
+			}
 		};
 		checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[1]));
 		checkIfBoundaryConditionWasApplied(Component::U, &(terzaghi.grid.staggeredElements[4]));
@@ -187,14 +193,15 @@ TestCase("Displacement - dirichlet boundary condition")
 	section("independent")
 	{
 		terzaghi.assemblyLinearSystemIndependent();
-		auto checkIfIndependentIsNull = [&terzaghi](Component component, StaggeredElement2D* staggeredElement) -> void
+		auto checkIfIndependentIsPrescribed = [&terzaghi](Component component, StaggeredElement2D* staggeredElement, const double prescribedValue) -> void
 		{
 			const unsigned row = terzaghi.transformIndex(component, staggeredElement);
-			check(terzaghi.linearSystem.independent[row]==0.0);
+			check(terzaghi.linearSystem.independent[row]==prescribedValue);
 		};
-		checkIfIndependentIsNull(Component::U, &(terzaghi.grid.staggeredElements[1]));
-		checkIfIndependentIsNull(Component::U, &(terzaghi.grid.staggeredElements[4]));
-		checkIfIndependentIsNull(Component::V, &(terzaghi.grid.staggeredElements[0]));
+		checkIfIndependentIsPrescribed(Component::U, &(terzaghi.grid.staggeredElements[1]), 0.0);
+		checkIfIndependentIsPrescribed(Component::U, &(terzaghi.grid.staggeredElements[4]), 0.0);
+		checkIfIndependentIsPrescribed(Component::V, &(terzaghi.grid.staggeredElements[0]), 0.0);
+		checkIfIndependentIsPrescribed(Component::V, &(terzaghi.grid.staggeredElements[3]), 1.0E-3);
 	}
 }
 
