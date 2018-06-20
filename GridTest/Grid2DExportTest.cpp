@@ -32,3 +32,14 @@ TestCase("Export 2D grid", "[Grid2DExport]")
 	}
 	boost::filesystem::remove_all(testFileName);
 }
+
+TestCase("Export grid2D to csv", "[Grid2DExport]")
+{
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
+	const std::string testFileName = gridDirectory + "grid2DExport_Test.csv";
+	Grid2D grid(cgnsGridFileName);
+	Grid2DExport::csv(testFileName, grid);
+	for(unsigned i=0 ; i<10 ; ++i)
+		Grid2DExport::csvAppendTimeSolution(testFileName, 2.0, std::vector<double>(3, 1.0));
+	// Manual checking
+}

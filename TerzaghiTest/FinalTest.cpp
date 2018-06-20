@@ -45,7 +45,9 @@ TestCase("Assembly linear system", "[Terzaghi]")
 
 	// Element center export
 	std::string elementCenterResult = outputDirectory + "terzaghi_element_center.cgns";
+	std::string pResultCSV = outputDirectory + "terzaghi_facet_center_p.csv";
 	Grid2DExport::cgns(elementCenterResult, terzaghi.grid);
+	Grid2DExport::csv(pResultCSV, terzaghi.grid);
 	CgnsWriter cgnsElementCenterWriter(elementCenterResult, "CellCenter");
 
 	constexpr unsigned numberOfTimeSteps = 100;
@@ -59,6 +61,7 @@ TestCase("Assembly linear system", "[Terzaghi]")
 		cgnsWriterFacetCenter.writeTransientField(terzaghi.getComponentFromOldSolution(Component::V), "v_displacement");
 		Grid2DWithStaggeredElementsExport::csvAppendTimeSolution(uResultCSV, terzaghi.timeInterval*timeStep, terzaghi.getComponentFromOldSolution(Component::U));
 		Grid2DWithStaggeredElementsExport::csvAppendTimeSolution(vResultCSV, terzaghi.timeInterval*timeStep, terzaghi.getComponentFromOldSolution(Component::V));
+		Grid2DExport::csvAppendTimeSolution(pResultCSV, terzaghi.timeInterval*timeStep, terzaghi.getComponentFromOldSolution(Component::P));
 		std::cout << timeStep << std::endl;
 	}
 }
