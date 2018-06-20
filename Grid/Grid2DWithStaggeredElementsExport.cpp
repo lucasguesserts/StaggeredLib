@@ -77,3 +77,50 @@ void Grid2DWithStaggeredElementsExport::exportRegion(const Grid2DWithStaggeredEl
 	gridData->regions.emplace_back(std::move(region));
 	return;
 }
+
+void Grid2DWithStaggeredElementsExport::csv(const std::string& fileName, Grid2DWithStaggeredElements& grid)
+{
+	std::ofstream csvFile;
+	csvFile.open(fileName, std::ios::out);
+	// X
+	for(unsigned count=0 ; count<(grid.staggeredElements.size()-1) ; ++count)
+	{
+		auto centroid = grid.staggeredElements[count].getCentroid();
+		csvFile << doubleToString(centroid.x()) << ",";
+	}
+	{
+		auto centroid = grid.staggeredElements.back().getCentroid();
+		csvFile << doubleToString(centroid.x());
+	}
+	csvFile << std::endl;
+	// Y
+	for(unsigned count=0 ; count<(grid.staggeredElements.size()-1) ; ++count)
+	{
+		auto centroid = grid.staggeredElements[count].getCentroid();
+		csvFile << doubleToString(centroid.y()) << ",";
+	}
+	{
+		auto centroid = grid.staggeredElements.back().getCentroid();
+		csvFile << doubleToString(centroid.y());
+	}
+	csvFile << std::endl;
+	csvFile.close();
+	return;
+}
+
+void Grid2DWithStaggeredElementsExport::csvAppendTimeSolution(const std::string& fileName, const double timeInstant, const std::vector<double>& solution)
+{
+	std::ofstream csvFile;
+	csvFile.open(fileName, std::ios::app);
+	csvFile << doubleToString(timeInstant) << ",";
+	for(unsigned count=0 ; count<(solution.size()-1) ; ++count)
+	{
+		csvFile << doubleToString(solution[count]) << ",";
+	}
+	{
+		csvFile << doubleToString(solution.back());
+	}
+	csvFile << std::endl;
+	csvFile.close();
+	return;
+}

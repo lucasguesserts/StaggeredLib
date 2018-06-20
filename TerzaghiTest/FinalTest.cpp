@@ -25,7 +25,7 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	terzaghi.shearModulus = 6.0E+9;
 	terzaghi.poissonCoefficient = 0.2;
 
-	const std::vector<double> initialPressureValues(terzaghi.numberOfElements, 1.0);
+	const std::vector<double> initialPressureValues(terzaghi.numberOfElements, 4E+5);
 	terzaghi.setOldPressure(initialPressureValues);
 	const std::vector<Eigen::Vector3d> oldDisplacements(terzaghi.numberOfStaggeredElements, Eigen::Vector3d::Zero());
 	terzaghi.setOldDisplacement(oldDisplacements);
@@ -36,7 +36,11 @@ TestCase("Assembly linear system", "[Terzaghi]")
 	// Facet center export
 	const std::string outputDirectory = gridDirectory + std::string("output/");
 	std::string resultFileName = outputDirectory + "terzaghi_facet_center.cgns";
+	std::string uResultCSV = outputDirectory + "terzaghi_facet_center_u.csv";
+	std::string vResultCSV = outputDirectory + "terzaghi_facet_center_v.csv";
 	Grid2DWithStaggeredElementsExport::cgns(resultFileName, terzaghi.grid);
+	Grid2DWithStaggeredElementsExport::csv(uResultCSV, terzaghi.grid);
+	Grid2DWithStaggeredElementsExport::csv(vResultCSV, terzaghi.grid);
 	CgnsWriter cgnsWriterFacetCenter(resultFileName, "CellCenter");
 
 	// Element center export
@@ -53,6 +57,8 @@ TestCase("Assembly linear system", "[Terzaghi]")
 		cgnsWriterFacetCenter.writeTransientSolution(terzaghi.timeInterval * timeStep);
 		cgnsWriterFacetCenter.writeTransientField(terzaghi.getComponentFromOldSolution(Component::U), "u_displacement");
 		cgnsWriterFacetCenter.writeTransientField(terzaghi.getComponentFromOldSolution(Component::V), "v_displacement");
+		Grid2DWithStaggeredElementsExport::csvAppendTimeSolution(uResultCSV, terzaghi.timeInterval*timeStep, terzaghi.getComponentFromOldSolution(Component::U));
+		Grid2DWithStaggeredElementsExport::csvAppendTimeSolution(vResultCSV, terzaghi.timeInterval*timeStep, terzaghi.getComponentFromOldSolution(Component::V));
 		std::cout << timeStep << std::endl;
 	}
 }

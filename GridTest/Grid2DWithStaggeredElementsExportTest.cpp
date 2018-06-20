@@ -49,3 +49,14 @@ TestCase("Export staggered grid", "[Grid2DWithStaggeredElementsExport]")
 	}
 	boost::filesystem::remove_all(testFileName);
 }
+
+TestCase("Export grid2D with staggered elements to csv", "[Grid2DWithStaggeredElementsExport]")
+{
+	const std::string cgnsGridFileName = gridDirectory + "two_triangles.cgns";
+	const std::string testFileName = gridDirectory + "grid2DWithStaggeredElementExport_Test.csv";
+	Grid2DWithStaggeredElements grid(cgnsGridFileName);
+	Grid2DWithStaggeredElementsExport::csv(testFileName, grid);
+	for(unsigned i=0 ; i<10 ; ++i)
+		Grid2DWithStaggeredElementsExport::csvAppendTimeSolution(testFileName, 2.0, std::vector<double>(3, 1.0));
+	// Manual checking
+}
