@@ -55,14 +55,27 @@ void FacetCenterHeatTransfer::initializeGradientOnFaces(void)
 	for(Face2D& face: this->grid2D.faces)
 	{
 		Eigen::Vector3d frontBackDifferencePosition = face.forwardStaggeredElement->getCentroid() - face.backwardStaggeredElement->getCentroid();
+		Eigen::Vector3d vertexElementDifferencePosition = *(face.adjacentVertex) - face.parentElement->getCentroid();
+		const double frontBackNorm = frontBackDifferencePosition.norm();
+		const double vertexElementNorm = vertexElementDifferencePosition.norm();
 		ScalarStencil frontBackDifferenceScalarStencil = ScalarStencil{
 			                                             	{face.forwardStaggeredElement->getIndex(), +1.0},
 			                                             	{face.backwardStaggeredElement->getIndex(), -1.0}};
-		Eigen::Vector3d vertexElementDifferencePosition = *(face.adjacentVertex) - face.parentElement->getCentroid();
 		ScalarStencil vertexElementDifferenceScalarStencil = this->scalarStencilOnVertices[face.adjacentVertex->getIndex()] +
 		                                                     (-1) * this->scalarStencilOnElements[face.parentElement->getIndex()];
-		this->gradientOnFaces[face.getIndex()] = ((1 / frontBackDifferencePosition.squaredNorm()) * frontBackDifferenceScalarStencil) * frontBackDifferencePosition +
-		                                         ((1 / vertexElementDifferencePosition.squaredNorm()) * vertexElementDifferenceScalarStencil) * vertexElementDifferencePosition;
+		// Compute vector stencil
+		Eigen::Matrix<double,3,2> directionComponentsMatrix = Eigen::Matrix<double,3,2>::Zero();
+			directionComponentsMatrix.block<1,2>(0,0) = frontBackDifferencePosition.normalized().block<2,1>(0,0);
+			directionComponentsMatrix.block<1,2>(1,0) = vertexElementDifferencePosition.normalized().block<2,1>(0,0);
+			directionComponentsMatrix.block<2,2>(0,0) = directionComponentsMatrix.block<2,2>(0,0).inverse().eval();
+		Eigen::Matrix<double,2,2> inverseDistanceMatrix;
+			inverseDistanceMatrix << 1.0/frontBackNorm, 0.0,
+									0.0, 1.0/vertexElementNorm;
+		Eigen::MatrixXd vectorsMatrix = directionComponentsMatrix * inverseDistanceMatrix;
+		VectorStencil vectorStencil = frontBackDifferenceScalarStencil * Eigen::Vector3d(vectorsMatrix.block<3,1>(0,0)) +
+		                              vertexElementDifferenceScalarStencil * Eigen::Vector3d(vectorsMatrix.block<3,1>(0,1));
+		// set value
+		this->gradientOnFaces[face.getIndex()] = vectorStencil;
 	}
 	return;
 }
