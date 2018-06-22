@@ -43,7 +43,7 @@ auto analiseConvergence = [](const std::string& directory, const std::vector<std
 		problem.insertDirichletBoundaryCondition("west boundary",0.0);
 		problem.insertDirichletBoundaryCondition("top boundary",
 			[](Eigen::Vector3d centroid) -> double
-			{ return std::sin(M_PI*centroid.x()) * std::sinh(M_PI*centroid.y()) / std::sinh(M_PI); });
+			{ return std::sin(M_PI*centroid.x()); });
 
 		// Steady numerical solution
 		problem.addDiffusiveTerm();
