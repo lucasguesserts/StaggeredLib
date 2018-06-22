@@ -10,6 +10,7 @@
 #include <Grid/Grid2DWithStaggeredElementsExport.hpp>
 #include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
 #include <CgnsInterface/CgnsWriter.hpp>
+#include <Utils/ExportConvergenceToCSV.hpp>
 
 const std::string cartesianDirectory               = gridDirectory + std::string("cartesian/");
 const std::string cartesianTriangleDirectory       = gridDirectory + std::string("cartesian_triangle/");
@@ -28,6 +29,7 @@ const std::vector<std::string> unstructuredFiles = {
 	"03.cgns",
 	"04.cgns"
 };
+const std::string csvFileName = gridDirectory + "facetCenter_convergence.csv";
 
 auto analiseConvergence = [](const std::string& directory, const std::vector<std::string>& fileNames) -> RateOfConvergence
 {
@@ -62,7 +64,14 @@ auto analiseConvergence = [](const std::string& directory, const std::vector<std
 		Eigen::VectorXd analyticalSolution = SquareCavityHeatTransfer::computeAnalyticalSolution(staggeredElementsCentroid);
 
 		Eigen::VectorXd difference = numericalSolution - analyticalSolution;
-		double error = difference.lpNorm<Eigen::Infinity>();
+		double error = 0.0;
+		for(auto element: problem.grid2D.elements)
+		{
+			const unsigned index = element->getIndex();
+			error += element->getVolume() * difference[index] * difference[index];
+		}
+		error = std::sqrt(error);
+		// double error = difference.lpNorm<Eigen::Infinity>();
 		numericalError.push_back(error);
 		characteristicLength.push_back(problem.grid2D.getStaggeredCharacteristicLength());
 		std::cout << std::endl << "\t" << "erro: " << error << "  characteristic length:" << characteristicLength.back();
@@ -77,6 +86,7 @@ auto analiseConvergence = [](const std::string& directory, const std::vector<std
 		cgnsWriter.writePermanentField("error", std::vector<double>(&difference[0], &difference[0] + difference.size()));
 	}
 	std::cout << std::endl;
+	appendConvergenceToCSV(csvFileName, numericalError, characteristicLength);
 	return RateOfConvergence(numericalError,characteristicLength);
 };
 
@@ -84,6 +94,7 @@ int main()
 {
 	constexpr int width = 50;
 	double orderOfConvergence;
+	createConvergenceFile(csvFileName);
 	std::cout << std::setw(width) << std::left << "Mesh type" << "Order of convergence" << std::endl;
 
 	orderOfConvergence = analiseConvergence(cartesianDirectory,cartesianFiles).order;

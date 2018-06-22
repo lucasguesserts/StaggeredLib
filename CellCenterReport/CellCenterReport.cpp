@@ -66,7 +66,14 @@ auto analiseConvergence = [](const std::string& directory, const std::vector<std
 
 		// Compare
 		Eigen::VectorXd difference = numericalSolution - analyticalSolution;
-		double error = difference.lpNorm<Eigen::Infinity>();
+		double error = 0.0;
+		for(auto element: problem.grid2D.elements)
+		{
+			const unsigned index = element->getIndex();
+			error += element->getVolume() * difference[index] * difference[index];
+		}
+		error = std::sqrt(error);
+		// double error = std::sqrt(difference.squaredNorm()/problem.grid2D.elements.size());
 		numericalError.push_back(error);
 		characteristicLength.push_back(problem.grid2D.getCharacteristicLength());
 		std::cout << std::endl << "\t" << "erro: " << error << "  characteristic length:" << characteristicLength.back();
