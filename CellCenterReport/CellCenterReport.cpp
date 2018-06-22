@@ -9,6 +9,7 @@
 #include <SquareCavityHeatTransfer/SquareCavityHeatTransfer.hpp>
 #include <Grid/Grid2DWithStaggeredElementsExport.hpp>
 #include <CgnsInterface/CgnsReader/CgnsReader2D.hpp>
+#include <Utils/ExportConvergenceToCSV.hpp>
 
 const std::string cartesianDirectory               = gridDirectory + std::string("cartesian/");
 const std::string cartesianTriangleDirectory       = gridDirectory + std::string("cartesian_triangle/");
@@ -27,6 +28,7 @@ const std::vector<std::string> unstructuredFiles = {
 	"03.cgns",
 	"04.cgns"
 };
+const std::string csvFileName = gridDirectory + "elementCenter_convergence.csv";
 
 auto analiseConvergence = [](const std::string& directory, const std::vector<std::string>& fileNames) -> RateOfConvergence
 {
@@ -79,6 +81,7 @@ auto analiseConvergence = [](const std::string& directory, const std::vector<std
 		std::cout << std::endl << "\t" << "erro: " << error << "  characteristic length:" << characteristicLength.back();
 	}
 	std::cout << std::endl;
+	appendConvergenceToCSV(csvFileName, numericalError, characteristicLength);
 	return RateOfConvergence(numericalError,characteristicLength);
 };
 
@@ -86,6 +89,7 @@ int main()
 {
 	constexpr int width = 50;
 	double orderOfConvergence;
+	createConvergenceFile(csvFileName);
 	std::cout << std::setw(width) << std::left << "Mesh type" << "Order of convergence" << std::endl;
 
 	orderOfConvergence = analiseConvergence(cartesianDirectory,cartesianFiles).order;

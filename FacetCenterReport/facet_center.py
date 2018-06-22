@@ -2,10 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # read csv file
-fileName = '/home/guesser/git_projects/StaggeredLib/grids/facetCenter_convergence.csv'
-file = open(fileName)
+facetCenter = '/home/guesser/git_projects/StaggeredLib/grids/facetCenter_convergence.csv'
+elementCenter = '/home/guesser/git_projects/StaggeredLib/grids/elementCenter_convergence.csv'
+fileFacet = open(facetCenter)
+fileElement = open(elementCenter)
 # one error
-def readLine():
+def readLine(file):
 	characteristicLengthLine = file.readline().split(',')
 	characteristicLength = np.zeros(len(characteristicLengthLine))
 	errorLine = file.readline().split(',')
@@ -15,28 +17,33 @@ def readLine():
 		error[i] = float(errorLine[i])
 	return [characteristicLength, error]
 
-plotar = []
+facetPlot = []
+elementPlot = []
 for i in range(5):
-	plotar.append(readLine())
+	facetPlot.append(readLine(fileFacet))
+	elementPlot.append(readLine(fileElement))
+plotar = [facetPlot, elementPlot]
 
-fig, ax = plt.subplots(1,1, figsize=(8,8))
-plt.subplots_adjust(left=0.175, right=0.98, top=0.96, bottom=0.135, wspace=0.36)
+fig, ax = plt.subplots(1,2, figsize=(8,16))
+# plt.subplots_adjust(left=0.175, right=0.98, top=0.96, bottom=0.135, wspace=0.36)
 
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['mathtext.fontset'] = 'dejavuserif'
 
-# markerList = [r'$\circ$', r'$\times$', r'$\diamondsuit$'] # procure por mathtext para mais markers
-
-cartesian_length = [ 0.5, 0.25, 0.111111, 0.0526316]
-cartesian_error = [0.0184619, 0.0117836, 0.00299693, 0.000706617]
-ax.loglog(plotar[1][0], plotar[1][1], linestyle='-', marker='o', color='k', linewidth='1.0' )
-
-ax.grid(True)
-ax.set_xlabel('Comprimento característico', size=14)
-ax.set_ylabel('Erro', size=14)
-plt.minorticks_on()
-ax.grid(which='major', linestyle=':')
-ax.grid(which='minor', linestyle=':')
-ax.set_xlim([1E-2, 1])
-ax.set_ylim([1E-4, 1E-1])
+titles = ['Facet Center', 'Element Center']
+colors = ['k', 'r', 'g', 'b', 'c']
+labels = ['cartesiana', 'cartesiana de triângulos', 'cartesiana mista', 'não estruturada triângulos', 'não estruturada quadriláteros']
+for j in range(len(ax)):
+	for i in range(5):
+		ax[j].loglog(plotar[j][i][0], plotar[j][i][1], linestyle='-', marker='o', color=colors[i], linewidth='1.0', label=labels[i])
+	ax[j].set_title(titles[j])
+	ax[j].legend()
+	ax[j].grid(True)
+	ax[j].set_xlabel('Comprimento característico', size=14)
+	ax[j].set_ylabel('Erro', size=14)
+	plt.minorticks_on()
+	ax[j].grid(which='major', linestyle=':')
+	ax[j].grid(which='minor', linestyle=':')
+	ax[j].set_xlim([1E-2, 1])
+	ax[j].set_ylim([1E-4, 1E-1])
 plt.show()
