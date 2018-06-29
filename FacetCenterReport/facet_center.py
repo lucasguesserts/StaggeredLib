@@ -60,9 +60,6 @@ def getLowerTri( x1, x2, yb, slope ):
     Y.append( [y2, y1] )
     return X, Y
 
-Xu, Yu = getUpperTri( 2E-2, 6E-2, 5E-2, 1.0 )
-Xl, Yl = getLowerTri( 2E-1, 7E-1, 2E-4, 1.0 )
-
 # plot
 
 fig, ax = plt.subplots(2,1, figsize=(6,12))
@@ -87,9 +84,20 @@ for j in range(len(ax)):
 	ax[j].set_ylim([1E-4, 1E-1])
 ax[0].legend(loc='upper left')
 ax[1].legend(loc='lower right')
-for x, y in zip( Xl, Yl ):
+
+
+Xf, Yf = getUpperTri( 3E-2, 8E-2, 9E-3, 1.0 )
+for x, y in zip( Xf, Yf ):
     ax[0].loglog(x, y, '-', color='grey')
-for x, y in zip( Xu, Yu ):
+Xf, Yf = getLowerTri( 8E-2, 3E-1, 2E-4, 2.0 )
+for x, y in zip( Xf, Yf ):
+    ax[0].loglog(x, y, '-', color='grey')
+
+Xf, Yf = getUpperTri( 6E-2, 2E-1, 5E-2, 1.0 )
+for x, y in zip( Xf, Yf ):
+    ax[1].loglog(x, y, '-', color='grey')
+Xf, Yf = getLowerTri( 1E-1, 3E-1, 1E-3, 2.0 )
+for x, y in zip( Xf, Yf ):
     ax[1].loglog(x, y, '-', color='grey')
 # plt.show()
 fig.savefig('/home/guesser/git_projects/tcc_guesser/images/report_heat_transfer.svg')
