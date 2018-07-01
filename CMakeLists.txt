@@ -23,16 +23,19 @@ include_directories ("${CMAKE_SOURCE_DIR}/Eigen")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/findsCMake/")
 
+set (CGNS_DIR "/home/herminio/Libraries/cgns-3.3.0/Debug/Shared/")
 find_package (CGNS REQUIRED)
 if (CGNS_FOUND)
     include_directories (${CGNS_INCLUDE_DIR})
 endif ()
 
+set (BOOST_ROOT "/home/herminio/Libraries/boost-1.66.0/Debug/Shared/")
 find_package (Boost REQUIRED COMPONENTS filesystem)
 if (Boost_FOUND)
 	include_directories (${Boost_INCLUDE_DIRS})
 endif ()
 
+set (MSHtoCGNS_DIR "/home/herminio/Libraries/MSHtoCGNS/Debug/Static/")
 find_package (MSHtoCGNS REQUIRED)
 if (MSHtoCGNS_FOUND)
 	include_directories (${MSHtoCGNS_INCLUDE_DIR})
@@ -59,6 +62,7 @@ add_subdirectory(FacetCenterHeatTransferTest)
 add_subdirectory(FacetCenterReport)
 add_subdirectory(Terzaghi)
 add_subdirectory(TerzaghiTest)
+add_subdirectory(SquarePlateHeatTransfer)
 
 message ("\n-- Project: ${PROJECT_NAME} ${VERSION}")
 message ("-- Build type: ${CMAKE_BUILD_TYPE}")
