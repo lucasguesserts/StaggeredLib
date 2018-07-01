@@ -57,6 +57,7 @@ add_subdirectory(CellCenterReport)
 add_subdirectory(FacetCenterHeatTransfer)
 add_subdirectory(FacetCenterHeatTransferTest)
 add_subdirectory(FacetCenterReport)
+add_subdirectory(FacetCenterApp)
 add_subdirectory(Terzaghi)
 add_subdirectory(TerzaghiTest)
 
